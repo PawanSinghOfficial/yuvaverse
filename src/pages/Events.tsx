@@ -68,7 +68,7 @@ export default function Events() {
           <p className="text-muted-foreground mt-2">Stay updated with society meetings, workshops, and fests.</p>
         </div>
         
-        {user?.role === "society_head" && (
+        {(user?.role === "society_head" || user?.role === "admin") && (
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <Button>

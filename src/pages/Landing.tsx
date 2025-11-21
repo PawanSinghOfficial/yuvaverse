@@ -12,9 +12,9 @@ export default function Landing() {
       <nav className="border-b py-4 px-6 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
           <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
-            G
+            Y
           </div>
-          GENZHUB
+          YuvaVerse
         </div>
         <div className="flex items-center gap-4">
           <Button variant="ghost" onClick={() => navigate("/auth")}>Log in</Button>
@@ -100,7 +100,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="py-12 border-t text-center text-muted-foreground text-sm">
-        <p>© {new Date().getFullYear()} GENZHUB. Built for students, by students.</p>
+        <p>© {new Date().getFullYear()} YuvaVerse. Built for students, by students.</p>
         <div className="mt-4">
             <Button variant="link" size="sm" className="text-xs text-muted-foreground/50 hover:text-primary" onClick={() => navigate("/admin")}>
                 Admin Portal

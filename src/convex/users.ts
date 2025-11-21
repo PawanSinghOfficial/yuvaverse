@@ -53,6 +53,21 @@ export const setUsername = mutation({
   },
 });
 
+export const syncAdminRole = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return;
+    
+    const user = await ctx.db.get(userId);
+    if (!user) return;
+
+    if (user.email === "placementandinternships4u@gmail.com" && user.role !== "admin") {
+      await ctx.db.patch(userId, { role: "admin" });
+    }
+  },
+});
+
 export const redeemPoints = mutation({
   args: { plan: v.union(v.literal("premium"), v.literal("elite")) },
   handler: async (ctx, args) => {

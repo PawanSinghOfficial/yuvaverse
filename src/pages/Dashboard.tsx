@@ -55,7 +55,7 @@ export default function Dashboard() {
           <CardContent className="flex items-center justify-between p-6">
             <div>
               <h3 className="font-bold text-lg">Set your Username</h3>
-              <p className="text-sm text-muted-foreground">Choose a unique username to be identified across GENZHUB.</p>
+              <p className="text-sm text-muted-foreground">Choose a unique username to be identified across YuvaVerse.</p>
             </div>
             <Dialog open={isSettingUsername} onOpenChange={setIsSettingUsername}>
               <DialogTrigger asChild>
@@ -85,7 +85,7 @@ export default function Dashboard() {
             Welcome back, {user?.username || user?.name?.split(' ')[0] || "Student"}
           </h1>
           <p className="text-muted-foreground mt-2">
-            Here's what's happening at GENZHUB today.
+            Here's what's happening at YuvaVerse today.
           </p>
         </div>
         <div className="flex gap-2">
