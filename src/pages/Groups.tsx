@@ -30,6 +30,7 @@ import { Id } from "@/convex/_generated/dataModel";
 
 export default function Groups() {
   const groups = useQuery(api.groups.list);
+  const memberships = useQuery(api.groups.getUserMemberships);
   const createGroup = useMutation(api.groups.create);
   const joinGroup = useMutation(api.groups.join);
   const navigate = useNavigate();
@@ -47,6 +48,10 @@ export default function Groups() {
   const [joinPassword, setJoinPassword] = useState("");
   const [selectedGroup, setSelectedGroup] = useState<Id<"groups"> | null>(null);
   const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
+
+  const isMember = (groupId: Id<"groups">) => {
+    return memberships?.some((m) => m.groupId === groupId);
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -203,34 +208,43 @@ export default function Groups() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {groups?.map((group) => (
-          <Card key={group._id} className="flex flex-col">
-            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-              <div className="space-y-1">
-                <CardTitle className="text-base font-medium">{group.name}</CardTitle>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  {group.isPrivate ? <Lock className="h-3 w-3" /> : <Globe className="h-3 w-3" />}
-                  <span className="capitalize">{group.type} Group</span>
+        {groups?.map((group) => {
+          const member = isMember(group._id);
+          return (
+            <Card key={group._id} className="flex flex-col">
+              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                <div className="space-y-1">
+                  <CardTitle className="text-base font-medium">{group.name}</CardTitle>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    {group.isPrivate ? <Lock className="h-3 w-3" /> : <Globe className="h-3 w-3" />}
+                    <span className="capitalize">{group.type} Group</span>
+                  </div>
                 </div>
-              </div>
-              <div className="p-2 bg-muted rounded-md">
-                <Users className="h-4 w-4 text-primary" />
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col">
-              <p className="text-sm text-muted-foreground mt-2 line-clamp-2 flex-1">
-                {group.description || "No description provided."}
-              </p>
-              <Button 
-                className="w-full mt-4" 
-                variant="outline"
-                onClick={() => handleJoin(group._id, group.isPrivate)}
-              >
-                {group.isPrivate ? "Join Private Group" : "Open Group"}
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+                <div className="p-2 bg-muted rounded-md">
+                  <Users className="h-4 w-4 text-primary" />
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1 flex flex-col">
+                <p className="text-sm text-muted-foreground mt-2 line-clamp-2 flex-1">
+                  {group.description || "No description provided."}
+                </p>
+                <Button 
+                  className="w-full mt-4" 
+                  variant={member ? "secondary" : "outline"}
+                  onClick={() => {
+                    if (member) {
+                      navigate(`/groups/${group._id}`);
+                    } else {
+                      handleJoin(group._id, group.isPrivate);
+                    }
+                  }}
+                >
+                  {member ? "View Group" : (group.isPrivate ? "Join Private Group" : "Join Group")}
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
          {groups?.length === 0 && (
             <div className="col-span-full text-center py-12 text-muted-foreground">
                 No groups found. Create one to get started!

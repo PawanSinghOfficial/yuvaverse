@@ -71,10 +71,11 @@ export const join = mutation({
       }
     }
 
+    // Check if already a member using by_user index which is likely more efficient for this check
     const existing = await ctx.db
       .query("group_members")
-      .withIndex("by_group", (q) => q.eq("groupId", args.groupId))
-      .filter((q) => q.eq(q.field("userId"), user._id))
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .filter((q) => q.eq(q.field("groupId"), args.groupId))
       .first();
 
     if (existing) throw new Error("Already a member");
@@ -84,6 +85,19 @@ export const join = mutation({
       userId: user._id,
       role: "member",
     });
+  },
+});
+
+export const getUserMemberships = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+    
+    return await ctx.db
+      .query("group_members")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
   },
 });
 
