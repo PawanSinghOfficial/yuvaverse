@@ -63,7 +63,14 @@ export const getRegisteredEvents = query({
       })
     );
 
-    return events.filter((e) => e !== null).sort((a, b) => a!.date - b!.date);
+    const validEvents = [];
+    for (const event of events) {
+      if (event) {
+        validEvents.push(event);
+      }
+    }
+
+    return validEvents.sort((a, b) => a.date - b.date);
   },
 });
 

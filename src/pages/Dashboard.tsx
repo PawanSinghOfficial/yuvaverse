@@ -166,18 +166,18 @@ export default function Dashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {registeredEvents.map((event) => (
-                    <div key={event?._id} className="flex items-start gap-3 border-b border-orange-100 dark:border-orange-800 pb-3 last:border-0 last:pb-0">
+                    <div key={event._id} className="flex items-start gap-3 border-b border-orange-100 dark:border-orange-800 pb-3 last:border-0 last:pb-0">
                       <div className="bg-white dark:bg-card rounded p-2 text-center min-w-[50px] shadow-sm">
                         <span className="block text-xs font-bold uppercase text-muted-foreground">
-                          {new Date(event!.date).toLocaleString('default', { month: 'short' })}
+                          {new Date(event.date).toLocaleString('default', { month: 'short' })}
                         </span>
                         <span className="block text-lg font-bold text-primary">
-                          {new Date(event!.date).getDate()}
+                          {new Date(event.date).getDate()}
                         </span>
                       </div>
                       <div>
-                        <p className="text-sm font-medium">{event!.title}</p>
-                        <p className="text-xs text-muted-foreground line-clamp-1">{event!.location} • {new Date(event!.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                        <p className="text-sm font-medium">{event.title}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{event.location} • {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                       </div>
                     </div>
                   ))}
