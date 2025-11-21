@@ -89,6 +89,11 @@ const schema = defineSchema(
       type: v.string(),
     }).index("by_date", ["date"]),
 
+    event_registrations: defineTable({
+      eventId: v.id("events"),
+      userId: v.id("users"),
+    }).index("by_user", ["userId"]).index("by_event", ["eventId"]).index("by_user_and_event", ["userId", "eventId"]),
+
     feedback: defineTable({
       content: v.string(),
       userId: v.id("users"),

@@ -16,6 +16,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   
   const upcomingEvents = useQuery(api.events.list) || [];
+  const registeredEvents = useQuery(api.events.getRegisteredEvents) || [];
   const recentResources = useQuery(api.resources.list, {}) || [];
   const leaderboard = useQuery(api.users.getLeaderboard) || [];
   
@@ -120,12 +121,12 @@ export default function Dashboard() {
         </Card>
         <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-orange-700" onClick={() => navigate("/events")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Events</CardTitle>
+            <CardTitle className="text-sm font-medium">My Events</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{upcomingEvents.length}</div>
-            <p className="text-xs text-muted-foreground">Upcoming activities</p>
+            <div className="text-2xl font-bold">{registeredEvents.length}</div>
+            <p className="text-xs text-muted-foreground">Registered</p>
           </CardContent>
         </Card>
         
@@ -156,6 +157,35 @@ export default function Dashboard() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <div className="col-span-4 space-y-4">
+          {/* Registered Events Section */}
+          {registeredEvents.length > 0 && (
+            <Card className="border-orange-200 dark:border-orange-900 bg-orange-50/50 dark:bg-orange-900/10">
+              <CardHeader>
+                <CardTitle className="text-orange-700 dark:text-orange-400">Your Registered Events</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {registeredEvents.map((event) => (
+                    <div key={event?._id} className="flex items-start gap-3 border-b border-orange-100 dark:border-orange-800 pb-3 last:border-0 last:pb-0">
+                      <div className="bg-white dark:bg-card rounded p-2 text-center min-w-[50px] shadow-sm">
+                        <span className="block text-xs font-bold uppercase text-muted-foreground">
+                          {new Date(event!.date).toLocaleString('default', { month: 'short' })}
+                        </span>
+                        <span className="block text-lg font-bold text-primary">
+                          {new Date(event!.date).getDate()}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">{event!.title}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{event!.location} • {new Date(event!.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardHeader>
               <CardTitle>Recent Resources</CardTitle>

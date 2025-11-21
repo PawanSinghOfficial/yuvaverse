@@ -9,6 +9,64 @@ export const list = query({
   },
 });
 
+export const register = mutation({
+  args: { eventId: v.id("events") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const existing = await ctx.db
+      .query("event_registrations")
+      .withIndex("by_user_and_event", (q) => 
+        q.eq("userId", userId).eq("eventId", args.eventId)
+      )
+      .first();
+
+    if (existing) throw new Error("Already registered");
+
+    await ctx.db.insert("event_registrations", {
+      eventId: args.eventId,
+      userId,
+    });
+  },
+});
+
+export const getUserRegistrations = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+
+    const registrations = await ctx.db
+      .query("event_registrations")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    return registrations.map((r) => r.eventId);
+  },
+});
+
+export const getRegisteredEvents = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+
+    const registrations = await ctx.db
+      .query("event_registrations")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    const events = await Promise.all(
+      registrations.map(async (r) => {
+        return await ctx.db.get(r.eventId);
+      })
+    );
+
+    return events.filter((e) => e !== null).sort((a, b) => a!.date - b!.date);
+  },
+});
+
 export const create = mutation({
   args: {
     title: v.string(),

@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, MapPin, Plus, Loader2 } from "lucide-react";
@@ -23,6 +24,8 @@ export default function Events() {
   const { user } = useAuth();
   const events = useQuery(api.events.list);
   const createEvent = useMutation(api.events.create);
+  const registerForEvent = useMutation(api.events.register);
+  const userRegistrations = useQuery(api.events.getUserRegistrations);
   
   const [isOpen, setIsOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -58,6 +61,19 @@ export default function Events() {
     } finally {
       setIsCreating(false);
     }
+  };
+
+  const handleRegister = async (eventId: Id<"events">) => {
+    try {
+      await registerForEvent({ eventId });
+      toast.success("Successfully registered for event!");
+    } catch (error) {
+      toast.error("Failed to register for event");
+    }
+  };
+
+  const isRegistered = (eventId: Id<"events">) => {
+    return userRegistrations?.includes(eventId);
   };
 
   return (
@@ -173,7 +189,13 @@ export default function Events() {
                     </div>
                   </div>
                 </div>
-                <Button>Register</Button>
+                <Button 
+                  onClick={() => handleRegister(event._id)} 
+                  disabled={isRegistered(event._id)}
+                  variant={isRegistered(event._id) ? "secondary" : "default"}
+                >
+                  {isRegistered(event._id) ? "Registered" : "Register"}
+                </Button>
               </div>
               <p className="mt-4 text-muted-foreground">{event.description}</p>
             </div>
