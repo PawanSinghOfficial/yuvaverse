@@ -17,27 +17,105 @@ export default function Dashboard() {
   const isSocietyHead = user?.role === "society_head";
   const isPremium = user?.tier === "premium" || user?.tier === "elite";
 
+  if (isSocietyHead) {
+    return (
+      <div className="p-8 space-y-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Society Dashboard</h1>
+            <p className="text-muted-foreground mt-2">Manage your society events and members.</p>
+          </div>
+          <Button onClick={() => navigate("/events")}>
+            <Calendar className="mr-2 h-4 w-4" />
+            Manage Events
+          </Button>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Events</CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{upcomingEvents.length}</div>
+              <p className="text-xs text-muted-foreground">Scheduled events</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Resources Shared</CardTitle>
+              <BookOpen className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{recentResources.length}</div>
+              <p className="text-xs text-muted-foreground">Total uploads</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Society Status</CardTitle>
+              <Crown className="h-4 w-4 text-amber-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-amber-600">Active</div>
+              <p className="text-xs text-muted-foreground">Verified Society</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Your Upcoming Events</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+               {upcomingEvents.map((event) => (
+                   <div key={event._id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                       <div className="flex items-center gap-4">
+                           <div className="bg-primary/10 p-3 rounded-lg text-center min-w-[60px]">
+                               <span className="block text-xs font-bold uppercase text-primary">
+                                   {new Date(event.date).toLocaleString('default', { month: 'short' })}
+                               </span>
+                               <span className="block text-xl font-bold text-primary">
+                                   {new Date(event.date).getDate()}
+                               </span>
+                           </div>
+                           <div>
+                               <h4 className="font-semibold">{event.title}</h4>
+                               <p className="text-sm text-muted-foreground">{event.location}</p>
+                           </div>
+                       </div>
+                       <div className="text-sm text-muted-foreground">
+                           {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                       </div>
+                   </div>
+               ))}
+               {upcomingEvents.length === 0 && (
+                   <p className="text-muted-foreground text-center py-8">No events scheduled.</p>
+               )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="p-8 space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            {isSocietyHead ? "Society Dashboard" : `Welcome back, ${user?.name?.split(' ')[0] || "Student"}`}
+            Welcome back, {user?.name?.split(' ')[0] || "Student"}
           </h1>
           <p className="text-muted-foreground mt-2">
-            {isSocietyHead 
-                ? "Manage your society events and members." 
-                : "Here's what's happening at MSIT today."}
+            Here's what's happening at MSIT today.
           </p>
         </div>
-        <div className="flex gap-4">
-          {isSocietyHead && (
-             <Button onClick={() => navigate("/events")}>Create Event</Button>
-          )}
-          <Button onClick={() => navigate("/resources")} variant={isSocietyHead ? "outline" : "default"}>
-            Upload Resource
-          </Button>
-        </div>
+        <Button onClick={() => navigate("/resources")}>
+          <BookOpen className="mr-2 h-4 w-4" />
+          Upload Resource
+        </Button>
       </div>
 
       {/* Stats / Quick Access Grid */}

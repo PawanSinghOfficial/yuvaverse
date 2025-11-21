@@ -17,8 +17,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Events() {
+  const { user } = useAuth();
   const events = useQuery(api.events.list);
   const createEvent = useMutation(api.events.create);
   
@@ -66,80 +68,82 @@ export default function Events() {
           <p className="text-muted-foreground mt-2">Stay updated with society meetings, workshops, and fests.</p>
         </div>
         
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Event
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create Event</DialogTitle>
-              <DialogDescription>Announce a new event to the campus.</DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Event Title</Label>
-                <Input 
-                  id="title" 
-                  required 
-                  value={formData.title}
-                  onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  placeholder="e.g., Annual Tech Fest"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+        {user?.role === "society_head" && (
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Event
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create Event</DialogTitle>
+                <DialogDescription>Announce a new event to the campus.</DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleCreate} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="date">Date</Label>
+                  <Label htmlFor="title">Event Title</Label>
                   <Input 
-                    id="date" 
-                    type="date"
-                    required
-                    value={formData.date}
-                    onChange={(e) => setFormData({...formData, date: e.target.value})}
+                    id="title" 
+                    required 
+                    value={formData.title}
+                    onChange={(e) => setFormData({...formData, title: e.target.value})}
+                    placeholder="e.g., Annual Tech Fest"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date</Label>
+                    <Input 
+                      id="date" 
+                      type="date"
+                      required
+                      value={formData.date}
+                      onChange={(e) => setFormData({...formData, date: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="time">Time</Label>
+                    <Input 
+                      id="time" 
+                      type="time"
+                      required
+                      value={formData.time}
+                      onChange={(e) => setFormData({...formData, time: e.target.value})}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location</Label>
+                  <Input 
+                    id="location" 
+                    required 
+                    value={formData.location}
+                    onChange={(e) => setFormData({...formData, location: e.target.value})}
+                    placeholder="e.g., Main Auditorium"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="time">Time</Label>
-                  <Input 
-                    id="time" 
-                    type="time"
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea 
+                    id="description" 
                     required
-                    value={formData.time}
-                    onChange={(e) => setFormData({...formData, time: e.target.value})}
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    placeholder="Event details..."
                   />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input 
-                  id="location" 
-                  required 
-                  value={formData.location}
-                  onChange={(e) => setFormData({...formData, location: e.target.value})}
-                  placeholder="e.g., Main Auditorium"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea 
-                  id="description" 
-                  required
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  placeholder="Event details..."
-                />
-              </div>
-              <DialogFooter>
-                <Button type="submit" disabled={isCreating}>
-                  {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create Event
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+                <DialogFooter>
+                  <Button type="submit" disabled={isCreating}>
+                    {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Create Event
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       <div className="space-y-4">

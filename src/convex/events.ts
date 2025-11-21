@@ -27,8 +27,10 @@ export const create = mutation({
 
     if (!user) throw new Error("User not found");
 
-    // Check if user is society head or admin (simplified check)
-    // In a real app, you'd check user.role === 'society_head'
+    // Check if user is society head or admin
+    if (user.role !== "society_head" && user.role !== "admin") {
+      throw new Error("Only society heads can create events");
+    }
 
     await ctx.db.insert("events", {
       ...args,

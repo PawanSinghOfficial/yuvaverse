@@ -16,6 +16,7 @@ import type {
 import type * as auth_emailOtp from "../auth/emailOtp.js";
 import type * as auth from "../auth.js";
 import type * as events from "../events.js";
+import type * as feedback from "../feedback.js";
 import type * as groups from "../groups.js";
 import type * as http from "../http.js";
 import type * as resources from "../resources.js";
@@ -33,6 +34,7 @@ declare const fullApi: ApiFromModules<{
   "auth/emailOtp": typeof auth_emailOtp;
   auth: typeof auth;
   events: typeof events;
+  feedback: typeof feedback;
   groups: typeof groups;
   http: typeof http;
   resources: typeof resources;
