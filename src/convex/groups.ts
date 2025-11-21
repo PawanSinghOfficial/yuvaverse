@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const list = query({
   args: {},
@@ -23,14 +24,10 @@ export const create = mutation({
     isPrivate: v.boolean(),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("email", (q) => q.eq("email", identity.email!))
-      .unique();
-
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const groupId = await ctx.db.insert("groups", {
@@ -51,14 +48,10 @@ export const create = mutation({
 export const join = mutation({
   args: { groupId: v.id("groups") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("email", (q) => q.eq("email", identity.email!))
-      .unique();
-
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const existing = await ctx.db
@@ -114,14 +107,10 @@ export const sendMessage = mutation({
     type: v.string(),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("email", (q) => q.eq("email", identity.email!))
-      .unique();
-
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     await ctx.db.insert("messages", {
