@@ -35,3 +35,16 @@ export const create = mutation({
     });
   },
 });
+
+export const deleteEvent = mutation({
+  args: { id: v.id("events") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") throw new Error("Unauthorized");
+
+    await ctx.db.delete(args.id);
+  },
+});

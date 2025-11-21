@@ -44,7 +44,8 @@ const schema = defineSchema(
       role: v.optional(roleValidator), // role of the user. do not remove
       tier: v.optional(tierValidator),
       points: v.optional(v.number()),
-    }).index("email", ["email"]), // index for the email. do not remove or modify
+      username: v.optional(v.string()),
+    }).index("email", ["email"]).index("by_username", ["username"]), // index for the email. do not remove or modify
 
     resources: defineTable({
       title: v.string(),
@@ -62,6 +63,7 @@ const schema = defineSchema(
       description: v.optional(v.string()),
       type: v.union(v.literal("study"), v.literal("social")),
       isPrivate: v.boolean(),
+      password: v.optional(v.string()),
       creatorId: v.id("users"),
     }),
 
@@ -91,7 +93,8 @@ const schema = defineSchema(
       content: v.string(),
       userId: v.id("users"),
       isAnonymous: v.boolean(),
-      status: v.string(), // pending, reviewed
+      status: v.string(), // pending, reviewed, resolved, rejected
+      reply: v.optional(v.string()),
     }).index("by_user", ["userId"]),
   },
   {

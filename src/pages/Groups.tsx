@@ -26,10 +26,12 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Id } from "@/convex/_generated/dataModel";
 
 export default function Groups() {
   const groups = useQuery(api.groups.list);
   const createGroup = useMutation(api.groups.create);
+  const joinGroup = useMutation(api.groups.join);
   const navigate = useNavigate();
   
   const [isOpen, setIsOpen] = useState(false);
@@ -39,20 +41,57 @@ export default function Groups() {
     description: "",
     type: "study" as "study" | "social",
     isPrivate: false,
+    password: "",
   });
+
+  const [joinPassword, setJoinPassword] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState<Id<"groups"> | null>(null);
+  const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsCreating(true);
     try {
-      await createGroup(formData);
+      await createGroup({
+        ...formData,
+        password: formData.isPrivate ? formData.password : undefined,
+      });
       toast.success("Group created successfully!");
       setIsOpen(false);
-      setFormData({ name: "", description: "", type: "study", isPrivate: false });
+      setFormData({ name: "", description: "", type: "study", isPrivate: false, password: "" });
     } catch (error) {
       toast.error("Failed to create group");
     } finally {
       setIsCreating(false);
+    }
+  };
+
+  const handleJoin = async (groupId: Id<"groups">, isPrivate: boolean) => {
+    if (isPrivate) {
+      setSelectedGroup(groupId);
+      setIsJoinDialogOpen(true);
+      return;
+    }
+    
+    try {
+      await joinGroup({ groupId });
+      toast.success("Joined group!");
+      navigate(`/groups/${groupId}`);
+    } catch (error) {
+      toast.error("Failed to join group");
+    }
+  };
+
+  const handlePrivateJoin = async () => {
+    if (!selectedGroup) return;
+    try {
+      await joinGroup({ groupId: selectedGroup, password: joinPassword });
+      toast.success("Joined group!");
+      setIsJoinDialogOpen(false);
+      setJoinPassword("");
+      navigate(`/groups/${selectedGroup}`);
+    } catch (error) {
+      toast.error("Incorrect password or failed to join");
     }
   };
 
@@ -121,6 +160,19 @@ export default function Groups() {
                   onCheckedChange={(c) => setFormData({...formData, isPrivate: c})}
                 />
               </div>
+              {formData.isPrivate && (
+                <div className="space-y-2">
+                  <Label htmlFor="password">Group Password</Label>
+                  <Input 
+                    id="password" 
+                    type="password"
+                    required 
+                    value={formData.password}
+                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    placeholder="Set a password"
+                  />
+                </div>
+              )}
               <DialogFooter>
                 <Button type="submit" disabled={isCreating}>
                   {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -128,6 +180,24 @@ export default function Groups() {
                 </Button>
               </DialogFooter>
             </form>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isJoinDialogOpen} onOpenChange={setIsJoinDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Enter Password</DialogTitle>
+              <DialogDescription>This group is private. Please enter the password to join.</DialogDescription>
+            </DialogHeader>
+            <Input 
+              type="password" 
+              value={joinPassword} 
+              onChange={(e) => setJoinPassword(e.target.value)}
+              placeholder="Password"
+            />
+            <DialogFooter>
+              <Button onClick={handlePrivateJoin}>Join</Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
@@ -154,9 +224,9 @@ export default function Groups() {
               <Button 
                 className="w-full mt-4" 
                 variant="outline"
-                onClick={() => navigate(`/groups/${group._id}`)}
+                onClick={() => handleJoin(group._id, group.isPrivate)}
               >
-                Open Group
+                {group.isPrivate ? "Join Private Group" : "Open Group"}
               </Button>
             </CardContent>
           </Card>

@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, ArrowLeft, Users, Lock, Globe } from "lucide-react";
+import { Send, ArrowLeft, Users, Lock, Globe, Menu } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 export default function GroupChat() {
   const { groupId } = useParams<{ groupId: string }>();
@@ -50,11 +51,14 @@ export default function GroupChat() {
 
   const handleJoin = async () => {
     if (!groupId) return;
+    // Note: This simple join only works for public groups or if we handle password prompt here too.
+    // For now, we assume public or already handled in Groups page. 
+    // If private, it might fail if password needed.
     try {
       await joinGroup({ groupId: groupId as Id<"groups"> });
       toast.success("Joined group successfully!");
     } catch (error) {
-      toast.error("Failed to join group");
+      toast.error("Failed to join group. If private, join from the Groups page.");
     }
   };
 
@@ -73,9 +77,34 @@ export default function GroupChat() {
               {group.name}
               {group.isPrivate ? <Lock className="h-3 w-3 text-muted-foreground" /> : <Globe className="h-3 w-3 text-muted-foreground" />}
             </h1>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <Users className="h-3 w-3" /> {members?.length || 0} members
-            </p>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-auto p-0 text-xs text-muted-foreground hover:text-primary">
+                  <Users className="h-3 w-3 mr-1" /> {members?.length || 0} members
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Group Members</SheetTitle>
+                </SheetHeader>
+                <ScrollArea className="h-[calc(100vh-8rem)] mt-4">
+                  <div className="space-y-4">
+                    {members?.map((member) => (
+                      <div key={member._id} className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarImage src={member.user?.image} />
+                          <AvatarFallback>{member.user?.name?.[0] || "?"}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{member.user?.name}</p>
+                          <p className="text-xs text-muted-foreground capitalize">{member.role}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
         {!isMember && (

@@ -22,6 +22,7 @@ export const create = mutation({
     description: v.optional(v.string()),
     type: v.union(v.literal("study"), v.literal("social")),
     isPrivate: v.boolean(),
+    password: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -29,6 +30,10 @@ export const create = mutation({
 
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
+
+    if (args.isPrivate && !args.password) {
+      throw new Error("Password required for private groups");
+    }
 
     const groupId = await ctx.db.insert("groups", {
       ...args,
@@ -46,13 +51,25 @@ export const create = mutation({
 });
 
 export const join = mutation({
-  args: { groupId: v.id("groups") },
+  args: { 
+    groupId: v.id("groups"),
+    password: v.optional(v.string())
+  },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
 
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
+
+    const group = await ctx.db.get(args.groupId);
+    if (!group) throw new Error("Group not found");
+
+    if (group.isPrivate) {
+      if (group.password !== args.password) {
+        throw new Error("Incorrect password");
+      }
+    }
 
     const existing = await ctx.db
       .query("group_members")
@@ -81,7 +98,13 @@ export const getMembers = query({
     const users = await Promise.all(
       members.map(async (member) => {
         const user = await ctx.db.get(member.userId);
-        return { ...member, user };
+        return { 
+          ...member, 
+          user: {
+            ...user,
+            name: user?.username || user?.name // Use username if available
+          }
+        };
       })
     );
     
@@ -117,5 +140,9 @@ export const sendMessage = mutation({
       ...args,
       userId: user._id,
     });
+    
+    // Award points for participation
+    const currentPoints = user.points || 0;
+    await ctx.db.patch(user._id, { points: currentPoints + 1 });
   },
 });

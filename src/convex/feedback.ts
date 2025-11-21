@@ -26,7 +26,39 @@ export const submit = mutation({
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    // In a real app, restrict this to admins
-    return await ctx.db.query("feedback").order("desc").collect();
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+    
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") return [];
+
+    const feedbacks = await ctx.db.query("feedback").order("desc").collect();
+    
+    // Enrich with user details if not anonymous
+    return await Promise.all(feedbacks.map(async (f) => {
+      if (f.isAnonymous) return { ...f, user: null };
+      const u = await ctx.db.get(f.userId);
+      return { ...f, user: u };
+    }));
+  },
+});
+
+export const updateStatus = mutation({
+  args: {
+    id: v.id("feedback"),
+    status: v.string(),
+    reply: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") throw new Error("Unauthorized");
+
+    await ctx.db.patch(args.id, {
+      status: args.status,
+      reply: args.reply,
+    });
   },
 });

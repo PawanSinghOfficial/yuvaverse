@@ -184,6 +184,7 @@ export default function Resources() {
               <div className="space-y-1">
                 <CardTitle className="text-base font-medium">{resource.title}</CardTitle>
                 <p className="text-xs text-muted-foreground">{resource.subject} • Sem {resource.semester}</p>
+                <p className="text-xs text-muted-foreground">By {resource.uploaderName}</p>
               </div>
               <div className="p-2 bg-muted rounded-md">
                 <FileText className="h-4 w-4 text-primary" />
@@ -195,9 +196,11 @@ export default function Resources() {
               </p>
               <div className="mt-4 flex items-center justify-between">
                 <span className="text-xs text-muted-foreground capitalize">{resource.type}</span>
-                <Button variant="ghost" size="sm" className="h-8 gap-2">
-                  <Download className="h-3 w-3" />
-                  Download
+                <Button variant="ghost" size="sm" className="h-8 gap-2" asChild>
+                  <a href={`${import.meta.env.VITE_CONVEX_URL}/api/storage/${resource.fileId}`} target="_blank" rel="noopener noreferrer">
+                    <Download className="h-3 w-3" />
+                    Download
+                  </a>
                 </Button>
               </div>
             </CardContent>

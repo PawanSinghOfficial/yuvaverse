@@ -5,15 +5,28 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 export const list = query({
   args: { semester: v.optional(v.number()) },
   handler: async (ctx, args) => {
+    let resources;
     if (args.semester !== undefined) {
       const semester = args.semester;
-      return await ctx.db
+      resources = await ctx.db
         .query("resources")
         .withIndex("by_semester", (q) => q.eq("semester", semester))
         .order("desc")
         .collect();
+    } else {
+      resources = await ctx.db.query("resources").order("desc").collect();
     }
-    return await ctx.db.query("resources").order("desc").collect();
+
+    // Enrich with uploader username and file URL
+    return await Promise.all(resources.map(async (r) => {
+      const uploader = await ctx.db.get(r.uploaderId);
+      const url = await ctx.storage.getUrl(r.fileId);
+      return {
+        ...r,
+        uploaderName: uploader?.username || uploader?.name || "Unknown",
+        url: url || "#",
+      };
+    }));
   },
 });
 

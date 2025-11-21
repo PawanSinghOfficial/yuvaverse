@@ -12,9 +12,9 @@ export default function Landing() {
       <nav className="border-b py-4 px-6 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
           <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
-            M
+            G
           </div>
-          MSIT Campus
+          GENZHUB
         </div>
         <div className="flex items-center gap-4">
           <Button variant="ghost" onClick={() => navigate("/auth")}>Log in</Button>
@@ -37,7 +37,7 @@ export default function Landing() {
             <span className="text-muted-foreground">Reimagined.</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            The all-in-one platform for MSIT students and societies. Access resources, join study groups, and stay updated with campus events.
+            The all-in-one platform for students and societies. Access resources, join study groups, and stay updated with campus events.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="h-12 px-8 text-base" onClick={() => navigate("/auth")}>
@@ -100,7 +100,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="py-12 border-t text-center text-muted-foreground text-sm">
-        <p>© {new Date().getFullYear()} MSIT Campus. Built for students, by students.</p>
+        <p>© {new Date().getFullYear()} GENZHUB. Built for students, by students.</p>
       </footer>
     </div>
   );

@@ -9,7 +9,8 @@ import {
   Settings,
   Users,
   Shield,
-  GraduationCap
+  GraduationCap,
+  Lock
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
@@ -54,17 +55,26 @@ export function AppSidebar({ className }: SidebarProps) {
     },
   ];
 
+  if (user?.role === "admin") {
+    routes.push({
+      label: "Admin Portal",
+      icon: Shield,
+      href: "/admin",
+      color: "text-red-500",
+    });
+  }
+
   return (
     <div className={cn("space-y-4 py-4 flex flex-col h-full bg-secondary/10 border-r", className)}>
       <div className="px-3 py-2">
         <Link to="/dashboard" className="flex items-center pl-3 mb-14">
           <div className="relative h-8 w-8 mr-4">
              <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-bold">
-                M
+                G
              </div>
           </div>
           <h1 className="text-2xl font-bold">
-            MSIT Campus
+            GENZHUB
           </h1>
         </Link>
         <div className="space-y-1">
@@ -93,7 +103,7 @@ export function AppSidebar({ className }: SidebarProps) {
                     {user?.name?.[0] || "U"}
                 </div>
                 <div className="overflow-hidden">
-                    <p className="text-sm font-medium truncate">{user?.name}</p>
+                    <p className="text-sm font-medium truncate">{user?.username || user?.name}</p>
                     <p className="text-xs text-muted-foreground truncate capitalize">{user?.role || "Student"}</p>
                 </div>
             </div>
