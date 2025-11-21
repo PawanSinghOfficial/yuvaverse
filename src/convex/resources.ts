@@ -1,0 +1,66 @@
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
+
+export const list = query({
+  args: { semester: v.optional(v.number()) },
+  handler: async (ctx, args) => {
+    if (args.semester !== undefined) {
+      const semester = args.semester;
+      return await ctx.db
+        .query("resources")
+        .withIndex("by_semester", (q) => q.eq("semester", semester))
+        .order("desc")
+        .collect();
+    }
+    return await ctx.db.query("resources").order("desc").collect();
+  },
+});
+
+export const generateUploadUrl = mutation(async (ctx) => {
+  return await ctx.storage.generateUploadUrl();
+});
+
+export const create = mutation({
+  args: {
+    title: v.string(),
+    description: v.optional(v.string()),
+    type: v.string(),
+    subject: v.string(),
+    semester: v.number(),
+    fileId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
+    // We need to find the user in our database to link them
+    const user = await ctx.db
+      .query("users")
+      .withIndex("email", (q) => q.eq("email", identity.email!))
+      .unique();
+
+    if (!user) throw new Error("User not found");
+
+    await ctx.db.insert("resources", {
+      ...args,
+      uploaderId: user._id,
+      downloads: 0,
+    });
+
+    // Award points for upload
+    const currentPoints = user.points || 0;
+    await ctx.db.patch(user._id, { points: currentPoints + 10 });
+  },
+});
+
+export const getLeaderboard = query({
+  args: {},
+  handler: async (ctx) => {
+    // This is a simple implementation. For production, you might want a separate leaderboard table or index
+    const users = await ctx.db.query("users").collect();
+    return users
+      .filter((u) => (u.points || 0) > 0)
+      .sort((a, b) => (b.points || 0) - (a.points || 0))
+      .slice(0, 10);
+  },
+});
