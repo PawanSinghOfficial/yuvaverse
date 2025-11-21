@@ -8,6 +8,13 @@ export const list = query({
   },
 });
 
+export const get = query({
+  args: { id: v.id("groups") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id);
+  },
+});
+
 export const create = mutation({
   args: {
     name: v.string(),
@@ -67,6 +74,25 @@ export const join = mutation({
       userId: user._id,
       role: "member",
     });
+  },
+});
+
+export const getMembers = query({
+  args: { groupId: v.id("groups") },
+  handler: async (ctx, args) => {
+    const members = await ctx.db
+      .query("group_members")
+      .withIndex("by_group", (q) => q.eq("groupId", args.groupId))
+      .collect();
+    
+    const users = await Promise.all(
+      members.map(async (member) => {
+        const user = await ctx.db.get(member.userId);
+        return { ...member, user };
+      })
+    );
+    
+    return users;
   },
 });
 
