@@ -197,7 +197,7 @@ export default function Resources() {
               <div className="mt-4 flex items-center justify-between">
                 <span className="text-xs text-muted-foreground capitalize">{resource.type}</span>
                 <Button variant="ghost" size="sm" className="h-8 gap-2" asChild>
-                  <a href={`${import.meta.env.VITE_CONVEX_URL}/api/storage/${resource.fileId}`} target="_blank" rel="noopener noreferrer">
+                  <a href={resource.url} target="_blank" rel="noopener noreferrer">
                     <Download className="h-3 w-3" />
                     Download
                   </a>

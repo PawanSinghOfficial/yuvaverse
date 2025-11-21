@@ -62,6 +62,25 @@ export const create = mutation({
   },
 });
 
+export const deleteResource = mutation({
+  args: { id: v.id("resources") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") throw new Error("Unauthorized");
+
+    const resource = await ctx.db.get(args.id);
+    if (resource) {
+        // Try to delete from storage if possible, though we might not have the ID directly mapped if not stored
+        // But we have fileId
+        await ctx.storage.delete(resource.fileId);
+        await ctx.db.delete(args.id);
+    }
+  },
+});
+
 export const getLeaderboard = query({
   args: {},
   handler: async (ctx) => {

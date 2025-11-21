@@ -23,6 +23,7 @@ export default function Admin() {
   
   const deleteEvent = useMutation(api.events.deleteEvent);
   const updateFeedback = useMutation(api.feedback.updateStatus);
+  const deleteResource = useMutation(api.resources.deleteResource);
 
   const [replyText, setReplyText] = useState("");
   const [selectedFeedback, setSelectedFeedback] = useState<Id<"feedback"> | null>(null);
@@ -42,6 +43,15 @@ export default function Admin() {
       toast.success("Event deleted");
     } catch (error) {
       toast.error("Failed to delete event");
+    }
+  };
+
+  const handleDeleteResource = async (id: Id<"resources">) => {
+    try {
+      await deleteResource({ id });
+      toast.success("Resource deleted");
+    } catch (error) {
+      toast.error("Failed to delete resource");
     }
   };
 
@@ -162,11 +172,16 @@ export default function Admin() {
                           By {res.uploaderName} • {res.subject}
                         </p>
                       </div>
-                      <Button variant="ghost" size="sm" asChild>
-                        <a href={res.url} target="_blank" rel="noopener noreferrer">
-                          <Download className="h-4 w-4" />
-                        </a>
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="sm" asChild>
+                          <a href={res.url} target="_blank" rel="noopener noreferrer">
+                            <Download className="h-4 w-4" />
+                          </a>
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteResource(res._id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
