@@ -25,6 +25,7 @@ export default function Events() {
   const events = useQuery(api.events.list);
   const createEvent = useMutation(api.events.create);
   const registerForEvent = useMutation(api.events.register);
+  const unregisterFromEvent = useMutation(api.events.unregister);
   const userRegistrations = useQuery(api.events.getUserRegistrations);
   
   const [isOpen, setIsOpen] = useState(false);
@@ -63,12 +64,19 @@ export default function Events() {
     }
   };
 
-  const handleRegister = async (eventId: Id<"events">) => {
+  const handleToggleRegistration = async (eventId: Id<"events">) => {
+    const isRegistered = userRegistrations?.includes(eventId);
+    
     try {
-      await registerForEvent({ eventId });
-      toast.success("Successfully registered for event!");
+      if (isRegistered) {
+        await unregisterFromEvent({ eventId });
+        toast.success("Unregistered from event");
+      } else {
+        await registerForEvent({ eventId });
+        toast.success("Successfully registered for event!");
+      }
     } catch (error) {
-      toast.error("Failed to register for event");
+      toast.error(isRegistered ? "Failed to unregister" : "Failed to register");
     }
   };
 
@@ -190,9 +198,9 @@ export default function Events() {
                   </div>
                 </div>
                 <Button 
-                  onClick={() => handleRegister(event._id)} 
-                  disabled={isRegistered(event._id)}
-                  variant={isRegistered(event._id) ? "secondary" : "default"}
+                  onClick={() => handleToggleRegistration(event._id)} 
+                  variant={isRegistered(event._id) ? "outline" : "default"}
+                  className={isRegistered(event._id) ? "border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700" : ""}
                 >
                   {isRegistered(event._id) ? "Registered" : "Register"}
                 </Button>

@@ -161,24 +161,39 @@ export default function Dashboard() {
           {registeredEvents.length > 0 && (
             <Card className="border-orange-200 dark:border-orange-900 bg-orange-50/50 dark:bg-orange-900/10">
               <CardHeader>
-                <CardTitle className="text-orange-700 dark:text-orange-400">Your Registered Events</CardTitle>
+                <CardTitle className="text-orange-700 dark:text-orange-400 flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Your Registered Events
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {registeredEvents.map((event) => (
-                    <div key={event._id} className="flex items-start gap-3 border-b border-orange-100 dark:border-orange-800 pb-3 last:border-0 last:pb-0">
-                      <div className="bg-white dark:bg-card rounded p-2 text-center min-w-[50px] shadow-sm">
+                    <div key={event?._id} className="flex items-start gap-4 border-b border-orange-100 dark:border-orange-800 pb-4 last:border-0 last:pb-0">
+                      <div className="bg-white dark:bg-card rounded-lg p-3 text-center min-w-[60px] shadow-sm border border-orange-100 dark:border-orange-800">
                         <span className="block text-xs font-bold uppercase text-muted-foreground">
-                          {new Date(event.date).toLocaleString('default', { month: 'short' })}
+                          {new Date(event!.date).toLocaleString('default', { month: 'short' })}
                         </span>
-                        <span className="block text-lg font-bold text-primary">
-                          {new Date(event.date).getDate()}
+                        <span className="block text-xl font-bold text-primary">
+                          {new Date(event!.date).getDate()}
                         </span>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium">{event.title}</p>
-                        <p className="text-xs text-muted-foreground line-clamp-1">{event.location} • {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                      <div className="flex-1">
+                        <h4 className="text-base font-semibold text-foreground">{event!.title}</h4>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {new Date(event!.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Users className="h-3 w-3" />
+                            {event!.location}
+                          </span>
+                        </div>
                       </div>
+                      <Button variant="ghost" size="sm" onClick={() => navigate("/events")}>
+                        View
+                      </Button>
                     </div>
                   ))}
                 </div>

@@ -31,6 +31,25 @@ export const register = mutation({
   },
 });
 
+export const unregister = mutation({
+  args: { eventId: v.id("events") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const existing = await ctx.db
+      .query("event_registrations")
+      .withIndex("by_user_and_event", (q) => 
+        q.eq("userId", userId).eq("eventId", args.eventId)
+      )
+      .first();
+
+    if (!existing) throw new Error("Not registered");
+
+    await ctx.db.delete(existing._id);
+  },
+});
+
 export const getUserRegistrations = query({
   args: {},
   handler: async (ctx) => {
@@ -63,14 +82,7 @@ export const getRegisteredEvents = query({
       })
     );
 
-    const validEvents = [];
-    for (const event of events) {
-      if (event) {
-        validEvents.push(event);
-      }
-    }
-
-    return validEvents.sort((a, b) => a.date - b.date);
+    return events.filter((e) => e !== null).sort((a, b) => a!.date - b!.date);
   },
 });
 
