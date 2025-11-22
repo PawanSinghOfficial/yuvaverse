@@ -113,14 +113,7 @@
   --sidebar-ring: oklch(0.6 0.15 260);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
-  }
-  
+@layer utilities {
   .neu-flat {
     box-shadow: 6px 6px 12px rgba(163, 177, 198, 0.6), -6px -6px 12px rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(255,255,255,0.2);
@@ -136,7 +129,16 @@
   .dark .neu-pressed {
     box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4), inset -4px -4px 8px rgba(255, 255, 255, 0.05);
   }
+}
 
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  
   .card, [data-slot="card"] {
     @apply border-none;
   }
