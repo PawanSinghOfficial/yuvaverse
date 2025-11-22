@@ -61,6 +61,7 @@ const schema = defineSchema(
     groups: defineTable({
       name: v.string(),
       description: v.optional(v.string()),
+      image: v.optional(v.id("_storage")),
       type: v.union(v.literal("study"), v.literal("social")),
       isPrivate: v.boolean(),
       password: v.optional(v.string()),
@@ -77,7 +78,8 @@ const schema = defineSchema(
       groupId: v.id("groups"),
       userId: v.id("users"),
       content: v.string(),
-      type: v.string(), // text, image
+      type: v.string(), // text, image, audio
+      seenBy: v.optional(v.array(v.id("users"))),
     }).index("by_group", ["groupId"]),
 
     events: defineTable({

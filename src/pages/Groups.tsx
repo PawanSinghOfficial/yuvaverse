@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Lock, Globe, Plus, Loader2 } from "lucide-react";
+import { Users, Lock, Globe, Plus, Loader2, Image as ImageIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 import {
   Dialog,
@@ -32,6 +32,7 @@ export default function Groups() {
   const groups = useQuery(api.groups.list);
   const memberships = useQuery(api.groups.getUserMemberships);
   const createGroup = useMutation(api.groups.create);
+  const generateUploadUrl = useMutation(api.groups.generateUploadUrl);
   const joinGroup = useMutation(api.groups.join);
   const navigate = useNavigate();
   
@@ -43,6 +44,7 @@ export default function Groups() {
     type: "study" as "study" | "social",
     isPrivate: false,
     password: "",
+    image: null as File | null,
   });
 
   const [joinPassword, setJoinPassword] = useState("");
@@ -57,13 +59,30 @@ export default function Groups() {
     e.preventDefault();
     setIsCreating(true);
     try {
+      let imageId = undefined;
+      if (formData.image) {
+        const postUrl = await generateUploadUrl();
+        const result = await fetch(postUrl, {
+          method: "POST",
+          headers: { "Content-Type": formData.image.type },
+          body: formData.image,
+        });
+        if (!result.ok) throw new Error("Upload failed");
+        const { storageId } = await result.json();
+        imageId = storageId;
+      }
+
       await createGroup({
-        ...formData,
+        name: formData.name,
+        description: formData.description,
+        type: formData.type,
+        isPrivate: formData.isPrivate,
         password: formData.isPrivate ? formData.password : undefined,
+        image: imageId,
       });
       toast.success("Group created successfully!");
       setIsOpen(false);
-      setFormData({ name: "", description: "", type: "study", isPrivate: false, password: "" });
+      setFormData({ name: "", description: "", type: "study", isPrivate: false, password: "", image: null });
     } catch (error) {
       toast.error("Failed to create group");
     } finally {
@@ -121,6 +140,18 @@ export default function Groups() {
               <DialogDescription>Start a new community for study or social activities.</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="image">Group Image (Optional)</Label>
+                <div className="flex items-center gap-4">
+                    <Input 
+                        id="image" 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => setFormData({...formData, image: e.target.files?.[0] || null})}
+                        className="cursor-pointer"
+                    />
+                </div>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="name">Group Name</Label>
                 <Input 
@@ -211,20 +242,26 @@ export default function Groups() {
         {groups?.map((group) => {
           const member = isMember(group._id);
           return (
-            <Card key={group._id} className="flex flex-col">
-              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                <div className="space-y-1">
+            <Card key={group._id} className="flex flex-col overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-card/50 backdrop-blur-sm">
+              <div className="h-24 bg-gradient-to-r from-primary/20 to-primary/5 relative">
+                 {group.imageUrl ? (
+                    <img src={group.imageUrl} alt={group.name} className="w-full h-full object-cover" />
+                 ) : (
+                    <div className="w-full h-full flex items-center justify-center text-primary/20">
+                        <Users className="h-12 w-12" />
+                    </div>
+                 )}
+              </div>
+              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2 relative -mt-6">
+                <div className="space-y-1 bg-card/80 backdrop-blur p-2 rounded-lg shadow-sm">
                   <CardTitle className="text-base font-medium">{group.name}</CardTitle>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     {group.isPrivate ? <Lock className="h-3 w-3" /> : <Globe className="h-3 w-3" />}
                     <span className="capitalize">{group.type} Group</span>
                   </div>
                 </div>
-                <div className="p-2 bg-muted rounded-md">
-                  <Users className="h-4 w-4 text-primary" />
-                </div>
               </CardHeader>
-              <CardContent className="flex-1 flex flex-col">
+              <CardContent className="flex-1 flex flex-col pt-4">
                 <p className="text-sm text-muted-foreground mt-2 line-clamp-2 flex-1">
                   {group.description || "No description provided."}
                 </p>

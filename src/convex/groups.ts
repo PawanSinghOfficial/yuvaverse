@@ -1,18 +1,32 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { Id } from "./_generated/dataModel";
 
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("groups").collect();
+    const groups = await ctx.db.query("groups").collect();
+    return await Promise.all(groups.map(async (g) => {
+      let imageUrl = null;
+      if (g.image) {
+        imageUrl = await ctx.storage.getUrl(g.image);
+      }
+      return { ...g, imageUrl };
+    }));
   },
 });
 
 export const get = query({
   args: { id: v.id("groups") },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
+    const group = await ctx.db.get(args.id);
+    if (!group) return null;
+    let imageUrl = null;
+    if (group.image) {
+      imageUrl = await ctx.storage.getUrl(group.image);
+    }
+    return { ...group, imageUrl };
   },
 });
 
@@ -20,6 +34,7 @@ export const create = mutation({
   args: {
     name: v.string(),
     description: v.optional(v.string()),
+    image: v.optional(v.id("_storage")),
     type: v.union(v.literal("study"), v.literal("social")),
     isPrivate: v.boolean(),
     password: v.optional(v.string()),
@@ -129,11 +144,27 @@ export const getMembers = query({
 export const getMessages = query({
   args: { groupId: v.id("groups") },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const messages = await ctx.db
       .query("messages")
       .withIndex("by_group", (q) => q.eq("groupId", args.groupId))
       .order("desc")
       .take(50);
+    
+    return await Promise.all(messages.map(async (msg) => {
+      let contentUrl = undefined;
+      if (msg.type === "audio" || msg.type === "image") {
+        // For audio/image, content is the storageId
+        try {
+            contentUrl = await ctx.storage.getUrl(msg.content as Id<"_storage">);
+        } catch (e) {
+            contentUrl = null;
+        }
+      }
+      return {
+        ...msg,
+        contentUrl,
+      };
+    }));
   },
 });
 
@@ -153,10 +184,35 @@ export const sendMessage = mutation({
     await ctx.db.insert("messages", {
       ...args,
       userId: user._id,
+      seenBy: [user._id],
     });
     
     // Award points for participation
     const currentPoints = user.points || 0;
     await ctx.db.patch(user._id, { points: currentPoints + 1 });
   },
+});
+
+export const markAsRead = mutation({
+  args: {
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return;
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) return;
+
+    const seenBy = message.seenBy || [];
+    if (!seenBy.includes(userId)) {
+      await ctx.db.patch(args.messageId, {
+        seenBy: [...seenBy, userId],
+      });
+    }
+  },
+});
+
+export const generateUploadUrl = mutation(async (ctx) => {
+  return await ctx.storage.generateUploadUrl();
 });
