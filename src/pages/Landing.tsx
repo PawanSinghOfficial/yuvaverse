@@ -1,10 +1,44 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Users, Calendar, Shield } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Calendar, Shield, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 
 export default function Landing() {
   const navigate = useNavigate();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      setIsDarkMode(true);
+      return;
+    }
+    if (storedTheme === "light") {
+      document.documentElement.classList.remove("dark");
+      setIsDarkMode(false);
+      return;
+    }
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (prefersDark) {
+      document.documentElement.classList.add("dark");
+      setIsDarkMode(true);
+    }
+  }, []);
+
+  const handleThemeToggle = () => {
+    const nextTheme = !isDarkMode;
+    setIsDarkMode(nextTheme);
+    if (nextTheme) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -17,6 +51,16 @@ export default function Landing() {
           YuvaVerse
         </div>
         <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-pressed={isDarkMode}
+            aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+            onClick={handleThemeToggle}
+            className="neu-flat h-10 w-10"
+          >
+            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
           <Button variant="ghost" onClick={() => navigate("/auth")}>Log in</Button>
           <Button onClick={() => navigate("/auth")} className="neu-flat">Get Started</Button>
         </div>
