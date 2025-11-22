@@ -138,7 +138,7 @@
   }
 
   .card, [data-slot="card"] {
-    @apply neu-flat border-none;
+    @apply border-none;
   }
   
   button:not([disabled]),
