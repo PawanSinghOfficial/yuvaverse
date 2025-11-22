@@ -9,16 +9,16 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Navbar */}
-      <nav className="border-b py-4 px-6 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-50">
+      <nav className="py-4 px-6 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-          <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
+          <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground neu-flat">
             Y
           </div>
           YuvaVerse
         </div>
         <div className="flex items-center gap-4">
           <Button variant="ghost" onClick={() => navigate("/auth")}>Log in</Button>
-          <Button onClick={() => navigate("/auth")}>Get Started</Button>
+          <Button onClick={() => navigate("/auth")} className="neu-flat">Get Started</Button>
         </div>
       </nav>
 

@@ -65,11 +65,11 @@ export function AppSidebar({ className }: SidebarProps) {
   }
 
   return (
-    <div className={cn("space-y-4 py-4 flex flex-col h-full bg-secondary/10 border-r", className)}>
+    <div className={cn("space-y-4 py-4 flex flex-col h-full bg-secondary/10 border-r-0 shadow-lg", className)}>
       <div className="px-3 py-2">
         <Link to="/dashboard" className="flex items-center pl-3 mb-14">
           <div className="relative h-8 w-8 mr-4">
-             <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-bold">
+             <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-bold neu-flat">
                 Y
              </div>
           </div>
@@ -83,8 +83,8 @@ export function AppSidebar({ className }: SidebarProps) {
               key={route.href}
               to={route.href}
               className={cn(
-                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 rounded-lg transition",
-                pathname === route.href ? "text-primary bg-primary/10" : "text-muted-foreground"
+                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 rounded-lg transition hover:neu-flat",
+                pathname === route.href ? "text-primary bg-primary/10 neu-pressed" : "text-muted-foreground"
               )}
             >
               <div className="flex items-center flex-1">
