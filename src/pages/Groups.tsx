@@ -242,7 +242,7 @@ export default function Groups() {
         {groups?.map((group) => {
           const member = isMember(group._id);
           return (
-            <Card key={group._id} className="flex flex-col overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-card/50 backdrop-blur-sm">
+            <Card key={group._id} className="flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1">
               <div className="h-24 bg-gradient-to-r from-primary/20 to-primary/5 relative">
                  {group.imageUrl ? (
                     <img src={group.imageUrl} alt={group.name} className="w-full h-full object-cover" />
