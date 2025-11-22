@@ -1,43 +1,31 @@
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Users, Calendar, Shield, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    const root = document.documentElement;
     const storedTheme = localStorage.getItem("theme");
-    if (storedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      setIsDarkMode(true);
-      return;
-    }
-    if (storedTheme === "light") {
-      document.documentElement.classList.remove("dark");
-      setIsDarkMode(false);
-      return;
-    }
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (prefersDark) {
-      document.documentElement.classList.add("dark");
-      setIsDarkMode(true);
-    }
+    const prefersDark = window.matchMedia
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+      : false;
+    const initialDark = storedTheme ? storedTheme === "dark" : prefersDark;
+    root.classList.toggle("dark", initialDark);
+    setIsDark(initialDark);
   }, []);
 
   const handleThemeToggle = () => {
-    const nextTheme = !isDarkMode;
-    setIsDarkMode(nextTheme);
-    if (nextTheme) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
+    setIsDark((prev) => {
+      const next = !prev;
+      document.documentElement.classList.toggle("dark", next);
+      localStorage.setItem("theme", next ? "dark" : "light");
+      return next;
+    });
   };
 
   return (
@@ -54,15 +42,18 @@ export default function Landing() {
           <Button
             variant="ghost"
             size="icon"
-            aria-pressed={isDarkMode}
-            aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+            className="rounded-full border border-border/50 text-muted-foreground neu-flat"
             onClick={handleThemeToggle}
-            className="neu-flat h-10 w-10"
+            aria-label="Toggle dark mode"
           >
-            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
-          <Button variant="ghost" onClick={() => navigate("/auth")}>Log in</Button>
-          <Button onClick={() => navigate("/auth")} className="neu-flat">Get Started</Button>
+          <Button variant="ghost" onClick={() => navigate("/auth")}>
+            Log in
+          </Button>
+          <Button onClick={() => navigate("/auth")} className="neu-flat">
+            Get Started
+          </Button>
         </div>
       </nav>
 
