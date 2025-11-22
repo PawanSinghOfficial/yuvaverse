@@ -99,7 +99,7 @@ export default function Dashboard() {
 
       {/* Stats / Quick Access Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-violet-500" onClick={() => navigate("/resources")}>
+        <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-violet-500 neu-flat" onClick={() => navigate("/resources")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Resources</CardTitle>
             <BookOpen className="h-4 w-4 text-muted-foreground" />
@@ -109,7 +109,7 @@ export default function Dashboard() {
             <p className="text-xs text-muted-foreground">Files available</p>
           </CardContent>
         </Card>
-        <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-pink-700" onClick={() => navigate("/groups")}>
+        <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-pink-700 neu-flat" onClick={() => navigate("/groups")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Study Groups</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -119,7 +119,7 @@ export default function Dashboard() {
             <p className="text-xs text-muted-foreground">Join sessions</p>
           </CardContent>
         </Card>
-        <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-orange-700" onClick={() => navigate("/events")}>
+        <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-orange-700 neu-flat" onClick={() => navigate("/events")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Events</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -131,7 +131,7 @@ export default function Dashboard() {
         </Card>
         
         {isPremium ? (
-             <Card className="bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/20 dark:to-amber-900/10 border-amber-200 dark:border-amber-800">
+             <Card className="bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/20 dark:to-amber-900/10 border-amber-200 dark:border-amber-800 neu-flat">
              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                <CardTitle className="text-sm font-medium text-amber-700 dark:text-amber-400">Premium Status</CardTitle>
                <Crown className="h-4 w-4 text-amber-600" />
@@ -142,7 +142,7 @@ export default function Dashboard() {
              </CardContent>
            </Card>
         ) : (
-            <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-emerald-500">
+            <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-emerald-500 neu-flat">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Points</CardTitle>
                 <Trophy className="h-4 w-4 text-muted-foreground" />

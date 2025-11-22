@@ -56,7 +56,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <motion.div 
               whileHover={{ y: -5 }}
-              className="bg-card p-6 rounded-xl border shadow-sm"
+              className="bg-card p-6 rounded-xl neu-flat"
             >
               <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
                 <BookOpen className="h-6 w-6" />
@@ -66,7 +66,7 @@ export default function Landing() {
             </motion.div>
             <motion.div 
               whileHover={{ y: -5 }}
-              className="bg-card p-6 rounded-xl border shadow-sm"
+              className="bg-card p-6 rounded-xl neu-flat"
             >
               <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
                 <Users className="h-6 w-6" />
@@ -76,7 +76,7 @@ export default function Landing() {
             </motion.div>
             <motion.div 
               whileHover={{ y: -5 }}
-              className="bg-card p-6 rounded-xl border shadow-sm"
+              className="bg-card p-6 rounded-xl neu-flat"
             >
               <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
                 <Calendar className="h-6 w-6" />
@@ -86,7 +86,7 @@ export default function Landing() {
             </motion.div>
             <motion.div 
               whileHover={{ y: -5 }}
-              className="bg-card p-6 rounded-xl border shadow-sm"
+              className="bg-card p-6 rounded-xl neu-flat"
             >
               <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
                 <Shield className="h-6 w-6" />
