@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, BookOpen, Users, Calendar, Shield, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export default function Landing() {
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false);
+  const [isThemeAnimating, setIsThemeAnimating] = useState(false);
+  const themeAnimationTimeout = useRef<number | null>(null);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -17,9 +19,17 @@ export default function Landing() {
     const initialDark = storedTheme ? storedTheme === "dark" : prefersDark;
     root.classList.toggle("dark", initialDark);
     setIsDark(initialDark);
+
+    return () => {
+      if (themeAnimationTimeout.current) {
+        window.clearTimeout(themeAnimationTimeout.current);
+      }
+      document.documentElement.classList.remove("theme-transition");
+    };
   }, []);
 
   const handleThemeToggle = () => {
+    triggerThemeAnimation();
     setIsDark((prev) => {
       const next = !prev;
       document.documentElement.classList.toggle("dark", next);
@@ -28,8 +38,34 @@ export default function Landing() {
     });
   };
 
+  const triggerThemeAnimation = () => {
+    setIsThemeAnimating(true);
+    const root = document.documentElement;
+    root.classList.add("theme-transition");
+    if (themeAnimationTimeout.current) {
+      window.clearTimeout(themeAnimationTimeout.current);
+    }
+    themeAnimationTimeout.current = window.setTimeout(() => {
+      root.classList.remove("theme-transition");
+      setIsThemeAnimating(false);
+      themeAnimationTimeout.current = null;
+    }, 450);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <AnimatePresence>
+        {isThemeAnimating && (
+          <motion.div
+            key="theme-veil"
+            className="fixed inset-0 z-40 pointer-events-none bg-background/70 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+          />
+        )}
+      </AnimatePresence>
       {/* Navbar */}
       <nav className="py-4 px-6 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
