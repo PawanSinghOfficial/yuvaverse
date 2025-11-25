@@ -2,7 +2,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router";
+import { Outlet, useNavigate, useLocation } from "react-router";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
@@ -10,6 +10,7 @@ import { OnboardingGuide } from "@/components/OnboardingGuide";
 export default function DashboardLayout() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const syncAdmin = useMutation(api.users.syncAdminRole);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
 
@@ -28,6 +29,13 @@ export default function DashboardLayout() {
     }
   }, [isAuthenticated, user, syncAdmin]);
 
+  const handleGuideClick = () => {
+    if (location.pathname !== "/dashboard") {
+      navigate("/dashboard");
+    }
+    setIsGuideOpen(true);
+  };
+
   if (isLoading) {
     return (
       <div className="h-screen w-full flex items-center justify-center">
@@ -43,7 +51,7 @@ export default function DashboardLayout() {
   return (
     <div className="h-full relative">
       <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-[80]">
-        <AppSidebar onGuideClick={() => setIsGuideOpen(true)} />
+        <AppSidebar onGuideClick={handleGuideClick} />
       </div>
       <main className="md:pl-72 pb-10">
         <Outlet />
