@@ -54,9 +54,9 @@ export default function DashboardLayout() {
     <SidebarProvider>
       <ExitIntentPopup />
       <div className="flex min-h-screen w-full bg-background">
-        <AppSidebar onGuideClick={handleGuideClick} />
-        <SidebarInset className="flex flex-col">
-          <main className="md:pl-72 pb-10">
+        <AppSidebar onGuideClick={handleGuideClick} className="w-72 hidden md:flex shrink-0 border-r" />
+        <SidebarInset className="flex flex-col flex-1 min-w-0">
+          <main className="flex-1 p-6 pb-10">
             <Outlet />
           </main>
           <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
