@@ -146,11 +146,6 @@ export default function Landing() {
       {/* Footer */}
       <footer className="relative z-10 py-12 border-t text-center text-muted-foreground text-sm">
         <p>© {new Date().getFullYear()} YuvaVerse. Built for students, by students.</p>
-        <div className="mt-4">
-            <Button variant="link" size="sm" className="text-xs text-muted-foreground/50 hover:text-primary" onClick={() => navigate("/admin")}>
-                Admin Portal
-            </Button>
-        </div>
       </footer>
     </div>
   );
