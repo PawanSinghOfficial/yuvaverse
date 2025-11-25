@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 export default function Landing() {
   const navigate = useNavigate();
   const logoUrl = "https://harmless-tapir-303.convex.cloud/api/storage/db1724ed-9b2f-4ed4-8514-69ae556175c8";
+  const backgroundUrl = "https://harmless-tapir-303.convex.cloud/api/storage/e34061a8-ff55-4ebe-bc01-5d7cf76ffdf1";
 
   useEffect(() => {
     document.documentElement.classList.remove("dark");
@@ -18,7 +19,7 @@ export default function Landing() {
       <div 
         className="fixed inset-0 -z-10 opacity-10 pointer-events-none"
         style={{
-            backgroundImage: `url(${logoUrl})`,
+            backgroundImage: `url(${backgroundUrl})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
