@@ -16,10 +16,13 @@ import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { getBadgeFromPoints } from "@/lib/utils";
+import { Bot } from "lucide-react";
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  onGuideClick?: () => void;
+}
 
-export function AppSidebar({ className }: SidebarProps) {
+export function AppSidebar({ className, onGuideClick }: SidebarProps) {
   const { pathname } = useLocation();
   const { user, signOut } = useAuth();
   const badge = getBadgeFromPoints(user?.points || 0);
@@ -100,6 +103,15 @@ export function AppSidebar({ className }: SidebarProps) {
               </div>
             </Link>
           ))}
+          
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition hover:neu-flat p-3 h-auto"
+            onClick={onGuideClick}
+          >
+             <Bot className="h-5 w-5 mr-3 text-indigo-500" />
+             Guide Me
+          </Button>
         </div>
       </div>
       

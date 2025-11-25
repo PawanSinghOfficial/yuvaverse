@@ -178,3 +178,12 @@ export const updateStreak = mutation({
     }
   },
 });
+
+export const completeOnboarding = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    await ctx.db.patch(userId, { hasSeenOnboarding: true });
+  },
+});

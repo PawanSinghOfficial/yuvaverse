@@ -47,6 +47,7 @@ const schema = defineSchema(
       username: v.optional(v.string()),
       streakCount: v.optional(v.number()),
       lastActiveDate: v.optional(v.number()),
+      hasSeenOnboarding: v.optional(v.boolean()),
     }).index("email", ["email"]).index("by_username", ["username"]), // index for the email. do not remove or modify
 
     resources: defineTable({
