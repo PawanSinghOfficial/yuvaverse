@@ -128,7 +128,7 @@ export default function Landing() {
                     BUILD FOR STUDENTS, BY STUDENTS
                 </p>
                 <p className="font-serif text-lg font-medium text-foreground">
-                    Built by Pawan Singh
+                    Pawan Singh
                 </p>
                 <div className="flex items-center gap-4">
                     <a 
