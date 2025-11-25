@@ -48,6 +48,11 @@ const steps = [
     targetId: "dashboard-redeem",
   },
   {
+    title: "Feedback & Suggestions",
+    description: "The feedback form is for the features you want in future or any complain regarding the same. We value your input to make YuvaVerse better!",
+    targetId: "sidebar-nav-feedback",
+  },
+  {
     title: "You're All Set!",
     description: "That's the basics! You can also explore the sidebar for more features like the Calendar, Study Groups, and Feedback. Enjoy your journey in YuvaVerse!",
     targetId: null,

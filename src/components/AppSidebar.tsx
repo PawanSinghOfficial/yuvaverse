@@ -92,6 +92,7 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
             <Link
               key={route.href}
               to={route.href}
+              id={`sidebar-nav-${route.href.replace("/", "")}`}
               className={cn(
                 "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 transition hover:neo-brutal-sm",
                 pathname === route.href ? "text-primary bg-primary/10 neo-brutal-sm" : "text-muted-foreground"
