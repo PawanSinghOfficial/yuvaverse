@@ -119,7 +119,7 @@ export default function Dashboard() {
       )}
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-6" id="dashboard-profile">
            <div className="relative group">
               {user?.image ? (
                 <img src={user.image} alt="Avatar" className="h-20 w-20 object-cover border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)]" />
@@ -156,7 +156,7 @@ export default function Dashboard() {
            </div>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
+          <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200" id="dashboard-upload-btn">
             <BookOpen className="mr-2 h-4 w-4" />
             Upload Resource
           </Button>
@@ -164,7 +164,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats / Quick Access Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4" id="dashboard-stats-grid">
         <Card className="bg-card hover:bg-violet-100 dark:hover:bg-violet-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#8b5cf6]" onClick={() => navigate("/resources")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-black uppercase">Resources</CardTitle>
@@ -225,7 +225,7 @@ export default function Dashboard() {
         <div className="col-span-4 space-y-6">
           {/* Registered Events Section */}
           {registeredEvents.length > 0 && (
-            <Card className="bg-orange-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#f97316]">
+            <Card className="bg-orange-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#f97316]" id="dashboard-registered-events">
               <CardHeader>
                 <CardTitle className="text-orange-600 flex items-center gap-2 uppercase">
                   <Calendar className="h-6 w-6" />
@@ -298,7 +298,7 @@ export default function Dashboard() {
 
           {/* Points Redemption */}
           {!isPremium && (
-            <Card className="bg-sky-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#0ea5e9]">
+            <Card className="bg-sky-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#0ea5e9]" id="dashboard-redeem">
               <CardHeader>
                 <CardTitle className="uppercase">Redeem Points</CardTitle>
               </CardHeader>
@@ -330,7 +330,7 @@ export default function Dashboard() {
 
         <div className="col-span-3 space-y-6">
           {/* Leaderboard */}
-          <Card className="bg-yellow-100 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#eab308]">
+          <Card className="bg-yellow-100 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#eab308]" id="dashboard-leaderboard">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 uppercase">
                 <Trophy className="h-6 w-6 text-foreground" />
@@ -363,7 +363,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
+          <Card className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]" id="dashboard-upcoming-events">
             <CardHeader>
               <CardTitle className="uppercase">Upcoming Events</CardTitle>
             </CardHeader>
