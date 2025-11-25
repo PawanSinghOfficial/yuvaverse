@@ -30,10 +30,10 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden isolate">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 z-0 opacity-10 pointer-events-none"
+        className="fixed inset-0 -z-10 opacity-10 pointer-events-none"
         style={{
             backgroundImage: `url(${logoUrl})`,
             backgroundSize: 'cover',
@@ -68,7 +68,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-24 max-w-5xl mx-auto">
+      <section className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 py-24 max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -96,7 +96,7 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-24 bg-muted/30">
+      <section className="relative z-10 py-24 bg-muted/30">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <motion.div 
@@ -144,7 +144,7 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t text-center text-muted-foreground text-sm">
+      <footer className="relative z-10 py-12 border-t text-center text-muted-foreground text-sm">
         <p>© {new Date().getFullYear()} YuvaVerse. Built for students, by students.</p>
         <div className="mt-4">
             <Button variant="link" size="sm" className="text-xs text-muted-foreground/50 hover:text-primary" onClick={() => navigate("/admin")}>
