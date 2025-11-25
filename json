@@ -1,0 +1,12 @@
+{
+  "type": "tool_call",
+  "tool_name": "readFilesToContextTool",
+  "tool_number": 1,
+  "input_args": {
+    "file_paths": [
+      "src/components/ui/card.tsx",
+      "src/components/ui/badge.tsx"
+    ],
+    "replace_files_in_context": false
+  }
+}
