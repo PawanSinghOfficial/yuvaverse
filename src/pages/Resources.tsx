@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Upload, Loader2 } from "lucide-react";
+import { FileText, Download, Upload, Loader2, Code } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -162,6 +162,7 @@ export default function Resources() {
                     <SelectItem value="paper">Question Paper</SelectItem>
                     <SelectItem value="practical">Practical File</SelectItem>
                     <SelectItem value="book">Book/Reference</SelectItem>
+                    <SelectItem value="code">Code/Snippet</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -195,7 +196,11 @@ export default function Resources() {
                 <p className="text-xs text-muted-foreground">By {resource.uploaderName}</p>
               </div>
               <div className="p-2 bg-muted rounded-md">
-                <FileText className="h-4 w-4 text-primary" />
+                {resource.type === "code" ? (
+                  <Code className="h-4 w-4 text-primary" />
+                ) : (
+                  <FileText className="h-4 w-4 text-primary" />
+                )}
               </div>
             </CardHeader>
             <CardContent>

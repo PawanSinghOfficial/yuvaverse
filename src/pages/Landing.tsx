@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Users, Calendar, Shield } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Calendar, Shield, Linkedin, Mail } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export default function Landing() {
@@ -118,8 +118,32 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 py-12 border-t text-center text-muted-foreground text-sm">
-        <p>© {new Date().getFullYear()} YuvaVerse. Built for students, by students.</p>
+      <footer className="relative z-10 py-12 border-t bg-background/50 backdrop-blur-sm">
+        <div className="flex flex-col items-center justify-center gap-4 text-center">
+            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} YuvaVerse.</p>
+            
+            <div className="flex flex-col items-center gap-2">
+                <p className="font-serif text-lg font-medium text-foreground">
+                    Built by Pawan Singh
+                </p>
+                <div className="flex items-center gap-4">
+                    <a 
+                        href="https://www.linkedin.com/in/pawansinghofficial/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
+                    >
+                        <Linkedin className="h-5 w-5" />
+                    </a>
+                    <a 
+                        href="mailto:pawansinghmahori@gmail.com"
+                        className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
+                    >
+                        <Mail className="h-5 w-5" />
+                    </a>
+                </div>
+            </div>
+        </div>
       </footer>
     </div>
   );
