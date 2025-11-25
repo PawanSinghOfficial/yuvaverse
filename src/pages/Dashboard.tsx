@@ -86,30 +86,31 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 space-y-8 bg-yellow-50 min-h-screen">
       {/* Username Prompt */}
       {!user?.username && (
-        <Card className="bg-primary/10 border-primary">
+        <Card className="bg-primary text-primary-foreground border-4 border-black shadow-[8px_8px_0px_0px_#000000]">
           <CardContent className="flex items-center justify-between p-6">
             <div>
-              <h3 className="font-bold text-lg">Set your Username</h3>
-              <p className="text-sm text-muted-foreground">Choose a unique username to be identified across YuvaVerse.</p>
+              <h3 className="font-bold text-2xl uppercase">Set your Username</h3>
+              <p className="text-sm font-medium opacity-90">Choose a unique username to be identified across YuvaVerse.</p>
             </div>
             <Dialog open={isSettingUsername} onOpenChange={setIsSettingUsername}>
               <DialogTrigger asChild>
-                <Button>Set Username</Button>
+                <Button variant="secondary" className="border-2 border-black shadow-[4px_4px_0px_0px_#000000]">Set Username</Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_#000000]">
                 <DialogHeader>
-                  <DialogTitle>Choose Username</DialogTitle>
+                  <DialogTitle className="text-2xl font-bold uppercase">Choose Username</DialogTitle>
                 </DialogHeader>
                 <Input 
                   value={newUsername}
                   onChange={(e) => setNewUsername(e.target.value)}
                   placeholder="e.g., coolstudent123"
+                  className="border-4 border-black rounded-none shadow-[4px_4px_0px_0px_#000000] focus:shadow-none focus:translate-x-[4px] focus:translate-y-[4px] transition-all"
                 />
                 <DialogFooter>
-                  <Button onClick={handleSetUsername}>Save</Button>
+                  <Button onClick={handleSetUsername} className="w-full">Save</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -118,45 +119,44 @@ export default function Dashboard() {
       )}
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
            <div className="relative group">
               {user?.image ? (
-                <img src={user.image} alt="Avatar" className="h-16 w-16 rounded-full object-cover border-2 border-primary/20 neu-flat" />
+                <img src={user.image} alt="Avatar" className="h-20 w-20 object-cover border-4 border-black shadow-[4px_4px_0px_0px_#000000]" />
               ) : (
-                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl border-2 border-primary/20 neu-flat">
+                <div className="h-20 w-20 bg-secondary flex items-center justify-center text-black font-bold text-3xl border-4 border-black shadow-[4px_4px_0px_0px_#000000]">
                   {user?.name?.[0] || "U"}
                 </div>
               )}
-              <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                <span className="text-white text-xs font-medium">Change</span>
+              <label className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-4 border-transparent">
+                <span className="text-white text-xs font-bold uppercase">Change</span>
                 <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
               </label>
-              <div className={`absolute -bottom-1 -right-1 px-2 py-0.5 text-[10px] font-semibold text-white rounded-full bg-gradient-to-r ${badge.gradient} shadow-lg`}>
-                <span className="mr-1">{badge.icon}</span>
-                {badge.label}
+              <div className={`absolute -bottom-2 -right-2 px-2 py-1 text-xs font-bold text-white border-2 border-black bg-black`}>
+                {badge.icon}
               </div>
            </div>
            <div>
-              <h1 className="text-3xl font-bold tracking-tight">
-                Welcome back, {user?.username || user?.name?.split(" ")[0] || "Student"}
+              <h1 className="text-4xl font-black tracking-tighter uppercase">
+                Hello, {user?.username || user?.name?.split(" ")[0] || "Student"}
               </h1>
-              <p className="text-muted-foreground mt-2">
-                Here's what's happening at YuvaVerse today.
+              <p className="text-black font-medium mt-1 bg-white inline-block px-2 border-2 border-black">
+                Welcome to your digital campus.
               </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Badge className="bg-primary/10 text-primary border border-primary/20">
-                  <Medal className="h-3 w-3 mr-1" />
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Badge className="bg-accent text-white border-2 border-black rounded-none shadow-[2px_2px_0px_0px_#000000]">
+                  <Medal className="h-4 w-4 mr-1" />
                   {badge.label} Badge
                 </Badge>
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  <Flame className="h-3 w-3 text-orange-500" />
+                <Badge className="bg-orange-500 text-white border-2 border-black rounded-none shadow-[2px_2px_0px_0px_#000000] flex items-center gap-1">
+                  <Flame className="h-4 w-4" />
                   {user?.streakCount || 0} day streak
                 </Badge>
               </div>
            </div>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => navigate("/resources")}>
+          <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800">
             <BookOpen className="mr-2 h-4 w-4" />
             Upload Resource
           </Button>
@@ -164,110 +164,100 @@ export default function Dashboard() {
       </div>
 
       {/* Stats / Quick Access Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-violet-500 neu-flat" onClick={() => navigate("/resources")}>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-white hover:bg-violet-100 cursor-pointer border-4 border-black shadow-[8px_8px_0px_0px_#8b5cf6]" onClick={() => navigate("/resources")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Resources</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-lg font-black uppercase">Resources</CardTitle>
+            <BookOpen className="h-6 w-6 text-black" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{recentResources.length}</div>
-            <p className="text-xs text-muted-foreground">Files available</p>
+            <div className="text-4xl font-black">{recentResources.length}</div>
+            <p className="text-sm font-bold text-muted-foreground bg-violet-200 inline-block px-1 mt-1">Files available</p>
           </CardContent>
         </Card>
-        <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-pink-700 neu-flat" onClick={() => navigate("/groups")}>
+        <Card className="bg-white hover:bg-pink-100 cursor-pointer border-4 border-black shadow-[8px_8px_0px_0px_#ec4899]" onClick={() => navigate("/groups")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Study Groups</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-lg font-black uppercase">Study Groups</CardTitle>
+            <Users className="h-6 w-6 text-black" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Active</div>
-            <p className="text-xs text-muted-foreground">Join sessions</p>
+            <div className="text-4xl font-black">Active</div>
+            <p className="text-sm font-bold text-muted-foreground bg-pink-200 inline-block px-1 mt-1">Join sessions</p>
           </CardContent>
         </Card>
-        <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-orange-700 neu-flat" onClick={() => navigate("/events")}>
+        <Card className="bg-white hover:bg-orange-100 cursor-pointer border-4 border-black shadow-[8px_8px_0px_0px_#f97316]" onClick={() => navigate("/events")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">My Events</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-lg font-black uppercase">My Events</CardTitle>
+            <Calendar className="h-6 w-6 text-black" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{registeredEvents.length}</div>
-            <p className="text-xs text-muted-foreground">Registered</p>
+            <div className="text-4xl font-black">{registeredEvents.length}</div>
+            <p className="text-sm font-bold text-muted-foreground bg-orange-200 inline-block px-1 mt-1">Registered</p>
           </CardContent>
         </Card>
         
         {isPremium ? (
-             <Card className="bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/20 dark:to-amber-900/10 border-amber-200 dark:border-amber-800 neu-flat">
+             <Card className="bg-amber-300 border-4 border-black shadow-[8px_8px_0px_0px_#000000]">
              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-               <CardTitle className="text-sm font-medium text-amber-700 dark:text-amber-400">Premium Status</CardTitle>
-               <Crown className="h-4 w-4 text-amber-600" />
+               <CardTitle className="text-lg font-black uppercase text-black">Premium</CardTitle>
+               <Crown className="h-6 w-6 text-black" />
              </CardHeader>
              <CardContent>
-               <div className="text-2xl font-bold text-amber-800 dark:text-amber-300">Active</div>
-               <p className="text-xs text-amber-600/80 dark:text-amber-400/80">All features unlocked</p>
+               <div className="text-4xl font-black text-black">Active</div>
+               <p className="text-sm font-bold text-black/80 mt-1">All features unlocked</p>
              </CardContent>
            </Card>
         ) : (
-            <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-emerald-500 neu-flat">
+            <Card className="bg-white hover:bg-emerald-100 cursor-pointer border-4 border-black shadow-[8px_8px_0px_0px_#10b981]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Points</CardTitle>
-                <Trophy className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-lg font-black uppercase">Points</CardTitle>
+                <Trophy className="h-6 w-6 text-black" />
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold">{user?.points || 0}</div>
-                <p className="text-xs text-muted-foreground">Contribution score</p>
+                <div className="text-4xl font-black">{user?.points || 0}</div>
+                <p className="text-sm font-bold text-muted-foreground bg-emerald-200 inline-block px-1 mt-1">Contribution score</p>
             </CardContent>
             </Card>
         )}
-        <Card className="hover:bg-muted/50 transition-colors border-l-4 border-l-red-400 neu-flat">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Daily Streak</CardTitle>
-            <Flame className="h-4 w-4 text-orange-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{user?.streakCount || 0} days</div>
-            <p className="text-xs text-muted-foreground">Stay active to keep your streak alive.</p>
-          </CardContent>
-        </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <div className="col-span-4 space-y-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+        <div className="col-span-4 space-y-6">
           {/* Registered Events Section */}
           {registeredEvents.length > 0 && (
-            <Card className="border-orange-200 dark:border-orange-900 bg-orange-50/50 dark:bg-orange-900/10">
+            <Card className="bg-orange-50 border-4 border-black shadow-[8px_8px_0px_0px_#f97316]">
               <CardHeader>
-                <CardTitle className="text-orange-700 dark:text-orange-400 flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
+                <CardTitle className="text-orange-600 flex items-center gap-2 uppercase">
+                  <Calendar className="h-6 w-6" />
                   Your Registered Events
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {registeredEvents.map((event) => (
-                    <div key={event?._id} className="flex items-start gap-4 border-b border-orange-100 dark:border-orange-800 pb-4 last:border-0 last:pb-0">
-                      <div className="bg-white dark:bg-card rounded-lg p-3 text-center min-w-[60px] shadow-sm border border-orange-100 dark:border-orange-800">
-                        <span className="block text-xs font-bold uppercase text-muted-foreground">
+                    <div key={event?._id} className="flex items-start gap-4 border-b-2 border-black pb-4 last:border-0 last:pb-0">
+                      <div className="bg-white border-2 border-black p-3 text-center min-w-[70px] shadow-[4px_4px_0px_0px_#000000]">
+                        <span className="block text-xs font-black uppercase text-black">
                           {new Date(event!.date).toLocaleString('default', { month: 'short' })}
                         </span>
-                        <span className="block text-xl font-bold text-primary">
+                        <span className="block text-2xl font-black text-black">
                           {new Date(event!.date).getDate()}
                         </span>
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-base font-semibold text-foreground">{event!.title}</h4>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
+                        <h4 className="text-lg font-bold text-black uppercase">{event!.title}</h4>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm font-medium text-black/70">
                           <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
+                            <Calendar className="h-4 w-4" />
                             {new Date(event!.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                           <span className="flex items-center gap-1">
-                            <Users className="h-3 w-3" />
+                            <Users className="h-4 w-4" />
                             {event!.location}
                           </span>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm" onClick={() => navigate("/events")}>
+                      <Button variant="outline" size="sm" onClick={() => navigate("/events")} className="border-2 border-black shadow-[2px_2px_0px_0px_#000000]">
                         View
                       </Button>
                     </div>
@@ -277,30 +267,30 @@ export default function Dashboard() {
             </Card>
           )}
 
-          <Card>
+          <Card className="border-4 border-black shadow-[8px_8px_0px_0px_#000000]">
             <CardHeader>
-              <CardTitle>Recent Resources</CardTitle>
+              <CardTitle className="uppercase">Recent Resources</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {recentResources.slice(0, 5).map((resource) => (
-                    <div key={resource._id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
+                    <div key={resource._id} className="flex items-center justify-between border-b-2 border-black/10 pb-2 last:border-0 last:pb-0 hover:bg-gray-50 p-2 transition-colors">
                         <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 rounded bg-primary/10 flex items-center justify-center text-primary">
-                                <BookOpen className="h-4 w-4" />
+                            <div className="h-10 w-10 bg-primary text-white border-2 border-black flex items-center justify-center">
+                                <BookOpen className="h-5 w-5" />
                             </div>
                             <div>
-                                <p className="text-sm font-medium">{resource.title}</p>
-                                <p className="text-xs text-muted-foreground">By {resource.uploaderName}</p>
+                                <p className="text-base font-bold">{resource.title}</p>
+                                <p className="text-xs font-medium text-muted-foreground uppercase">By {resource.uploaderName}</p>
                             </div>
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                            Sem {resource.semester}
+                        <div className="text-xs font-bold bg-gray-200 px-2 py-1 border border-black">
+                            SEM {resource.semester}
                         </div>
                     </div>
                 ))}
                 {recentResources.length === 0 && (
-                    <p className="text-sm text-muted-foreground">No resources uploaded yet.</p>
+                    <p className="text-sm font-medium text-muted-foreground">No resources uploaded yet.</p>
                 )}
               </div>
             </CardContent>
@@ -308,28 +298,28 @@ export default function Dashboard() {
 
           {/* Points Redemption */}
           {!isPremium && (
-            <Card>
+            <Card className="bg-sky-50 border-4 border-black shadow-[8px_8px_0px_0px_#0ea5e9]">
               <CardHeader>
-                <CardTitle>Redeem Points</CardTitle>
+                <CardTitle className="uppercase">Redeem Points</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-2">
-                <div className="border rounded-lg p-4 space-y-2">
+                <div className="bg-white border-2 border-black p-4 space-y-2 shadow-[4px_4px_0px_0px_#000000]">
                   <div className="flex justify-between items-center">
-                    <h4 className="font-bold">Premium</h4>
-                    <Badge variant="secondary">500 pts</Badge>
+                    <h4 className="font-black uppercase text-lg">Premium</h4>
+                    <Badge className="bg-black text-white rounded-none">500 pts</Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground">Unlock exclusive features and badges.</p>
-                  <Button size="sm" className="w-full" onClick={() => handleRedeem("premium")} disabled={(user?.points || 0) < 500}>
+                  <p className="text-xs font-medium">Unlock exclusive features and badges.</p>
+                  <Button size="sm" className="w-full mt-2" onClick={() => handleRedeem("premium")} disabled={(user?.points || 0) < 500}>
                     Redeem
                   </Button>
                 </div>
-                <div className="border rounded-lg p-4 space-y-2">
+                <div className="bg-amber-100 border-2 border-black p-4 space-y-2 shadow-[4px_4px_0px_0px_#000000]">
                   <div className="flex justify-between items-center">
-                    <h4 className="font-bold text-amber-600">Elite</h4>
-                    <Badge variant="secondary">1000 pts</Badge>
+                    <h4 className="font-black uppercase text-lg text-amber-700">Elite</h4>
+                    <Badge className="bg-amber-600 text-white rounded-none">1000 pts</Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground">Top tier status and priority support.</p>
-                  <Button size="sm" className="w-full" onClick={() => handleRedeem("elite")} disabled={(user?.points || 0) < 1000}>
+                  <p className="text-xs font-medium">Top tier status and priority support.</p>
+                  <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white" onClick={() => handleRedeem("elite")} disabled={(user?.points || 0) < 1000}>
                     Redeem
                   </Button>
                 </div>
@@ -338,65 +328,65 @@ export default function Dashboard() {
           )}
         </div>
 
-        <div className="col-span-3 space-y-4">
+        <div className="col-span-3 space-y-6">
           {/* Leaderboard */}
-          <Card>
+          <Card className="bg-yellow-100 border-4 border-black shadow-[8px_8px_0px_0px_#eab308]">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-yellow-500" />
+              <CardTitle className="flex items-center gap-2 uppercase">
+                <Trophy className="h-6 w-6 text-black" />
                 Top Contributors
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {leaderboard.map((u, i) => {
                   const entryBadge = getBadgeFromPoints(u.points);
                   return (
-                    <div key={i} className="flex items-center justify-between">
+                    <div key={i} className="flex items-center justify-between bg-white border-2 border-black p-2 shadow-[2px_2px_0px_0px_#000000]">
                       <div className="flex items-center gap-3">
-                        <span className={`font-bold w-6 text-center ${i < 3 ? "text-yellow-600" : "text-muted-foreground"}`}>
+                        <span className={`font-black text-lg w-8 text-center ${i < 3 ? "text-yellow-600" : "text-gray-500"}`}>
                           #{i + 1}
                         </span>
-                        <span className="text-sm font-medium">{u.name}</span>
+                        <span className="text-sm font-bold truncate max-w-[100px]">{u.name}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-primary">{u.points} pts</span>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r ${entryBadge.gradient} text-white`}>
-                          {entryBadge.label}
+                        <span className="text-xs font-black text-black">{u.points} pts</span>
+                        <span className="text-[10px] font-bold px-1 border border-black bg-gray-100">
+                          {entryBadge.icon}
                         </span>
                       </div>
                     </div>
                   );
                 })}
-                {leaderboard.length === 0 && <p className="text-sm text-muted-foreground">No contributions yet.</p>}
+                {leaderboard.length === 0 && <p className="text-sm font-medium">No contributions yet.</p>}
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-4 border-black shadow-[8px_8px_0px_0px_#000000]">
             <CardHeader>
-              <CardTitle>Upcoming Events</CardTitle>
+              <CardTitle className="uppercase">Upcoming Events</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                  {upcomingEvents.slice(0, 3).map((event) => (
-                     <div key={event._id} className="flex items-start gap-3 border-b pb-3 last:border-0 last:pb-0">
-                         <div className="bg-muted rounded p-2 text-center min-w-[50px]">
-                             <span className="block text-xs font-bold uppercase text-muted-foreground">
+                     <div key={event._id} className="flex items-start gap-3 border-b-2 border-black/10 pb-3 last:border-0 last:pb-0">
+                         <div className="bg-primary text-white border-2 border-black rounded-none p-2 text-center min-w-[50px]">
+                             <span className="block text-xs font-bold uppercase">
                                  {new Date(event.date).toLocaleString('default', { month: 'short' })}
                              </span>
-                             <span className="block text-lg font-bold text-primary">
+                             <span className="block text-lg font-black">
                                  {new Date(event.date).getDate()}
                              </span>
                          </div>
                          <div>
-                             <p className="text-sm font-medium">{event.title}</p>
-                             <p className="text-xs text-muted-foreground line-clamp-1">{event.location}</p>
+                             <p className="text-sm font-bold uppercase">{event.title}</p>
+                             <p className="text-xs font-medium text-muted-foreground line-clamp-1">{event.location}</p>
                          </div>
                      </div>
                  ))}
                  {upcomingEvents.length === 0 && (
-                     <p className="text-sm text-muted-foreground">No upcoming events.</p>
+                     <p className="text-sm font-medium text-muted-foreground">No upcoming events.</p>
                  )}
               </div>
             </CardContent>
