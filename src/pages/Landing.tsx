@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 export default function Landing() {
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false);
+  const logoUrl = "https://harmless-tapir-303.convex.cloud/api/storage/e34061a8-ff55-4ebe-bc01-5d7cf76ffdf1";
 
   useEffect(() => {
     const root = document.documentElement;
@@ -29,13 +30,22 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 z-0 opacity-10 pointer-events-none"
+        style={{
+            backgroundImage: `url(${logoUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+        }}
+      />
+      
       {/* Navbar */}
       <nav className="py-4 px-6 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-50 border border-border/60 neu-flat shadow-none">
         <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-          <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground neu-flat">
-            Y
-          </div>
+          <img src={logoUrl} alt="YuvaVerse Logo" className="h-10 w-10 object-contain neu-flat rounded-lg bg-primary/10 p-1" />
           YuvaVerse
         </div>
         <div className="flex items-center gap-4">

@@ -23,6 +23,7 @@ export function AppSidebar({ className }: SidebarProps) {
   const { pathname } = useLocation();
   const { user, signOut } = useAuth();
   const badge = getBadgeFromPoints(user?.points || 0);
+  const logoUrl = "https://harmless-tapir-303.convex.cloud/api/storage/e34061a8-ff55-4ebe-bc01-5d7cf76ffdf1";
 
   const routes = [
     {
@@ -70,10 +71,8 @@ export function AppSidebar({ className }: SidebarProps) {
     <div className={cn("space-y-4 py-4 flex flex-col h-full bg-secondary/10 border-r-0 shadow-lg", className)}>
       <div className="px-3 py-2">
         <Link to="/dashboard" className="flex items-center pl-3 mb-14">
-          <div className="relative h-8 w-8 mr-4">
-             <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-bold neu-flat">
-                Y
-             </div>
+          <div className="relative h-10 w-10 mr-3">
+             <img src={logoUrl} alt="YuvaVerse" className="h-full w-full object-contain neu-flat rounded-lg bg-primary/10 p-1" />
           </div>
           <h1 className="text-2xl font-bold">
             YuvaVerse
