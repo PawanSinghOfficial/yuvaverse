@@ -6,6 +6,8 @@ import { Outlet, useNavigate, useLocation } from "react-router";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
+import { ExitIntentPopup } from "@/components/ExitIntentPopup";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
 export default function DashboardLayout() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -49,14 +51,17 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className="h-full relative">
-      <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-[80]">
+    <SidebarProvider>
+      <ExitIntentPopup />
+      <div className="flex min-h-screen w-full bg-background">
         <AppSidebar onGuideClick={handleGuideClick} />
+        <SidebarInset className="flex flex-col">
+          <main className="md:pl-72 pb-10">
+            <Outlet />
+          </main>
+          <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
+        </SidebarInset>
       </div>
-      <main className="md:pl-72 pb-10">
-        <Outlet />
-      </main>
-      <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
-    </div>
+    </SidebarProvider>
   );
 }

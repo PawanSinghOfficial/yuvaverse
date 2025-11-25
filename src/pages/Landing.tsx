@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Users, Calendar, Shield, Linkedin, Mail } from "lucide-react";
 import { useNavigate } from "react-router";
+import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden isolate">
+      <ExitIntentPopup />
       {/* Background Image */}
       <div 
         className="fixed inset-0 -z-10 opacity-10 pointer-events-none"
