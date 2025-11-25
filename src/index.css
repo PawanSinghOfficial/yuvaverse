@@ -1,5 +1,5 @@
 /* FONT IMPORTS GO HERE */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Merriweather:wght@100;200;300;400;500;600;700;800;900&family=Fira+Code:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 /* DO NOT CHANGE */
 @import "tailwindcss";
@@ -47,94 +47,90 @@
 
 /* CHANGE VALUES FOR THEME */
 :root {
-  --radius: 0rem; /* Blocky shapes */
+  --radius: 0.625rem;
   --background: #ffffff;
   --foreground: #000000;
-  
-  /* Neo Brutalism Palette */
   --card: #ffffff;
   --card-foreground: #000000;
   --popover: #ffffff;
   --popover-foreground: #000000;
-  
-  --primary: #FF0080; /* Bold Pink */
+  --primary: #FF0080;
   --primary-foreground: #ffffff;
-  
-  --secondary: #00FF80; /* Bold Green */
+  --secondary: #00FF80;
   --secondary-foreground: #000000;
-  
   --muted: #f0f0f0;
   --muted-foreground: #000000;
-  
-  --accent: #0080FF; /* Bold Blue */
+  --accent: #0080FF;
   --accent-foreground: #ffffff;
-  
   --destructive: #ff0000;
-  --border: #404040; /* Weak dark (Neutral 700) */
-  --input: #ffffff;
+  --border: #404040;
+  --input: #404040;
   --ring: #404040;
-  --shadow: #404040;
-  
   --chart-1: #FF0080;
   --chart-2: #00FF80;
-  --chart-3: #0080FF;
-  --chart-4: #FFFF00;
-  --chart-5: #8000FF;
-  
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: #f8f9fa;
   --sidebar-foreground: #000000;
   --sidebar-primary: #FF0080;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #00FF80;
   --sidebar-accent-foreground: #000000;
-  --sidebar-border: #000000;
-  --sidebar-ring: #000000;
+  --sidebar-border: #404040;
+  --sidebar-ring: #404040;
 }
 
 .dark {
-  /* Neo Brutalism Dark Mode (High Contrast) */
-  --background: #1a1a1a;
-  --foreground: #ffffff;
-  --card: #000000;
-  --card-foreground: #ffffff;
-  --popover: #000000;
-  --popover-foreground: #ffffff;
-  --primary: #FF0080;
-  --primary-foreground: #ffffff;
-  --secondary: #00FF80;
-  --secondary-foreground: #000000;
-  --muted: #2a2a2a;
-  --muted-foreground: #cccccc;
-  --accent: #0080FF;
-  --accent-foreground: #ffffff;
-  --destructive: #ff0000;
-  --border: #525252; /* Weak dark for dark mode (Neutral 600) */
-  --input: #000000;
-  --ring: #ffffff;
-  --shadow: #525252;
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: Montserrat, system-ui, sans-serif;
   }
-}
-
-@layer utilities {
-  .neo-brutal {
-    @apply border border-border shadow-[8px_8px_0px_0px_var(--shadow)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_var(--shadow)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none rounded-none;
+  .font-sans {
+    font-family: Montserrat, system-ui, sans-serif;
   }
-  
-  .neo-brutal-sm {
-    @apply border border-border shadow-[4px_4px_0px_0px_var(--shadow)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_var(--shadow)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none rounded-none;
+  .font-serif {
+    font-family: Merriweather, Georgia, serif;
   }
-
-  .neo-input {
-    @apply border border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-[2px_2px_0px_0px_var(--shadow)] focus:translate-x-[2px] focus:translate-y-[2px] outline-none rounded-none;
+  .font-mono {
+    font-family: Fira Code, "Courier New", monospace;
   }
 }
