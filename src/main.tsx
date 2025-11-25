@@ -21,6 +21,10 @@ import Admin from "./pages/Admin.tsx";
 import CalendarPage from "./pages/Calendar.tsx";
 import "./types/global.d.ts";
 
+// Force light mode
+document.documentElement.classList.remove("dark");
+localStorage.removeItem("theme");
+
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
 function RouteSyncer() {

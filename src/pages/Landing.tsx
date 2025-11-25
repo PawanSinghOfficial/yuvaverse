@@ -1,33 +1,16 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Users, Calendar, Shield, Sun, Moon } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Calendar, Shield } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [isDark, setIsDark] = useState(false);
   const logoUrl = "https://harmless-tapir-303.convex.cloud/api/storage/e34061a8-ff55-4ebe-bc01-5d7cf76ffdf1";
 
   useEffect(() => {
-    const root = document.documentElement;
-    const storedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
-      : false;
-    const initialDark = storedTheme ? storedTheme === "dark" : prefersDark;
-    root.classList.toggle("dark", initialDark);
-    setIsDark(initialDark);
+    document.documentElement.classList.remove("dark");
   }, []);
-
-  const handleThemeToggle = () => {
-    setIsDark((prev) => {
-      const next = !prev;
-      document.documentElement.classList.toggle("dark", next);
-      localStorage.setItem("theme", next ? "dark" : "light");
-      return next;
-    });
-  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden isolate">
@@ -49,15 +32,6 @@ export default function Landing() {
           YuvaVerse
         </div>
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-none border border-border text-muted-foreground neo-brutal-sm"
-            onClick={handleThemeToggle}
-            aria-label="Toggle dark mode"
-          >
-            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
           <Button variant="ghost" onClick={() => navigate("/auth")}>
             Log in
           </Button>
