@@ -89,7 +89,7 @@ export default function Dashboard() {
     <div className="p-8 space-y-8 bg-yellow-50 dark:bg-background min-h-screen">
       {/* Username Prompt */}
       {!user?.username && (
-        <Card className="bg-primary text-primary-foreground border-4 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
+        <Card className="bg-primary text-primary-foreground border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
           <CardContent className="flex items-center justify-between p-6">
             <div>
               <h3 className="font-bold text-2xl uppercase">Set your Username</h3>
@@ -97,9 +97,9 @@ export default function Dashboard() {
             </div>
             <Dialog open={isSettingUsername} onOpenChange={setIsSettingUsername}>
               <DialogTrigger asChild>
-                <Button variant="secondary" className="border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)]">Set Username</Button>
+                <Button variant="secondary" className="border border-border shadow-[4px_4px_0px_0px_var(--shadow)]">Set Username</Button>
               </DialogTrigger>
-              <DialogContent className="border-4 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
+              <DialogContent className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
                 <DialogHeader>
                   <DialogTitle className="text-2xl font-bold uppercase">Choose Username</DialogTitle>
                 </DialogHeader>
@@ -107,7 +107,7 @@ export default function Dashboard() {
                   value={newUsername}
                   onChange={(e) => setNewUsername(e.target.value)}
                   placeholder="e.g., coolstudent123"
-                  className="border-4 border-border rounded-none shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-none focus:translate-x-[4px] focus:translate-y-[4px] transition-all"
+                  className="border-2 border-border rounded-none shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-none focus:translate-x-[4px] focus:translate-y-[4px] transition-all"
                 />
                 <DialogFooter>
                   <Button onClick={handleSetUsername} className="w-full">Save</Button>
@@ -122,17 +122,17 @@ export default function Dashboard() {
         <div className="flex items-center gap-6">
            <div className="relative group">
               {user?.image ? (
-                <img src={user.image} alt="Avatar" className="h-20 w-20 object-cover border-4 border-border shadow-[4px_4px_0px_0px_var(--shadow)]" />
+                <img src={user.image} alt="Avatar" className="h-20 w-20 object-cover border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)]" />
               ) : (
-                <div className="h-20 w-20 bg-secondary flex items-center justify-center text-black font-bold text-3xl border-4 border-border shadow-[4px_4px_0px_0px_var(--shadow)]">
+                <div className="h-20 w-20 bg-secondary flex items-center justify-center text-black font-bold text-3xl border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)]">
                   {user?.name?.[0] || "U"}
                 </div>
               )}
-              <label className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-4 border-transparent">
+              <label className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-2 border-transparent">
                 <span className="text-white text-xs font-bold uppercase">Change</span>
                 <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
               </label>
-              <div className={`absolute -bottom-2 -right-2 px-2 py-1 text-xs font-bold text-white border-2 border-border bg-black`}>
+              <div className={`absolute -bottom-2 -right-2 px-2 py-1 text-xs font-bold text-white border border-border bg-black`}>
                 {badge.icon}
               </div>
            </div>
@@ -140,15 +140,15 @@ export default function Dashboard() {
               <h1 className="text-4xl font-black tracking-tighter uppercase">
                 Hello, {user?.username || user?.name?.split(" ")[0] || "Student"}
               </h1>
-              <p className="text-foreground font-medium mt-1 bg-card inline-block px-2 border-2 border-border">
+              <p className="text-foreground font-medium mt-1 bg-card inline-block px-2 border border-border">
                 Welcome to your digital campus.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <Badge className="bg-accent text-white border-2 border-border rounded-none shadow-[2px_2px_0px_0px_var(--shadow)]">
+                <Badge className="bg-accent text-white border border-border rounded-none shadow-[2px_2px_0px_0px_var(--shadow)]">
                   <Medal className="h-4 w-4 mr-1" />
                   {badge.label} Badge
                 </Badge>
-                <Badge className="bg-orange-500 text-white border-2 border-border rounded-none shadow-[2px_2px_0px_0px_var(--shadow)] flex items-center gap-1">
+                <Badge className="bg-orange-500 text-white border border-border rounded-none shadow-[2px_2px_0px_0px_var(--shadow)] flex items-center gap-1">
                   <Flame className="h-4 w-4" />
                   {user?.streakCount || 0} day streak
                 </Badge>
@@ -165,7 +165,7 @@ export default function Dashboard() {
 
       {/* Stats / Quick Access Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-card hover:bg-violet-100 dark:hover:bg-violet-900 cursor-pointer border-4 border-border shadow-[8px_8px_0px_0px_#8b5cf6]" onClick={() => navigate("/resources")}>
+        <Card className="bg-card hover:bg-violet-100 dark:hover:bg-violet-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#8b5cf6]" onClick={() => navigate("/resources")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-black uppercase">Resources</CardTitle>
             <BookOpen className="h-6 w-6 text-foreground" />
@@ -175,7 +175,7 @@ export default function Dashboard() {
             <p className="text-sm font-bold text-muted-foreground bg-violet-200 dark:bg-violet-800 dark:text-white inline-block px-1 mt-1">Files available</p>
           </CardContent>
         </Card>
-        <Card className="bg-card hover:bg-pink-100 dark:hover:bg-pink-900 cursor-pointer border-4 border-border shadow-[8px_8px_0px_0px_#ec4899]" onClick={() => navigate("/groups")}>
+        <Card className="bg-card hover:bg-pink-100 dark:hover:bg-pink-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#ec4899]" onClick={() => navigate("/groups")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-black uppercase">Study Groups</CardTitle>
             <Users className="h-6 w-6 text-foreground" />
@@ -185,7 +185,7 @@ export default function Dashboard() {
             <p className="text-sm font-bold text-muted-foreground bg-pink-200 dark:bg-pink-800 dark:text-white inline-block px-1 mt-1">Join sessions</p>
           </CardContent>
         </Card>
-        <Card className="bg-card hover:bg-orange-100 dark:hover:bg-orange-900 cursor-pointer border-4 border-border shadow-[8px_8px_0px_0px_#f97316]" onClick={() => navigate("/events")}>
+        <Card className="bg-card hover:bg-orange-100 dark:hover:bg-orange-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#f97316]" onClick={() => navigate("/events")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-black uppercase">My Events</CardTitle>
             <Calendar className="h-6 w-6 text-foreground" />
@@ -197,7 +197,7 @@ export default function Dashboard() {
         </Card>
         
         {isPremium ? (
-             <Card className="bg-amber-300 dark:bg-amber-700 border-4 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
+             <Card className="bg-amber-300 dark:bg-amber-700 border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                <CardTitle className="text-lg font-black uppercase text-black dark:text-white">Premium</CardTitle>
                <Crown className="h-6 w-6 text-black dark:text-white" />
@@ -208,7 +208,7 @@ export default function Dashboard() {
              </CardContent>
            </Card>
         ) : (
-            <Card className="bg-card hover:bg-emerald-100 dark:hover:bg-emerald-900 cursor-pointer border-4 border-border shadow-[8px_8px_0px_0px_#10b981]">
+            <Card className="bg-card hover:bg-emerald-100 dark:hover:bg-emerald-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#10b981]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-lg font-black uppercase">Points</CardTitle>
                 <Trophy className="h-6 w-6 text-foreground" />
@@ -225,7 +225,7 @@ export default function Dashboard() {
         <div className="col-span-4 space-y-6">
           {/* Registered Events Section */}
           {registeredEvents.length > 0 && (
-            <Card className="bg-orange-50 dark:bg-card border-4 border-border shadow-[8px_8px_0px_0px_#f97316]">
+            <Card className="bg-orange-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#f97316]">
               <CardHeader>
                 <CardTitle className="text-orange-600 flex items-center gap-2 uppercase">
                   <Calendar className="h-6 w-6" />
@@ -236,7 +236,7 @@ export default function Dashboard() {
                 <div className="space-y-4">
                   {registeredEvents.map((event) => (
                     <div key={event?._id} className="flex items-start gap-4 border-b-2 border-border pb-4 last:border-0 last:pb-0">
-                      <div className="bg-card border-2 border-border p-3 text-center min-w-[70px] shadow-[4px_4px_0px_0px_var(--shadow)]">
+                      <div className="bg-card border border-border p-3 text-center min-w-[70px] shadow-[4px_4px_0px_0px_var(--shadow)]">
                         <span className="block text-xs font-black uppercase text-foreground">
                           {new Date(event!.date).toLocaleString('default', { month: 'short' })}
                         </span>
@@ -257,7 +257,7 @@ export default function Dashboard() {
                           </span>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" onClick={() => navigate("/events")} className="border-2 border-border shadow-[2px_2px_0px_0px_var(--shadow)]">
+                      <Button variant="outline" size="sm" onClick={() => navigate("/events")} className="border border-border shadow-[2px_2px_0px_0px_var(--shadow)]">
                         View
                       </Button>
                     </div>
@@ -267,7 +267,7 @@ export default function Dashboard() {
             </Card>
           )}
 
-          <Card className="border-4 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
+          <Card className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
             <CardHeader>
               <CardTitle className="uppercase">Recent Resources</CardTitle>
             </CardHeader>
@@ -276,7 +276,7 @@ export default function Dashboard() {
                 {recentResources.slice(0, 5).map((resource) => (
                     <div key={resource._id} className="flex items-center justify-between border-b-2 border-border/10 pb-2 last:border-0 last:pb-0 hover:bg-gray-50 dark:hover:bg-neutral-900 p-2 transition-colors">
                         <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 bg-primary text-white border-2 border-border flex items-center justify-center">
+                            <div className="h-10 w-10 bg-primary text-white border border-border flex items-center justify-center">
                                 <BookOpen className="h-5 w-5" />
                             </div>
                             <div>
@@ -298,12 +298,12 @@ export default function Dashboard() {
 
           {/* Points Redemption */}
           {!isPremium && (
-            <Card className="bg-sky-50 dark:bg-card border-4 border-border shadow-[8px_8px_0px_0px_#0ea5e9]">
+            <Card className="bg-sky-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#0ea5e9]">
               <CardHeader>
                 <CardTitle className="uppercase">Redeem Points</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-2">
-                <div className="bg-card border-2 border-border p-4 space-y-2 shadow-[4px_4px_0px_0px_var(--shadow)]">
+                <div className="bg-card border border-border p-4 space-y-2 shadow-[4px_4px_0px_0px_var(--shadow)]">
                   <div className="flex justify-between items-center">
                     <h4 className="font-black uppercase text-lg">Premium</h4>
                     <Badge className="bg-black dark:bg-white text-white dark:text-black rounded-none">500 pts</Badge>
@@ -313,7 +313,7 @@ export default function Dashboard() {
                     Redeem
                   </Button>
                 </div>
-                <div className="bg-amber-100 dark:bg-amber-900 border-2 border-border p-4 space-y-2 shadow-[4px_4px_0px_0px_var(--shadow)]">
+                <div className="bg-amber-100 dark:bg-amber-900 border border-border p-4 space-y-2 shadow-[4px_4px_0px_0px_var(--shadow)]">
                   <div className="flex justify-between items-center">
                     <h4 className="font-black uppercase text-lg text-amber-700 dark:text-amber-300">Elite</h4>
                     <Badge className="bg-amber-600 text-white rounded-none">1000 pts</Badge>
@@ -330,7 +330,7 @@ export default function Dashboard() {
 
         <div className="col-span-3 space-y-6">
           {/* Leaderboard */}
-          <Card className="bg-yellow-100 dark:bg-card border-4 border-border shadow-[8px_8px_0px_0px_#eab308]">
+          <Card className="bg-yellow-100 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#eab308]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 uppercase">
                 <Trophy className="h-6 w-6 text-foreground" />
@@ -342,7 +342,7 @@ export default function Dashboard() {
                 {leaderboard.map((u, i) => {
                   const entryBadge = getBadgeFromPoints(u.points);
                   return (
-                    <div key={i} className="flex items-center justify-between bg-card border-2 border-border p-2 shadow-[2px_2px_0px_0px_var(--shadow)]">
+                    <div key={i} className="flex items-center justify-between bg-card border border-border p-2 shadow-[2px_2px_0px_0px_var(--shadow)]">
                       <div className="flex items-center gap-3">
                         <span className={`font-black text-lg w-8 text-center ${i < 3 ? "text-yellow-600" : "text-gray-500"}`}>
                           #{i + 1}
@@ -363,7 +363,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="border-4 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
+          <Card className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
             <CardHeader>
               <CardTitle className="uppercase">Upcoming Events</CardTitle>
             </CardHeader>
@@ -371,7 +371,7 @@ export default function Dashboard() {
               <div className="space-y-4">
                  {upcomingEvents.slice(0, 3).map((event) => (
                      <div key={event._id} className="flex items-start gap-3 border-b-2 border-border/10 pb-3 last:border-0 last:pb-0">
-                         <div className="bg-primary text-white border-2 border-border rounded-none p-2 text-center min-w-[50px]">
+                         <div className="bg-primary text-white border border-border rounded-none p-2 text-center min-w-[50px]">
                              <span className="block text-xs font-bold uppercase">
                                  {new Date(event.date).toLocaleString('default', { month: 'short' })}
                              </span>

@@ -70,10 +70,10 @@
   --accent-foreground: #ffffff;
   
   --destructive: #ff0000;
-  --border: #000000;
+  --border: #404040; /* Weak dark (Neutral 700) */
   --input: #ffffff;
-  --ring: #000000;
-  --shadow: #000000;
+  --ring: #404040;
+  --shadow: #404040;
   
   --chart-1: #FF0080;
   --chart-2: #00FF80;
@@ -108,10 +108,10 @@
   --accent: #0080FF;
   --accent-foreground: #ffffff;
   --destructive: #ff0000;
-  --border: #ffffff;
+  --border: #525252; /* Weak dark for dark mode (Neutral 600) */
   --input: #000000;
   --ring: #ffffff;
-  --shadow: #ffffff;
+  --shadow: #525252;
 }
 
 @layer base {
@@ -127,14 +127,14 @@
 
 @layer utilities {
   .neo-brutal {
-    @apply border-4 border-border shadow-[8px_8px_0px_0px_var(--shadow)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_var(--shadow)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none rounded-none;
+    @apply border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_var(--shadow)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none rounded-none;
   }
   
   .neo-brutal-sm {
-    @apply border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_var(--shadow)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none rounded-none;
+    @apply border border-border shadow-[4px_4px_0px_0px_var(--shadow)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_var(--shadow)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none rounded-none;
   }
 
   .neo-input {
-    @apply border-4 border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-[2px_2px_0px_0px_var(--shadow)] focus:translate-x-[2px] focus:translate-y-[2px] outline-none rounded-none;
+    @apply border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-[2px_2px_0px_0px_var(--shadow)] focus:translate-x-[2px] focus:translate-y-[2px] outline-none rounded-none;
   }
 }

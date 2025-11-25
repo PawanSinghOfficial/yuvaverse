@@ -214,12 +214,12 @@ export default function GroupChat() {
           <div className="flex items-center gap-3">
             <div className="relative group/icon">
                 {group.imageUrl ? (
-                    <Avatar className="h-10 w-10 border-2 border-black">
+                    <Avatar className="h-10 w-10 border border-border">
                         <AvatarImage src={group.imageUrl} />
                         <AvatarFallback>{group.name[0]}</AvatarFallback>
                     </Avatar>
                 ) : (
-                    <Avatar className="h-10 w-10 border-2 border-black">
+                    <Avatar className="h-10 w-10 border border-border">
                         <AvatarFallback>{group.name[0]}</AvatarFallback>
                     </Avatar>
                 )}
@@ -324,7 +324,7 @@ export default function GroupChat() {
                 key={msg._id}
                 className={`flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}
               >
-                <Avatar className="h-8 w-8 border-2 border-background shadow-sm">
+                <Avatar className="h-8 w-8 border border-background shadow-sm">
                   <AvatarImage src={sender?.image} />
                   <AvatarFallback>{sender?.name?.[0] || "?"}</AvatarFallback>
                 </Avatar>

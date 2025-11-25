@@ -58,13 +58,13 @@ export default function CalendarPage() {
     <div className="p-8 space-y-8 bg-pink-50 dark:bg-background min-h-screen">
       <div className="flex flex-col gap-2">
         <h1 className="text-4xl font-black tracking-tighter uppercase">Calendar & To-Do</h1>
-        <p className="text-lg font-medium text-muted-foreground border-2 border-border bg-white dark:bg-card p-2 inline-block shadow-[4px_4px_0px_0px_var(--shadow)]">
+        <p className="text-lg font-medium text-muted-foreground border border-border bg-white dark:bg-card p-2 inline-block shadow-[4px_4px_0px_0px_var(--shadow)]">
             Manage your schedule, assignments, and event reminders.
         </p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-[auto_1fr]">
-        <Card className="h-fit border-4 border-border shadow-[8px_8px_0px_0px_var(--shadow)] bg-card">
+        <Card className="h-fit border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)] bg-card">
           <CardContent className="p-4">
             <CalendarComponent
               mode="single"
@@ -72,16 +72,16 @@ export default function CalendarPage() {
               onSelect={setDate}
               className="rounded-none border-0"
               classNames={{
-                day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-none border-2 border-black shadow-[2px_2px_0px_0px_var(--shadow)]",
-                day_today: "bg-accent text-accent-foreground rounded-none border-2 border-black font-bold",
-                day: "h-9 w-9 p-0 font-medium aria-selected:opacity-100 hover:bg-secondary hover:text-secondary-foreground rounded-none transition-all border border-transparent hover:border-black hover:shadow-[2px_2px_0px_0px_var(--shadow)]",
+                day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-none border border-border shadow-[2px_2px_0px_0px_var(--shadow)]",
+                day_today: "bg-accent text-accent-foreground rounded-none border border-border font-bold",
+                day: "h-9 w-9 p-0 font-medium aria-selected:opacity-100 hover:bg-secondary hover:text-secondary-foreground rounded-none transition-all border border-transparent hover:border-border hover:shadow-[2px_2px_0px_0px_var(--shadow)]",
                 head_cell: "text-muted-foreground rounded-none w-9 font-bold text-[0.8rem] uppercase",
               }}
             />
           </CardContent>
         </Card>
 
-        <Card className="flex flex-col h-full min-h-[500px] border-4 border-border shadow-[8px_8px_0px_0px_var(--shadow)] bg-card">
+        <Card className="flex flex-col h-full min-h-[500px] border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)] bg-card">
           <CardHeader className="flex flex-row items-center justify-between border-b-4 border-border bg-secondary/10 pb-6">
             <CardTitle className="uppercase flex items-center gap-2 text-2xl font-black">
               <CalendarIcon className="h-6 w-6" />
@@ -94,7 +94,7 @@ export default function CalendarPage() {
                   Add Task
                 </Button>
               </DialogTrigger>
-              <DialogContent className="border-4 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
+              <DialogContent className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
                 <DialogHeader>
                   <DialogTitle className="text-2xl font-black uppercase">Add New Task</DialogTitle>
                 </DialogHeader>
@@ -105,7 +105,7 @@ export default function CalendarPage() {
                       value={newTodo.title}
                       onChange={(e) => setNewTodo({...newTodo, title: e.target.value})}
                       placeholder="e.g., Submit Assignment"
-                      className="border-4 border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-[2px_2px_0px_0px_var(--shadow)] focus:translate-x-[2px] focus:translate-y-[2px] transition-all"
+                      className="border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-[2px_2px_0px_0px_var(--shadow)] focus:translate-x-[2px] focus:translate-y-[2px] transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -114,7 +114,7 @@ export default function CalendarPage() {
                       type="time"
                       value={newTodo.time}
                       onChange={(e) => setNewTodo({...newTodo, time: e.target.value})}
-                      className="border-4 border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-[2px_2px_0px_0px_var(--shadow)] focus:translate-x-[2px] focus:translate-y-[2px] transition-all"
+                      className="border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-[2px_2px_0px_0px_var(--shadow)] focus:translate-x-[2px] focus:translate-y-[2px] transition-all"
                     />
                   </div>
                   <div className="flex items-center space-x-2 pt-2">
@@ -122,7 +122,7 @@ export default function CalendarPage() {
                       id="reminder" 
                       checked={newTodo.reminder}
                       onCheckedChange={(c) => setNewTodo({...newTodo, reminder: c as boolean})}
-                      className="border-2 border-black h-5 w-5 rounded-none data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                      className="border border-border h-5 w-5 rounded-none data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                     />
                     <Label htmlFor="reminder" className="font-bold cursor-pointer">Set Reminder (30 mins before)</Label>
                   </div>
@@ -136,19 +136,19 @@ export default function CalendarPage() {
           <CardContent className="flex-1 p-6 bg-white dark:bg-black/20">
             <div className="space-y-4">
               {selectedDateTodos.length === 0 ? (
-                <div className="text-center py-12 flex flex-col items-center justify-center text-muted-foreground border-2 border-dashed border-border/50 bg-secondary/5">
+                <div className="text-center py-12 flex flex-col items-center justify-center text-muted-foreground border border-dashed border-border/50 bg-secondary/5">
                   <CalendarIcon className="h-12 w-12 mb-4 opacity-20" />
                   <p className="font-bold text-lg">No tasks for this day.</p>
                   <p className="text-sm">Enjoy your free time or add a new task!</p>
                 </div>
               ) : (
                 selectedDateTodos.map((todo) => (
-                  <div key={todo._id} className="group flex items-center justify-between p-4 border-4 border-black bg-white dark:bg-card shadow-[4px_4px_0px_0px_var(--shadow)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_var(--shadow)] transition-all">
+                  <div key={todo._id} className="group flex items-center justify-between p-4 border-2 border-border bg-white dark:bg-card shadow-[4px_4px_0px_0px_var(--shadow)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_var(--shadow)] transition-all">
                     <div className="flex items-center gap-4">
                       <Checkbox 
                         checked={todo.isCompleted}
                         onCheckedChange={() => toggleTodo({ id: todo._id })}
-                        className="h-6 w-6 border-2 border-black rounded-none data-[state=checked]:bg-secondary data-[state=checked]:text-black"
+                        className="h-6 w-6 border border-border rounded-none data-[state=checked]:bg-secondary data-[state=checked]:text-black"
                       />
                       <div className={todo.isCompleted ? "line-through opacity-50 transition-opacity" : ""}>
                         <p className="font-black text-lg uppercase">{todo.title}</p>
@@ -173,7 +173,7 @@ export default function CalendarPage() {
                       variant="ghost" 
                       size="icon"
                       onClick={() => deleteTodo({ id: todo._id })}
-                      className="text-destructive hover:bg-destructive hover:text-white border-2 border-transparent hover:border-black hover:shadow-[2px_2px_0px_0px_var(--shadow)] rounded-none transition-all opacity-0 group-hover:opacity-100"
+                      className="text-destructive hover:bg-destructive hover:text-white border border-transparent hover:border-border hover:shadow-[2px_2px_0px_0px_var(--shadow)] rounded-none transition-all opacity-0 group-hover:opacity-100"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
