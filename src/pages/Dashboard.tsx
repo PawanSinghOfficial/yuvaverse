@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { getBadgeFromPoints } from "@/lib/utils";
 import confetti from "canvas-confetti";
+import { motion } from "framer-motion";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -30,6 +31,7 @@ export default function Dashboard() {
 
   const [newUsername, setNewUsername] = useState("");
   const [isSettingUsername, setIsSettingUsername] = useState(false);
+  const [streakIncreased, setStreakIncreased] = useState(false);
 
   const badge = getBadgeFromPoints(user?.points || 0);
   const streakSyncRef = useRef(false);
@@ -39,11 +41,13 @@ export default function Dashboard() {
     streakSyncRef.current = true;
     updateStreak().then((result) => {
       if (result?.increased) {
+        setStreakIncreased(true);
         confetti({
           particleCount: 100,
           spread: 70,
           origin: { y: 0.6 },
-          colors: ['#FF0080', '#00FF80', '#0080FF']
+          colors: ['#FFD700', '#FFA500', '#FF4500'],
+          shapes: ['star'],
         });
         toast.success("Daily Streak Increased! 🔥");
       }
@@ -159,10 +163,15 @@ export default function Dashboard() {
                   <Medal className="h-4 w-4 mr-1" />
                   {badge.label} Badge
                 </Badge>
-                <Badge className="bg-orange-500 text-white border border-border rounded-none shadow-[2px_2px_0px_0px_var(--shadow)] flex items-center gap-1">
-                  <Flame className="h-4 w-4" />
-                  {user?.streakCount || 0} day streak
-                </Badge>
+                <motion.div
+                  animate={streakIncreased ? { scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] } : {}}
+                  transition={{ duration: 0.5, repeat: 2 }}
+                >
+                  <Badge className="bg-orange-500 text-white border border-border rounded-none shadow-[2px_2px_0px_0px_var(--shadow)] flex items-center gap-1">
+                    <Flame className="h-4 w-4" />
+                    {user?.streakCount || 0} day streak
+                  </Badge>
+                </motion.div>
               </div>
            </div>
         </div>
