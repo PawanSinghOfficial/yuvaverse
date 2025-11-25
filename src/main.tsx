@@ -18,6 +18,7 @@ import DashboardLayout from "./layouts/DashboardLayout.tsx";
 import GroupChat from "./pages/GroupChat.tsx";
 import Feedback from "./pages/Feedback.tsx";
 import Admin from "./pages/Admin.tsx";
+import CalendarPage from "./pages/Calendar.tsx";
 import "./types/global.d.ts";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
@@ -63,6 +64,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/groups/:groupId" element={<GroupChat />} />
                 <Route path="/events" element={<Events />} />
+                <Route path="/calendar" element={<CalendarPage />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/admin" element={<Admin />} />
             </Route>

@@ -51,6 +51,12 @@ export function AppSidebar({ className }: SidebarProps) {
       color: "text-orange-700",
     },
     {
+      label: "Calendar",
+      icon: Calendar,
+      href: "/calendar",
+      color: "text-yellow-600",
+    },
+    {
       label: "Feedback",
       icon: MessageSquare,
       href: "/feedback",

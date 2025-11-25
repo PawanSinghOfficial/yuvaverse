@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer } from "lucide-react";
+import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer, Settings, Edit, Image as ImageIcon } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -18,6 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 
 export default function GroupChat() {
   const { groupId } = useParams<{ groupId: string }>();
@@ -31,6 +33,9 @@ export default function GroupChat() {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [disappearingDuration, setDisappearingDuration] = useState("0");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
 
   const getExpiresInMinutes = () => {
     const minutes = parseInt(disappearingDuration, 10);
@@ -44,9 +49,11 @@ export default function GroupChat() {
   const members = useQuery(api.groups.getMembers, { groupId: groupId as Id<"groups"> });
   const markAsRead = useMutation(api.groups.markAsRead);
   const generateUploadUrl = useMutation(api.groups.generateUploadUrl);
+  const updateGroup = useMutation(api.groups.updateGroup);
 
   const isMember = members?.some((m) => m.userId === user?._id);
   const isStudyGroup = group?.type === "study";
+  const isCreator = group?.creatorId === user?._id;
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -154,6 +161,46 @@ export default function GroupChat() {
     }
   };
 
+  const handleUpdateGroup = async () => {
+    if (!groupId) return;
+    try {
+      await updateGroup({
+        groupId: groupId as Id<"groups">,
+        name: editName || undefined,
+        description: editDescription || undefined,
+      });
+      toast.success("Group updated!");
+      setIsSettingsOpen(false);
+    } catch (error) {
+      toast.error("Failed to update group");
+    }
+  };
+
+  const handleGroupImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !groupId) return;
+
+    try {
+      const postUrl = await generateUploadUrl();
+      const result = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      
+      if (!result.ok) throw new Error("Upload failed");
+      const { storageId } = await result.json();
+      
+      await updateGroup({
+        groupId: groupId as Id<"groups">,
+        image: storageId,
+      });
+      toast.success("Group icon updated!");
+    } catch (error) {
+      toast.error("Failed to update group icon");
+    }
+  };
+
   if (!group) return <div className="p-8">Loading...</div>;
 
   return (
@@ -165,12 +212,24 @@ export default function GroupChat() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-3">
-            {group.imageUrl && (
-                <Avatar>
-                    <AvatarImage src={group.imageUrl} />
-                    <AvatarFallback>{group.name[0]}</AvatarFallback>
-                </Avatar>
-            )}
+            <div className="relative group/icon">
+                {group.imageUrl ? (
+                    <Avatar className="h-10 w-10 border-2 border-black">
+                        <AvatarImage src={group.imageUrl} />
+                        <AvatarFallback>{group.name[0]}</AvatarFallback>
+                    </Avatar>
+                ) : (
+                    <Avatar className="h-10 w-10 border-2 border-black">
+                        <AvatarFallback>{group.name[0]}</AvatarFallback>
+                    </Avatar>
+                )}
+                {isCreator && (
+                    <label className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover/icon:opacity-100 rounded-full cursor-pointer transition-opacity">
+                        <Edit className="h-4 w-4 text-white" />
+                        <input type="file" className="hidden" accept="image/*" onChange={handleGroupImageUpload} />
+                    </label>
+                )}
+            </div>
             <div>
                 <h1 className="font-bold flex items-center gap-2">
                 {group.name}
@@ -208,6 +267,36 @@ export default function GroupChat() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+            {isCreator && (
+                <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" size="icon" onClick={() => {
+                            setEditName(group.name);
+                            setEditDescription(group.description || "");
+                        }}>
+                            <Settings className="h-5 w-5" />
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Group Settings</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label>Group Name</Label>
+                                <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Description</Label>
+                                <Input value={editDescription} onChange={(e) => setEditDescription(e.target.value)} />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button onClick={handleUpdateGroup}>Save Changes</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            )}
             {isMember && (
                 <Button variant="outline" size="icon" className="rounded-full" onClick={handleVideoCall} title="Start Video Call">
                     <Video className="h-4 w-4" />

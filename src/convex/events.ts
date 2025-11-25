@@ -28,6 +28,18 @@ export const register = mutation({
       eventId: args.eventId,
       userId,
     });
+
+    // Add to todos
+    const event = await ctx.db.get(args.eventId);
+    if (event) {
+      await ctx.db.insert("todos", {
+        userId,
+        title: `Event: ${event.title}`,
+        date: event.date,
+        isCompleted: false,
+        eventId: args.eventId,
+      });
+    }
   },
 });
 
@@ -47,6 +59,17 @@ export const unregister = mutation({
     if (!existing) throw new Error("Not registered");
 
     await ctx.db.delete(existing._id);
+
+    // Remove from todos
+    const todo = await ctx.db
+      .query("todos")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .first();
+
+    if (todo) {
+      await ctx.db.delete(todo._id);
+    }
   },
 });
 

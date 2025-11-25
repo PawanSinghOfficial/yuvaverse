@@ -236,3 +236,30 @@ export const markAsRead = mutation({
 export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
 });
+
+export const updateGroup = mutation({
+  args: {
+    groupId: v.id("groups"),
+    name: v.optional(v.string()),
+    description: v.optional(v.string()),
+    image: v.optional(v.id("_storage")),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const group = await ctx.db.get(args.groupId);
+    if (!group) throw new Error("Group not found");
+
+    if (group.creatorId !== userId) {
+      throw new Error("Only the creator can update the group");
+    }
+
+    const updates: any = {};
+    if (args.name) updates.name = args.name;
+    if (args.description) updates.description = args.description;
+    if (args.image) updates.image = args.image;
+
+    await ctx.db.patch(args.groupId, updates);
+  },
+});

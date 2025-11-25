@@ -106,6 +106,15 @@ const schema = defineSchema(
       status: v.string(), // pending, reviewed, resolved, rejected
       reply: v.optional(v.string()),
     }).index("by_user", ["userId"]),
+
+    todos: defineTable({
+      userId: v.id("users"),
+      title: v.string(),
+      date: v.number(),
+      isCompleted: v.boolean(),
+      eventId: v.optional(v.id("events")),
+      reminderTime: v.optional(v.number()),
+    }).index("by_user", ["userId"]).index("by_user_and_date", ["userId", "date"]),
   },
   {
     schemaValidation: false,
