@@ -59,6 +59,9 @@ const schema = defineSchema(
       fileId: v.id("_storage"),
       uploaderId: v.id("users"),
       downloads: v.number(),
+      likes: v.optional(v.array(v.id("users"))),
+      dislikes: v.optional(v.array(v.id("users"))),
+      isFlagged: v.optional(v.boolean()),
     }).index("by_semester", ["semester"]).index("by_uploader", ["uploaderId"]),
 
     groups: defineTable({

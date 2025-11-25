@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Trash2, CheckCircle, XCircle, MessageSquare, Download } from "lucide-react";
+import { Trash2, CheckCircle, XCircle, MessageSquare, Download, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router";
@@ -20,10 +20,12 @@ export default function Admin() {
   const events = useQuery(api.events.list);
   const feedbacks = useQuery(api.feedback.list);
   const resources = useQuery(api.resources.list, {});
+  const flaggedResources = useQuery(api.resources.getFlagged);
   
   const deleteEvent = useMutation(api.events.deleteEvent);
   const updateFeedback = useMutation(api.feedback.updateStatus);
   const deleteResource = useMutation(api.resources.deleteResource);
+  const resolveFlag = useMutation(api.resources.resolveFlag);
 
   const [replyText, setReplyText] = useState("");
   const [selectedFeedback, setSelectedFeedback] = useState<Id<"feedback"> | null>(null);
@@ -55,6 +57,15 @@ export default function Admin() {
     }
   };
 
+  const handleResolveFlag = async (id: Id<"resources">, action: "keep" | "delete") => {
+    try {
+      await resolveFlag({ resourceId: id, action });
+      toast.success(action === "delete" ? "Resource removed" : "Resource kept and unflagged");
+    } catch (error) {
+      toast.error("Failed to resolve flag");
+    }
+  };
+
   const handleFeedbackAction = async (id: Id<"feedback">, status: string, reply?: string) => {
     try {
       await updateFeedback({ id, status, reply });
@@ -78,6 +89,7 @@ export default function Admin() {
           <TabsTrigger value="feedback">Feedback</TabsTrigger>
           <TabsTrigger value="events">Events</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
+          <TabsTrigger value="flagged" className="text-destructive">Flagged Content</TabsTrigger>
         </TabsList>
 
         <TabsContent value="feedback" className="space-y-4">
@@ -137,6 +149,49 @@ export default function Admin() {
             ))}
             {feedbacks?.length === 0 && <p className="text-muted-foreground">No feedback found.</p>}
           </div>
+        </TabsContent>
+
+        <TabsContent value="flagged" className="space-y-4">
+          <Card className="border-destructive/50">
+            <CardHeader>
+              <CardTitle className="text-destructive flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5" />
+                Flagged Resources
+              </CardTitle>
+              <CardDescription>Resources with more than 6 dislikes requiring review.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {flaggedResources?.map((res) => (
+                  <div key={res._id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                    <div>
+                      <p className="font-bold text-lg">{res.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        By {res.uploaderName} • {res.subject} • {res.dislikes?.length || 0} Dislikes
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">{res.description}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" asChild>
+                        <a href={res.url} target="_blank" rel="noopener noreferrer">
+                          <Download className="h-4 w-4 mr-2" /> Review
+                        </a>
+                      </Button>
+                      <Button variant="default" size="sm" onClick={() => handleResolveFlag(res._id, "keep")}>
+                        <CheckCircle className="h-4 w-4 mr-2" /> Keep
+                      </Button>
+                      <Button variant="destructive" size="sm" onClick={() => handleResolveFlag(res._id, "delete")}>
+                        <Trash2 className="h-4 w-4 mr-2" /> Remove
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                {flaggedResources?.length === 0 && (
+                  <p className="text-muted-foreground text-center py-8">No flagged resources.</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="events" className="space-y-4">

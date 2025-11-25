@@ -123,6 +123,9 @@ export default function Landing() {
             <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} YuvaVerse.</p>
             
             <div className="flex flex-col items-center gap-2">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 mb-1">
+                    BUILD FOR STUDENTS, BY STUDENTS
+                </p>
                 <p className="font-serif text-lg font-medium text-foreground">
                     Built by Pawan Singh
                 </p>

@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Upload, Loader2, Code } from "lucide-react";
+import { FileText, Download, Upload, Loader2, Code, ThumbsUp, ThumbsDown, AlertTriangle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,11 +24,15 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Resources() {
+  const { user } = useAuth();
   const resources = useQuery(api.resources.list, {});
   const generateUploadUrl = useMutation(api.resources.generateUploadUrl);
   const createResource = useMutation(api.resources.create);
+  const toggleLike = useMutation(api.resources.toggleLike);
+  const toggleDislike = useMutation(api.resources.toggleDislike);
   
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -86,6 +90,22 @@ export default function Resources() {
       toast.error("Failed to upload resource");
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleLike = async (id: any) => {
+    try {
+      await toggleLike({ resourceId: id });
+    } catch (error) {
+      toast.error("Failed to like resource");
+    }
+  };
+
+  const handleDislike = async (id: any) => {
+    try {
+      await toggleDislike({ resourceId: id });
+    } catch (error) {
+      toast.error("Failed to dislike resource");
     }
   };
 
@@ -187,11 +207,18 @@ export default function Resources() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {resources?.map((resource) => (
-          <Card key={resource._id}>
+        {resources?.map((resource) => {
+          const hasLiked = user && resource.likes?.includes(user._id);
+          const hasDisliked = user && resource.dislikes?.includes(user._id);
+          
+          return (
+          <Card key={resource._id} className={resource.isFlagged ? "border-destructive/50 bg-destructive/5" : ""}>
             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
               <div className="space-y-1">
-                <CardTitle className="text-base font-medium">{resource.title}</CardTitle>
+                <CardTitle className="text-base font-medium flex items-center gap-2">
+                  {resource.title}
+                  {resource.isFlagged && <AlertTriangle className="h-4 w-4 text-destructive" />}
+                </CardTitle>
                 <p className="text-xs text-muted-foreground">{resource.subject} • Sem {resource.semester}</p>
                 <p className="text-xs text-muted-foreground">By {resource.uploaderName}</p>
               </div>
@@ -208,17 +235,39 @@ export default function Resources() {
                 {resource.description || "No description provided."}
               </p>
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-xs text-muted-foreground capitalize">{resource.type}</span>
-                <Button variant="ghost" size="sm" className="h-8 gap-2" asChild>
-                  <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                    <Download className="h-3 w-3" />
-                    Download
-                  </a>
-                </Button>
+                <div className="flex items-center gap-2">
+                   <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className={`h-8 px-2 gap-1 ${hasLiked ? "text-blue-600 bg-blue-50" : "text-muted-foreground"}`}
+                    onClick={() => handleLike(resource._id)}
+                   >
+                     <ThumbsUp className={`h-3 w-3 ${hasLiked ? "fill-current" : ""}`} />
+                     <span className="text-xs">{resource.likes?.length || 0}</span>
+                   </Button>
+                   <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className={`h-8 px-2 gap-1 ${hasDisliked ? "text-red-600 bg-red-50" : "text-muted-foreground"}`}
+                    onClick={() => handleDislike(resource._id)}
+                   >
+                     <ThumbsDown className={`h-3 w-3 ${hasDisliked ? "fill-current" : ""}`} />
+                     <span className="text-xs">{resource.dislikes?.length || 0}</span>
+                   </Button>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground capitalize">{resource.type}</span>
+                    <Button variant="ghost" size="sm" className="h-8 gap-2" asChild>
+                    <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                        <Download className="h-3 w-3" />
+                        Download
+                    </a>
+                    </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
-        ))}
+        )})}
         {resources?.length === 0 && (
             <div className="col-span-full text-center py-12 text-muted-foreground">
                 No resources found. Be the first to upload!

@@ -204,22 +204,22 @@ export default function GroupChat() {
   if (!group) return <div className="p-8">Loading...</div>;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-2rem)] md:h-[calc(100vh-4rem)] bg-background">
+    <div className="flex flex-col h-[calc(100vh-2rem)] md:h-[calc(100vh-4rem)] bg-white">
       {/* Header */}
-      <div className="border-b p-4 flex items-center justify-between bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm z-10">
+      <div className="border-b p-4 flex items-center justify-between bg-white/95 backdrop-blur shadow-sm z-10">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/groups")} className="rounded-full hover:bg-primary/10">
+          <Button variant="ghost" size="icon" onClick={() => navigate("/groups")} className="rounded-full hover:bg-gray-100">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-3">
             <div className="relative group/icon">
                 {group.imageUrl ? (
-                    <Avatar className="h-10 w-10 border border-border">
+                    <Avatar className="h-10 w-10 border border-gray-200">
                         <AvatarImage src={group.imageUrl} />
                         <AvatarFallback>{group.name[0]}</AvatarFallback>
                     </Avatar>
                 ) : (
-                    <Avatar className="h-10 w-10 border border-border">
+                    <Avatar className="h-10 w-10 border border-gray-200">
                         <AvatarFallback>{group.name[0]}</AvatarFallback>
                     </Avatar>
                 )}
@@ -311,7 +311,7 @@ export default function GroupChat() {
       </div>
 
       {/* Messages Area */}
-      <ScrollArea className="flex-1 p-4 bg-secondary/30">
+      <ScrollArea className="flex-1 p-4 bg-white">
         <div className="space-y-4 max-w-3xl mx-auto pb-4">
           {messages?.slice().reverse().map((msg) => {
             const isMe = msg.userId === user?._id;
@@ -324,7 +324,7 @@ export default function GroupChat() {
                 key={msg._id}
                 className={`flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}
               >
-                <Avatar className="h-8 w-8 border border-background shadow-sm">
+                <Avatar className="h-8 w-8 border border-gray-100 shadow-sm">
                   <AvatarImage src={sender?.image} />
                   <AvatarFallback>{sender?.name?.[0] || "?"}</AvatarFallback>
                 </Avatar>
@@ -334,15 +334,15 @@ export default function GroupChat() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1 px-1">
-                    <span className="text-xs font-medium text-muted-foreground">
+                    <span className="text-xs font-medium text-gray-500">
                       {sender?.name || "Unknown"}
                     </span>
                   </div>
                   <div
                     className={`rounded-2xl px-4 py-2 text-sm shadow-sm ${
                       isMe
-                        ? "bg-primary text-primary-foreground rounded-tr-none"
-                        : "bg-card text-card-foreground rounded-tl-none"
+                        ? "bg-blue-600 text-white rounded-tr-none"
+                        : "bg-gray-100 text-gray-900 rounded-tl-none"
                     } ${isDisappearing ? "border border-amber-500/40" : ""}`}
                   >
                     {msg.type === "text" && msg.content}
@@ -358,11 +358,11 @@ export default function GroupChat() {
                     </div>
                   )}
                   <div className="flex items-center gap-1 mt-1 px-1">
-                    <span className="text-[10px] text-muted-foreground/60">
+                    <span className="text-[10px] text-gray-400">
                       {new Date(msg._creationTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                     {isMe && (
-                        <span className="text-muted-foreground/60">
+                        <span className="text-gray-400">
                             {isSeen ? <CheckCheck className="h-3 w-3 text-blue-500" /> : <Check className="h-3 w-3" />}
                         </span>
                     )}
@@ -376,10 +376,10 @@ export default function GroupChat() {
       </ScrollArea>
 
       {/* Input Area */}
-      <div className="p-4 border-t bg-background/80 backdrop-blur-md">
+      <div className="p-4 border-t bg-white">
         <div className="max-w-3xl mx-auto space-y-3">
           {isStudyGroup && (
-            <div className="flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-2 text-xs text-gray-500 sm:flex-row sm:items-center">
               <span className="flex items-center gap-1 font-semibold uppercase tracking-wide">
                 <Timer className="h-3 w-3" />
                 Disappearing messages
@@ -389,7 +389,7 @@ export default function GroupChat() {
                 onValueChange={setDisappearingDuration}
                 disabled={!isMember}
               >
-                <SelectTrigger className="h-8 w-full rounded-full bg-secondary/50 border-transparent focus-visible:ring-0 focus:ring-0 sm:w-64">
+                <SelectTrigger className="h-8 w-full rounded-full bg-gray-50 border-gray-200 focus-visible:ring-0 focus:ring-0 sm:w-64">
                   <SelectValue placeholder="Keep forever" />
                 </SelectTrigger>
                 <SelectContent>
@@ -405,10 +405,10 @@ export default function GroupChat() {
               <Button
                 variant={isRecording ? "destructive" : "ghost"}
                 size="icon"
-                className="rounded-full shrink-0"
+                className="rounded-full shrink-0 hover:bg-gray-100"
                 onClick={isRecording ? stopRecording : startRecording}
               >
-                {isRecording ? <Square className="h-4 w-4 fill-current" /> : <Mic className="h-5 w-5" />}
+                {isRecording ? <Square className="h-4 w-4 fill-current" /> : <Mic className="h-5 w-5 text-gray-500" />}
               </Button>
             )}
 
@@ -420,13 +420,13 @@ export default function GroupChat() {
                   isRecording ? "Recording..." : isMember ? "Type a message..." : "Join the group to chat"
                 }
                 disabled={!isMember || isRecording}
-                className="flex-1 rounded-full bg-secondary/50 border-transparent focus:border-primary/20 focus:bg-background transition-all shadow-inner"
+                className="flex-1 rounded-full bg-gray-50 border-gray-200 focus:border-blue-500 focus:bg-white transition-all shadow-inner"
               />
               <Button
                 type="submit"
                 disabled={!isMember || !newMessage.trim()}
                 size="icon"
-                className="rounded-full shrink-0 shadow-md hover:shadow-lg transition-all"
+                className="rounded-full shrink-0 shadow-md hover:shadow-lg transition-all bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <Send className="h-4 w-4" />
                 <span className="sr-only">Send</span>
