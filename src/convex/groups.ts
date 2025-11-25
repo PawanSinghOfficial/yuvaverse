@@ -149,22 +149,26 @@ export const getMessages = query({
       .withIndex("by_group", (q) => q.eq("groupId", args.groupId))
       .order("desc")
       .take(50);
-    
-    return await Promise.all(messages.map(async (msg) => {
-      let contentUrl = undefined;
-      if (msg.type === "audio" || msg.type === "image") {
-        // For audio/image, content is the storageId
-        try {
+
+    const now = Date.now();
+    const activeMessages = messages.filter((msg) => !msg.expiresAt || msg.expiresAt > now);
+
+    return await Promise.all(
+      activeMessages.map(async (msg) => {
+        let contentUrl = undefined;
+        if (msg.type === "audio" || msg.type === "image") {
+          try {
             contentUrl = await ctx.storage.getUrl(msg.content as Id<"_storage">);
-        } catch (e) {
+          } catch (e) {
             contentUrl = null;
+          }
         }
-      }
-      return {
-        ...msg,
-        contentUrl,
-      };
-    }));
+        return {
+          ...msg,
+          contentUrl,
+        };
+      }),
+    );
   },
 });
 
@@ -173,6 +177,7 @@ export const sendMessage = mutation({
     groupId: v.id("groups"),
     content: v.string(),
     type: v.string(),
+    expiresInMinutes: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -181,12 +186,27 @@ export const sendMessage = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
+    const group = await ctx.db.get(args.groupId);
+    if (!group) throw new Error("Group not found");
+
+    let expiresAt: number | undefined;
+    if (args.expiresInMinutes && args.expiresInMinutes > 0) {
+      if (group.type !== "study") {
+        throw new Error("Disappearing messages are only available in study groups");
+      }
+      const clampedMinutes = Math.min(args.expiresInMinutes, 60 * 24);
+      expiresAt = Date.now() + clampedMinutes * 60 * 1000;
+    }
+
+    const { expiresInMinutes, ...message } = args;
+
     await ctx.db.insert("messages", {
-      ...args,
+      ...message,
       userId: user._id,
       seenBy: [user._id],
+      expiresAt,
     });
-    
+
     // Award points for participation
     const currentPoints = user.points || 0;
     await ctx.db.patch(user._id, { points: currentPoints + 1 });

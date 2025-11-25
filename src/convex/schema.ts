@@ -45,6 +45,8 @@ const schema = defineSchema(
       tier: v.optional(tierValidator),
       points: v.optional(v.number()),
       username: v.optional(v.string()),
+      streakCount: v.optional(v.number()),
+      lastActiveDate: v.optional(v.number()),
     }).index("email", ["email"]).index("by_username", ["username"]), // index for the email. do not remove or modify
 
     resources: defineTable({
@@ -80,6 +82,7 @@ const schema = defineSchema(
       content: v.string(),
       type: v.string(), // text, image, audio
       seenBy: v.optional(v.array(v.id("users"))),
+      expiresAt: v.optional(v.number()),
     }).index("by_group", ["groupId"]),
 
     events: defineTable({

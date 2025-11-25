@@ -2,14 +2,15 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { BookOpen, Calendar, Users, MessageSquare, Trophy, Crown, Star } from "lucide-react";
+import { BookOpen, Calendar, Users, MessageSquare, Trophy, Crown, Star, Flame, Medal } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { getBadgeFromPoints } from "@/lib/utils";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -24,9 +25,21 @@ export default function Dashboard() {
   const redeemPoints = useMutation(api.users.redeemPoints);
   const generateUploadUrl = useMutation(api.users.generateUploadUrl);
   const updateAvatar = useMutation(api.users.updateAvatar);
+  const updateStreak = useMutation(api.users.updateStreak);
 
   const [newUsername, setNewUsername] = useState("");
   const [isSettingUsername, setIsSettingUsername] = useState(false);
+
+  const badge = getBadgeFromPoints(user?.points || 0);
+  const streakSyncRef = useRef(false);
+
+  useEffect(() => {
+    if (!user?._id || streakSyncRef.current) return;
+    streakSyncRef.current = true;
+    updateStreak().catch(() => {
+      streakSyncRef.current = false;
+    });
+  }, [user?._id, updateStreak]);
 
   const isSocietyHead = user?.role === "society_head";
   const isPremium = user?.tier === "premium" || user?.tier === "elite";
@@ -118,14 +131,28 @@ export default function Dashboard() {
                 <span className="text-white text-xs font-medium">Change</span>
                 <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
               </label>
+              <div className={`absolute -bottom-1 -right-1 px-2 py-0.5 text-[10px] font-semibold text-white rounded-full bg-gradient-to-r ${badge.gradient} shadow-lg`}>
+                <span className="mr-1">{badge.icon}</span>
+                {badge.label}
+              </div>
            </div>
            <div>
               <h1 className="text-3xl font-bold tracking-tight">
-                Welcome back, {user?.username || user?.name?.split(' ')[0] || "Student"}
+                Welcome back, {user?.username || user?.name?.split(" ")[0] || "Student"}
               </h1>
               <p className="text-muted-foreground mt-2">
                 Here's what's happening at YuvaVerse today.
               </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Badge className="bg-primary/10 text-primary border border-primary/20">
+                  <Medal className="h-3 w-3 mr-1" />
+                  {badge.label} Badge
+                </Badge>
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  <Flame className="h-3 w-3 text-orange-500" />
+                  {user?.streakCount || 0} day streak
+                </Badge>
+              </div>
            </div>
         </div>
         <div className="flex gap-2">
@@ -192,6 +219,16 @@ export default function Dashboard() {
             </CardContent>
             </Card>
         )}
+        <Card className="hover:bg-muted/50 transition-colors border-l-4 border-l-red-400 neu-flat">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Daily Streak</CardTitle>
+            <Flame className="h-4 w-4 text-orange-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{user?.streakCount || 0} days</div>
+            <p className="text-xs text-muted-foreground">Stay active to keep your streak alive.</p>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -312,17 +349,25 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {leaderboard.map((u, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className={`font-bold w-6 text-center ${i < 3 ? "text-yellow-600" : "text-muted-foreground"}`}>
-                        #{i + 1}
-                      </span>
-                      <span className="text-sm font-medium">{u.name}</span>
+                {leaderboard.map((u, i) => {
+                  const entryBadge = getBadgeFromPoints(u.points);
+                  return (
+                    <div key={i} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className={`font-bold w-6 text-center ${i < 3 ? "text-yellow-600" : "text-muted-foreground"}`}>
+                          #{i + 1}
+                        </span>
+                        <span className="text-sm font-medium">{u.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-primary">{u.points} pts</span>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r ${entryBadge.gradient} text-white`}>
+                          {entryBadge.label}
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-sm font-bold text-primary">{u.points} pts</span>
-                  </div>
-                ))}
+                  );
+                })}
                 {leaderboard.length === 0 && <p className="text-sm text-muted-foreground">No contributions yet.</p>}
               </div>
             </CardContent>

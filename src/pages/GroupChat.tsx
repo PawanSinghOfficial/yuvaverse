@@ -7,10 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck } from "lucide-react";
+import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function GroupChat() {
   const { groupId } = useParams<{ groupId: string }>();
@@ -23,6 +30,12 @@ export default function GroupChat() {
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [disappearingDuration, setDisappearingDuration] = useState("0");
+
+  const getExpiresInMinutes = () => {
+    const minutes = parseInt(disappearingDuration, 10);
+    return Number.isFinite(minutes) && minutes > 0 ? minutes : undefined;
+  };
 
   const group = useQuery(api.groups.get, { id: groupId as Id<"groups"> });
   const messages = useQuery(api.groups.getMessages, { groupId: groupId as Id<"groups"> });
@@ -33,6 +46,7 @@ export default function GroupChat() {
   const generateUploadUrl = useMutation(api.groups.generateUploadUrl);
 
   const isMember = members?.some((m) => m.userId === user?._id);
+  const isStudyGroup = group?.type === "study";
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -56,10 +70,12 @@ export default function GroupChat() {
     if (!newMessage.trim() || !groupId) return;
 
     try {
+      const expiresInMinutes = getExpiresInMinutes();
       await sendMessage({
         groupId: groupId as Id<"groups">,
         content: newMessage,
         type: "text",
+        expiresInMinutes,
       });
       setNewMessage("");
     } catch (error) {
@@ -111,11 +127,13 @@ export default function GroupChat() {
       
       if (!result.ok) throw new Error("Upload failed");
       const { storageId } = await result.json();
+      const expiresInMinutes = getExpiresInMinutes();
 
       await sendMessage({
         groupId: groupId as Id<"groups">,
         content: storageId,
         type: "audio",
+        expiresInMinutes,
       });
     } catch (error) {
       toast.error("Failed to send audio");
@@ -208,8 +226,9 @@ export default function GroupChat() {
         <div className="space-y-4 max-w-3xl mx-auto pb-4">
           {messages?.slice().reverse().map((msg) => {
             const isMe = msg.userId === user?._id;
-            const sender = members?.find(m => m.userId === msg.userId)?.user;
-            const isSeen = msg.seenBy && msg.seenBy.length > 1; // Seen by more than just sender
+            const sender = members?.find((m) => m.userId === msg.userId)?.user;
+            const isSeen = msg.seenBy && msg.seenBy.length > 1;
+            const isDisappearing = Boolean(msg.expiresAt);
             
             return (
               <div
@@ -235,13 +254,20 @@ export default function GroupChat() {
                       isMe
                         ? "bg-primary text-primary-foreground rounded-tr-none"
                         : "bg-card text-card-foreground rounded-tl-none"
-                    }`}
+                    } ${isDisappearing ? "border border-amber-500/40" : ""}`}
                   >
                     {msg.type === "text" && msg.content}
                     {msg.type === "audio" && msg.contentUrl && (
                         <audio controls src={msg.contentUrl} className="h-8 w-48" />
                     )}
                   </div>
+                  {msg.expiresAt && (
+                    <div className="flex items-center gap-1 mt-1 px-1 text-[10px] text-amber-600">
+                      <Timer className="h-3 w-3" />
+                      Disappears at{" "}
+                      {new Date(msg.expiresAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </div>
+                  )}
                   <div className="flex items-center gap-1 mt-1 px-1">
                     <span className="text-[10px] text-muted-foreground/60">
                       {new Date(msg._creationTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -262,31 +288,62 @@ export default function GroupChat() {
 
       {/* Input Area */}
       <div className="p-4 border-t bg-background/80 backdrop-blur-md">
-        <div className="max-w-3xl mx-auto flex gap-2 items-center">
-          {isMember && (
-              <Button 
-                variant={isRecording ? "destructive" : "ghost"} 
-                size="icon" 
+        <div className="max-w-3xl mx-auto space-y-3">
+          {isStudyGroup && (
+            <div className="flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center">
+              <span className="flex items-center gap-1 font-semibold uppercase tracking-wide">
+                <Timer className="h-3 w-3" />
+                Disappearing messages
+              </span>
+              <Select
+                value={disappearingDuration}
+                onValueChange={setDisappearingDuration}
+                disabled={!isMember}
+              >
+                <SelectTrigger className="h-8 w-full rounded-full bg-secondary/50 border-transparent focus-visible:ring-0 focus:ring-0 sm:w-64">
+                  <SelectValue placeholder="Keep forever" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">Keep forever</SelectItem>
+                  <SelectItem value="60">Disappear in 1 hour</SelectItem>
+                  <SelectItem value="1440">Disappear in 24 hours</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          <div className="flex gap-2 items-center">
+            {isMember && (
+              <Button
+                variant={isRecording ? "destructive" : "ghost"}
+                size="icon"
                 className="rounded-full shrink-0"
                 onClick={isRecording ? stopRecording : startRecording}
               >
                 {isRecording ? <Square className="h-4 w-4 fill-current" /> : <Mic className="h-5 w-5" />}
               </Button>
-          )}
-          
-          <form onSubmit={handleSendMessage} className="flex-1 flex gap-2">
-            <Input
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder={isRecording ? "Recording..." : (isMember ? "Type a message..." : "Join the group to chat")}
-              disabled={!isMember || isRecording}
-              className="flex-1 rounded-full bg-secondary/50 border-transparent focus:border-primary/20 focus:bg-background transition-all shadow-inner"
-            />
-            <Button type="submit" disabled={!isMember || !newMessage.trim()} size="icon" className="rounded-full shrink-0 shadow-md hover:shadow-lg transition-all">
-              <Send className="h-4 w-4" />
-              <span className="sr-only">Send</span>
-            </Button>
-          </form>
+            )}
+
+            <form onSubmit={handleSendMessage} className="flex-1 flex gap-2">
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder={
+                  isRecording ? "Recording..." : isMember ? "Type a message..." : "Join the group to chat"
+                }
+                disabled={!isMember || isRecording}
+                className="flex-1 rounded-full bg-secondary/50 border-transparent focus:border-primary/20 focus:bg-background transition-all shadow-inner"
+              />
+              <Button
+                type="submit"
+                disabled={!isMember || !newMessage.trim()}
+                size="icon"
+                className="rounded-full shrink-0 shadow-md hover:shadow-lg transition-all"
+              >
+                <Send className="h-4 w-4" />
+                <span className="sr-only">Send</span>
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

@@ -15,12 +15,14 @@ import {
 import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
+import { getBadgeFromPoints } from "@/lib/utils";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function AppSidebar({ className }: SidebarProps) {
   const { pathname } = useLocation();
   const { user, signOut } = useAuth();
+  const badge = getBadgeFromPoints(user?.points || 0);
 
   const routes = [
     {
@@ -99,13 +101,18 @@ export function AppSidebar({ className }: SidebarProps) {
       <div className="mt-auto px-3 py-2">
          <div className="bg-card neu-flat rounded-lg p-4 mb-4">
             <div className="flex items-center gap-3 mb-3">
-                {user?.image ? (
-                  <img src={user.image} alt={user.name || "User"} className="h-10 w-10 rounded-full object-cover border border-border" />
-                ) : (
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg border border-border">
-                      {user?.name?.[0] || "U"}
+                <div className="relative">
+                  {user?.image ? (
+                    <img src={user.image} alt={user.name || "User"} className="h-10 w-10 rounded-full object-cover border border-border" />
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg border border-border">
+                        {user?.name?.[0] || "U"}
+                    </div>
+                  )}
+                  <div className={`absolute -bottom-1 -right-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gradient-to-r ${badge.gradient} text-white shadow-lg`}>
+                    {badge.icon}
                   </div>
-                )}
+                </div>
                 <div className="overflow-hidden">
                     <p className="text-sm font-medium truncate">{user?.username || user?.name}</p>
                     <p className="text-xs text-muted-foreground truncate capitalize">{user?.role || "Student"}</p>
@@ -115,7 +122,10 @@ export function AppSidebar({ className }: SidebarProps) {
                 <span>{user?.points || 0} Points</span>
                 <span className="capitalize text-primary font-semibold">{user?.tier || "Freemium"}</span>
             </div>
-         </div>
+            <p className="mt-2 text-[10px] uppercase tracking-wide text-muted-foreground/70">
+              Badge: {badge.label}
+            </p>
+        </div>
 
         <Button 
             variant="ghost" 

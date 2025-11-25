@@ -2,6 +2,14 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { query, mutation, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
 
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+
+const startOfDay = (timestamp: number) => {
+  const day = new Date(timestamp);
+  day.setHours(0, 0, 0, 0);
+  return day.getTime();
+};
+
 /**
  * Get the current signed in user. Returns null if the user is not signed in.
  * Usage: const signedInUser = await ctx.runQuery(api.authHelpers.currentUser);
@@ -124,5 +132,49 @@ export const getLeaderboard = query({
         points: u.points || 0,
         image: u.image
       }));
+  },
+});
+
+export const updateStreak = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    const today = startOfDay(Date.now());
+    const lastActive =
+      typeof user.lastActiveDate === "number" ? startOfDay(user.lastActiveDate) : undefined;
+
+    let streak = user.streakCount || 0;
+    let shouldPatch = false;
+
+    if (lastActive === undefined) {
+      streak = 1;
+      shouldPatch = true;
+    } else {
+      const diffDays = Math.floor((today - lastActive) / DAY_IN_MS);
+
+      if (diffDays === 0) {
+        if (user.lastActiveDate !== today) {
+          shouldPatch = true;
+        }
+      } else if (diffDays === 1) {
+        streak += 1;
+        shouldPatch = true;
+      } else if (diffDays > 1) {
+        streak = 1;
+        shouldPatch = true;
+      }
+    }
+
+    if (shouldPatch) {
+      await ctx.db.patch(userId, {
+        streakCount: streak,
+        lastActiveDate: today,
+      });
+    }
   },
 });
