@@ -125,7 +125,7 @@ export default function Landing() {
             
             <div className="flex flex-col items-center gap-2">
                 <p className="text-[10px] font-bold tracking-widest text-muted-foreground/80 mb-1">
-                    Build for students by student
+                    BUILD FOR STUDENTS, BY STUDENT
                 </p>
                 <p className="font-serif text-lg font-medium text-foreground">
                     Pawan Singh
