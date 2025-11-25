@@ -106,11 +106,13 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
           
           <Button
             variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition hover:neu-flat p-3 h-auto"
+            className="text-sm group flex p-3 w-full justify-start font-medium cursor-pointer text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition hover:neu-flat h-auto"
             onClick={onGuideClick}
           >
-             <Bot className="h-5 w-5 mr-3 text-indigo-500" />
-             Guide Me
+             <div className="flex items-center flex-1">
+                <Bot className="h-5 w-5 mr-3 text-indigo-500" />
+                Guide Me
+             </div>
           </Button>
         </div>
       </div>
