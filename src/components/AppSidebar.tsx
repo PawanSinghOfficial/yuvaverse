@@ -81,7 +81,7 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
       <div className="px-3 py-2">
         <Link to="/dashboard" className="flex items-center pl-3 mb-14">
           <div className="relative h-10 w-10 mr-3">
-             <img src={logoUrl} alt="YuvaVerse" className="h-full w-full object-contain neu-flat rounded-lg bg-primary/10 p-1" />
+             <img src={logoUrl} alt="YuvaVerse" className="h-full w-full object-contain neo-brutal-sm bg-primary/10 p-1" />
           </div>
           <h1 className="text-2xl font-bold">
             YuvaVerse
@@ -93,8 +93,8 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
               key={route.href}
               to={route.href}
               className={cn(
-                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 rounded-lg transition hover:neu-flat",
-                pathname === route.href ? "text-primary bg-primary/10 neu-pressed" : "text-muted-foreground"
+                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 transition hover:neo-brutal-sm",
+                pathname === route.href ? "text-primary bg-primary/10 neo-brutal-sm" : "text-muted-foreground"
               )}
             >
               <div className="flex items-center flex-1">
@@ -104,21 +104,20 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
             </Link>
           ))}
           
-          <Button
-            variant="ghost"
-            className="text-sm group flex p-3 w-full justify-start font-medium cursor-pointer text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition hover:neu-flat h-auto"
+          <button
+            className="text-sm group flex p-3 w-full justify-start font-medium cursor-pointer text-muted-foreground hover:text-primary hover:bg-primary/10 transition hover:neo-brutal-sm"
             onClick={onGuideClick}
           >
              <div className="flex items-center flex-1">
                 <Bot className="h-5 w-5 mr-3 text-indigo-500" />
                 Guide Me
              </div>
-          </Button>
+          </button>
         </div>
       </div>
       
       <div className="mt-auto px-3 py-2">
-         <div className="bg-card neu-flat rounded-lg p-4 mb-4">
+         <div className="bg-card neo-brutal p-4 mb-4">
             <div className="flex items-center gap-3 mb-3">
                 <div className="relative">
                   {user?.image ? (

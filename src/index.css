@@ -127,7 +127,7 @@
 
 @layer utilities {
   .neo-brutal {
-    @apply border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_var(--shadow)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none rounded-none;
+    @apply border border-border shadow-[8px_8px_0px_0px_var(--shadow)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_var(--shadow)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none rounded-none;
   }
   
   .neo-brutal-sm {
@@ -135,6 +135,6 @@
   }
 
   .neo-input {
-    @apply border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-[2px_2px_0px_0px_var(--shadow)] focus:translate-x-[2px] focus:translate-y-[2px] outline-none rounded-none;
+    @apply border border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-[2px_2px_0px_0px_var(--shadow)] focus:translate-x-[2px] focus:translate-y-[2px] outline-none rounded-none;
   }
 }

@@ -43,16 +43,16 @@ export default function Landing() {
       />
       
       {/* Navbar */}
-      <nav className="py-4 px-6 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-50 border border-border/60 neu-flat shadow-none">
+      <nav className="py-4 px-6 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-border shadow-sm">
         <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-          <img src={logoUrl} alt="YuvaVerse Logo" className="h-10 w-10 object-contain neu-flat rounded-lg bg-primary/10 p-1" />
+          <img src={logoUrl} alt="YuvaVerse Logo" className="h-10 w-10 object-contain neo-brutal-sm bg-primary/10 p-1" />
           YuvaVerse
         </div>
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full border border-border/50 text-muted-foreground neu-flat"
+            className="rounded-none border border-border text-muted-foreground neo-brutal-sm"
             onClick={handleThemeToggle}
             aria-label="Toggle dark mode"
           >
@@ -61,7 +61,7 @@ export default function Landing() {
           <Button variant="ghost" onClick={() => navigate("/auth")}>
             Log in
           </Button>
-          <Button onClick={() => navigate("/auth")} className="neu-flat">
+          <Button onClick={() => navigate("/auth")} className="neo-brutal-sm">
             Get Started
           </Button>
         </div>
@@ -101,9 +101,9 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <motion.div 
               whileHover={{ y: -5 }}
-              className="bg-card p-6 rounded-xl neu-flat"
+              className="bg-card p-6 neo-brutal"
             >
-              <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
+              <div className="h-12 w-12 bg-primary/10 flex items-center justify-center mb-4 text-primary border border-border shadow-[2px_2px_0px_0px_var(--shadow)]">
                 <BookOpen className="h-6 w-6" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Resource Library</h3>
@@ -111,9 +111,9 @@ export default function Landing() {
             </motion.div>
             <motion.div 
               whileHover={{ y: -5 }}
-              className="bg-card p-6 rounded-xl neu-flat"
+              className="bg-card p-6 neo-brutal"
             >
-              <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
+              <div className="h-12 w-12 bg-primary/10 flex items-center justify-center mb-4 text-primary border border-border shadow-[2px_2px_0px_0px_var(--shadow)]">
                 <Users className="h-6 w-6" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Study Groups</h3>
@@ -121,9 +121,9 @@ export default function Landing() {
             </motion.div>
             <motion.div 
               whileHover={{ y: -5 }}
-              className="bg-card p-6 rounded-xl neu-flat"
+              className="bg-card p-6 neo-brutal"
             >
-              <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
+              <div className="h-12 w-12 bg-primary/10 flex items-center justify-center mb-4 text-primary border border-border shadow-[2px_2px_0px_0px_var(--shadow)]">
                 <Calendar className="h-6 w-6" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Event Calendar</h3>
@@ -131,9 +131,9 @@ export default function Landing() {
             </motion.div>
             <motion.div 
               whileHover={{ y: -5 }}
-              className="bg-card p-6 rounded-xl neu-flat"
+              className="bg-card p-6 neo-brutal"
             >
-              <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
+              <div className="h-12 w-12 bg-primary/10 flex items-center justify-center mb-4 text-primary border border-border shadow-[2px_2px_0px_0px_var(--shadow)]">
                 <Shield className="h-6 w-6" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Private & Secure</h3>
