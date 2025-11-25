@@ -33,6 +33,26 @@ export const getCurrentUser = async (ctx: QueryCtx) => {
   return await ctx.db.get(userId);
 };
 
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const updateAvatar = mutation({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const url = await ctx.storage.getUrl(args.storageId);
+    if (!url) throw new Error("Failed to get image URL");
+
+    await ctx.db.patch(userId, { image: url });
+  },
+});
+
 export const setUsername = mutation({
   args: { username: v.string() },
   handler: async (ctx, args) => {

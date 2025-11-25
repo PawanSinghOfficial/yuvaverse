@@ -99,9 +99,13 @@ export function AppSidebar({ className }: SidebarProps) {
       <div className="mt-auto px-3 py-2">
          <div className="bg-card neu-flat rounded-lg p-4 mb-4">
             <div className="flex items-center gap-3 mb-3">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                    {user?.name?.[0] || "U"}
-                </div>
+                {user?.image ? (
+                  <img src={user.image} alt={user.name || "User"} className="h-10 w-10 rounded-full object-cover border border-border" />
+                ) : (
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg border border-border">
+                      {user?.name?.[0] || "U"}
+                  </div>
+                )}
                 <div className="overflow-hidden">
                     <p className="text-sm font-medium truncate">{user?.username || user?.name}</p>
                     <p className="text-xs text-muted-foreground truncate capitalize">{user?.role || "Student"}</p>

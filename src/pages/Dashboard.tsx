@@ -22,12 +22,36 @@ export default function Dashboard() {
   
   const setUsername = useMutation(api.users.setUsername);
   const redeemPoints = useMutation(api.users.redeemPoints);
+  const generateUploadUrl = useMutation(api.users.generateUploadUrl);
+  const updateAvatar = useMutation(api.users.updateAvatar);
 
   const [newUsername, setNewUsername] = useState("");
   const [isSettingUsername, setIsSettingUsername] = useState(false);
 
   const isSocietyHead = user?.role === "society_head";
   const isPremium = user?.tier === "premium" || user?.tier === "elite";
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const postUrl = await generateUploadUrl();
+      const result = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      
+      if (!result.ok) throw new Error("Upload failed");
+      const { storageId } = await result.json();
+      
+      await updateAvatar({ storageId });
+      toast.success("Avatar updated!");
+    } catch (error) {
+      toast.error("Failed to update avatar");
+    }
+  };
 
   const handleSetUsername = async () => {
     try {
@@ -81,13 +105,28 @@ export default function Dashboard() {
       )}
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Welcome back, {user?.username || user?.name?.split(' ')[0] || "Student"}
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Here's what's happening at YuvaVerse today.
-          </p>
+        <div className="flex items-center gap-4">
+           <div className="relative group">
+              {user?.image ? (
+                <img src={user.image} alt="Avatar" className="h-16 w-16 rounded-full object-cover border-2 border-primary/20 neu-flat" />
+              ) : (
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl border-2 border-primary/20 neu-flat">
+                  {user?.name?.[0] || "U"}
+                </div>
+              )}
+              <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                <span className="text-white text-xs font-medium">Change</span>
+                <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
+              </label>
+           </div>
+           <div>
+              <h1 className="text-3xl font-bold tracking-tight">
+                Welcome back, {user?.username || user?.name?.split(' ')[0] || "Student"}
+              </h1>
+              <p className="text-muted-foreground mt-2">
+                Here's what's happening at YuvaVerse today.
+              </p>
+           </div>
         </div>
         <div className="flex gap-2">
           <Button onClick={() => navigate("/resources")}>
