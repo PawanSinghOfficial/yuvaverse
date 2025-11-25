@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { getBadgeFromPoints } from "@/lib/utils";
+import confetti from "canvas-confetti";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -36,7 +37,17 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user?._id || streakSyncRef.current) return;
     streakSyncRef.current = true;
-    updateStreak().catch(() => {
+    updateStreak().then((result) => {
+      if (result?.increased) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#FF0080', '#00FF80', '#0080FF']
+        });
+        toast.success("Daily Streak Increased! 🔥");
+      }
+    }).catch(() => {
       streakSyncRef.current = false;
     });
   }, [user?._id, updateStreak]);

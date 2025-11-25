@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
+import confetti from "canvas-confetti";
 
 export default function Resources() {
   const resources = useQuery(api.resources.list, {});
@@ -70,7 +71,14 @@ export default function Resources() {
         fileId: storageId,
       });
 
-      toast.success("Resource uploaded successfully!");
+      confetti({
+        particleCount: 150,
+        spread: 60,
+        origin: { y: 0.7 },
+        colors: ['#FF0080', '#00FF80', '#FFD700']
+      });
+
+      toast.success("Resource uploaded successfully! +Points earned");
       setIsOpen(false);
       setFormData({ title: "", subject: "", semester: "1", type: "note", file: null });
     } catch (error) {

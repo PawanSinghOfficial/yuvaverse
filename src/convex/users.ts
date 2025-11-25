@@ -150,10 +150,12 @@ export const updateStreak = mutation({
 
     let streak = user.streakCount || 0;
     let shouldPatch = false;
+    let increased = false;
 
     if (lastActive === undefined) {
       streak = 1;
       shouldPatch = true;
+      increased = true;
     } else {
       const diffDays = Math.floor((today - lastActive) / DAY_IN_MS);
 
@@ -164,9 +166,11 @@ export const updateStreak = mutation({
       } else if (diffDays === 1) {
         streak += 1;
         shouldPatch = true;
+        increased = true;
       } else if (diffDays > 1) {
         streak = 1;
         shouldPatch = true;
+        // Resetting streak is not an "increase", so increased stays false
       }
     }
 
@@ -176,6 +180,8 @@ export const updateStreak = mutation({
         lastActiveDate: today,
       });
     }
+    
+    return { increased, streak };
   },
 });
 

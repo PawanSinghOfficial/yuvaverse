@@ -27,6 +27,7 @@ import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Id } from "@/convex/_generated/dataModel";
+import confetti from "canvas-confetti";
 
 export default function Groups() {
   const groups = useQuery(api.groups.list);
@@ -99,6 +100,13 @@ export default function Groups() {
     
     try {
       await joinGroup({ groupId });
+      
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
       toast.success("Joined group!");
       navigate(`/groups/${groupId}`);
     } catch (error) {
@@ -110,6 +118,13 @@ export default function Groups() {
     if (!selectedGroup) return;
     try {
       await joinGroup({ groupId: selectedGroup, password: joinPassword });
+      
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
       toast.success("Joined group!");
       setIsJoinDialogOpen(false);
       setJoinPassword("");
