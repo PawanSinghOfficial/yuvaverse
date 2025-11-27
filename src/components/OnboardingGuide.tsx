@@ -48,6 +48,16 @@ const steps = [
     targetId: "dashboard-redeem",
   },
   {
+    title: "Syllabus Tracker",
+    description: "Stay on top of your academics! Select your course, stream, and semester to track your progress topic by topic. Watch your completion percentage grow as you check off topics.",
+    targetId: "sidebar-nav-syllabus",
+  },
+  {
+    title: "AI Notebook",
+    description: "Your personal AI study companion. Use this to launch NotebookLM, where you can upload documents and get AI-generated summaries, quizzes, and insights to help you study smarter.",
+    targetId: "sidebar-nav-notebook",
+  },
+  {
     title: "Feedback & Suggestions",
     description: "The feedback form is for the features you want in future or any complain regarding the same. We value your input to make YuvaVerse better!",
     targetId: "sidebar-nav-feedback",
