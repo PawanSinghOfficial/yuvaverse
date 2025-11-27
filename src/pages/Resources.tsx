@@ -127,11 +127,11 @@ export default function Resources() {
         
         <div className="flex items-center gap-2 w-full md:w-auto">
           <div className="relative w-full md:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search resources..."
-              className="pl-9 w-full"
+              className="pl-10 w-full h-10 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus-visible:ring-0 placeholder:text-muted-foreground/70"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -232,52 +232,56 @@ export default function Resources() {
           const hasDisliked = user && resource.dislikes?.includes(user._id);
           
           return (
-          <Card key={resource._id} className={resource.isFlagged ? "border-destructive/50 bg-destructive/5" : ""}>
+          <Card key={resource._id} className={`border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${resource.isFlagged ? "bg-red-50" : "bg-white"}`}>
             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
               <div className="space-y-1">
-                <CardTitle className="text-base font-medium flex items-center gap-2">
+                <CardTitle className="text-base font-bold flex items-center gap-2">
                   {resource.title}
                   {resource.isFlagged && <AlertTriangle className="h-4 w-4 text-destructive" />}
                 </CardTitle>
-                <p className="text-xs text-muted-foreground">{resource.subject} • Sem {resource.semester}</p>
-                <p className="text-xs text-muted-foreground">By {resource.uploaderName}</p>
+                <div className="flex flex-wrap gap-2 mt-1">
+                    <span className="text-xs font-bold px-2 py-0.5 bg-indigo-100 text-indigo-700 border border-black rounded-none">
+                        {resource.subject}
+                    </span>
+                    <span className="text-xs font-bold px-2 py-0.5 bg-pink-100 text-pink-700 border border-black rounded-none">
+                        Sem {resource.semester}
+                    </span>
+                </div>
+                <p className="text-xs font-medium text-muted-foreground mt-1">By {resource.uploaderName}</p>
               </div>
-              <div className="p-2 bg-muted rounded-md">
+              <div className="p-2 bg-yellow-300 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 {resource.type === "code" ? (
-                  <Code className="h-4 w-4 text-primary" />
+                  <Code className="h-5 w-5 text-black" />
                 ) : (
-                  <FileText className="h-4 w-4 text-primary" />
+                  <FileText className="h-5 w-5 text-black" />
                 )}
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                {resource.description || "No description provided."}
-              </p>
               <div className="mt-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                    <Button 
                     variant="ghost" 
                     size="sm" 
-                    className={`h-8 px-2 gap-1 ${hasLiked ? "text-blue-600 bg-blue-50" : "text-muted-foreground"}`}
+                    className={`h-8 px-2 gap-1 border border-transparent hover:border-black hover:bg-gray-100 ${hasLiked ? "text-blue-600 bg-blue-50 border-blue-200" : "text-muted-foreground"}`}
                     onClick={() => handleLike(resource._id)}
                    >
                      <ThumbsUp className={`h-3 w-3 ${hasLiked ? "fill-current" : ""}`} />
-                     <span className="text-xs">{resource.likes?.length || 0}</span>
+                     <span className="text-xs font-bold">{resource.likes?.length || 0}</span>
                    </Button>
                    <Button 
                     variant="ghost" 
                     size="sm" 
-                    className={`h-8 px-2 gap-1 ${hasDisliked ? "text-red-600 bg-red-50" : "text-muted-foreground"}`}
+                    className={`h-8 px-2 gap-1 border border-transparent hover:border-black hover:bg-gray-100 ${hasDisliked ? "text-red-600 bg-red-50 border-red-200" : "text-muted-foreground"}`}
                     onClick={() => handleDislike(resource._id)}
                    >
                      <ThumbsDown className={`h-3 w-3 ${hasDisliked ? "fill-current" : ""}`} />
-                     <span className="text-xs">{resource.dislikes?.length || 0}</span>
+                     <span className="text-xs font-bold">{resource.dislikes?.length || 0}</span>
                    </Button>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground capitalize">{resource.type}</span>
-                    <Button variant="ghost" size="sm" className="h-8 gap-2" asChild>
+                    <span className="text-xs font-bold text-muted-foreground capitalize bg-gray-100 px-2 py-1 border border-black/20">{resource.type}</span>
+                    <Button variant="default" size="sm" className="h-8 gap-2 bg-black text-white hover:bg-gray-800 border-2 border-transparent hover:border-black shadow-none hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" asChild>
                     <a href={resource.url} target="_blank" rel="noopener noreferrer">
                         <Download className="h-3 w-3" />
                         Download
