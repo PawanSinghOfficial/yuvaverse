@@ -71,7 +71,20 @@ export default function GroupChat() {
 
   const filteredMembers = members?.filter(member => 
     member.user?.name?.toLowerCase().includes(memberSearch.toLowerCase())
-  );
+  ).sort((a, b) => {
+    // 1. Creator always on top
+    const isACreator = a.userId === group?.creatorId;
+    const isBCreator = b.userId === group?.creatorId;
+    if (isACreator && !isBCreator) return -1;
+    if (!isACreator && isBCreator) return 1;
+
+    // 2. Admins before members
+    if (a.role === "admin" && b.role !== "admin") return -1;
+    if (a.role !== "admin" && b.role === "admin") return 1;
+
+    // 3. Alphabetical by name
+    return (a.user?.name || "").localeCompare(b.user?.name || "");
+  });
 
   useEffect(() => {
     if (scrollRef.current) {
