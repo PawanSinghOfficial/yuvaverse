@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { BookOpen, Calendar, Users, MessageSquare, Trophy, Crown, Star, Flame, Medal } from "lucide-react";
+import { BookOpen, Calendar, Users, MessageSquare, Trophy, Crown, Star, Flame, Medal, BookCheck } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
@@ -22,6 +22,7 @@ export default function Dashboard() {
   const registeredEvents = useQuery(api.events.getRegisteredEvents) || [];
   const recentResources = useQuery(api.resources.list, {}) || [];
   const leaderboard = useQuery(api.users.getLeaderboard) || [];
+  const totalTopicsCompleted = useQuery(api.syllabus.getUserTotalProgress) || 0;
   
   const setUsername = useMutation(api.users.setUsername);
   const redeemPoints = useMutation(api.users.redeemPoints);
@@ -185,6 +186,16 @@ export default function Dashboard() {
 
       {/* Stats / Quick Access Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4" id="dashboard-stats-grid">
+        <Card className="bg-card hover:bg-indigo-100 dark:hover:bg-indigo-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#4f46e5]" onClick={() => navigate("/syllabus")}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-lg font-black uppercase">Syllabus</CardTitle>
+            <BookCheck className="h-6 w-6 text-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-black">{totalTopicsCompleted}</div>
+            <p className="text-sm font-bold text-muted-foreground bg-indigo-200 dark:bg-indigo-800 dark:text-white inline-block px-1 mt-1">Topics Completed</p>
+          </CardContent>
+        </Card>
         <Card className="bg-card hover:bg-violet-100 dark:hover:bg-violet-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#8b5cf6]" onClick={() => navigate("/resources")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-black uppercase">Resources</CardTitle>

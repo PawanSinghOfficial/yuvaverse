@@ -132,6 +132,21 @@ export const toggleTopicCompletion = mutation({
   },
 });
 
+export const getUserTotalProgress = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return 0;
+
+    const progress = await ctx.db
+      .query("syllabus_progress")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+    
+    return progress.filter(p => p.isCompleted).length;
+  },
+});
+
 // Seed function to populate initial data
 export const seedInitialData = mutation({
   args: {},
