@@ -114,7 +114,7 @@ export default function Dashboard() {
             </div>
             <Dialog open={isSettingUsername} onOpenChange={setIsSettingUsername}>
               <DialogTrigger asChild>
-                <Button variant="secondary" className="border border-border shadow-[4px_4px_0px_0px_var(--shadow)]">Set Username</Button>
+                <Button variant="secondary" className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">Set Username</Button>
               </DialogTrigger>
               <DialogContent className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
                 <DialogHeader>
@@ -178,7 +178,7 @@ export default function Dashboard() {
            </div>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200" id="dashboard-upload-btn">
+          <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" id="dashboard-upload-btn">
             <BookOpen className="mr-2 h-4 w-4" />
             Upload Resource
           </Button>
@@ -289,7 +289,7 @@ export default function Dashboard() {
                           </span>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" onClick={() => navigate("/events")} className="border border-border shadow-[2px_2px_0px_0px_var(--shadow)]">
+                      <Button variant="outline" size="sm" onClick={() => navigate("/events")} className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
                         View
                       </Button>
                     </div>
@@ -351,7 +351,7 @@ export default function Dashboard() {
                     <Badge className="bg-black dark:bg-white text-white dark:text-black rounded-none">500 pts</Badge>
                   </div>
                   <p className="text-xs font-medium">Unlock exclusive features and badges.</p>
-                  <Button size="sm" className="w-full mt-2" onClick={() => handleRedeem("premium")} disabled={(user?.points || 0) < 500}>
+                  <Button size="sm" className="w-full mt-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={() => handleRedeem("premium")} disabled={(user?.points || 0) < 500}>
                     Redeem
                   </Button>
                 </div>
@@ -361,7 +361,7 @@ export default function Dashboard() {
                     <Badge className="bg-amber-600 text-white rounded-none">1000 pts</Badge>
                   </div>
                   <p className="text-xs font-medium">Top tier status and priority support.</p>
-                  <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white" onClick={() => handleRedeem("elite")} disabled={(user?.points || 0) < 1000}>
+                  <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={() => handleRedeem("elite")} disabled={(user?.points || 0) < 1000}>
                     Redeem
                   </Button>
                 </div>
