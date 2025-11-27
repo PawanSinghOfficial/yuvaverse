@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer, Settings, Edit, Image as ImageIcon, UserMinus } from "lucide-react";
+import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer, Settings, Edit, Image as ImageIcon, UserMinus, Search } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -47,6 +47,7 @@ export default function GroupChat() {
   const [memberToRemove, setMemberToRemove] = useState<Id<"users"> | null>(null);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
+  const [memberSearch, setMemberSearch] = useState("");
 
   const getExpiresInMinutes = () => {
     const minutes = parseInt(disappearingDuration, 10);
@@ -67,6 +68,10 @@ export default function GroupChat() {
   const isStudyGroup = group?.type === "study";
   const isCreator = group?.creatorId === user?._id;
   const currentUserRole = members?.find(m => m.userId === user?._id)?.role;
+
+  const filteredMembers = members?.filter(member => 
+    member.user?.name?.toLowerCase().includes(memberSearch.toLowerCase())
+  );
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -273,9 +278,20 @@ export default function GroupChat() {
                     <SheetHeader>
                     <SheetTitle>Group Members</SheetTitle>
                     </SheetHeader>
-                    <ScrollArea className="h-[calc(100vh-8rem)] mt-4">
+                    <div className="my-4 px-1">
+                        <div className="relative">
+                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Search members..."
+                                value={memberSearch}
+                                onChange={(e) => setMemberSearch(e.target.value)}
+                                className="pl-8"
+                            />
+                        </div>
+                    </div>
+                    <ScrollArea className="h-[calc(100vh-10rem)] mt-0">
                     <div className="space-y-4">
-                        {members?.map((member) => (
+                        {filteredMembers?.map((member) => (
                         <div key={member._id} className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
                                 <Avatar>
