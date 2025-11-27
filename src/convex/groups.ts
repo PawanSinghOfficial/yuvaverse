@@ -263,3 +263,50 @@ export const updateGroup = mutation({
     await ctx.db.patch(args.groupId, updates);
   },
 });
+
+export const removeMember = mutation({
+  args: {
+    groupId: v.id("groups"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const group = await ctx.db.get(args.groupId);
+    if (!group) throw new Error("Group not found");
+
+    const requesterMembership = await ctx.db
+      .query("group_members")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("groupId"), args.groupId))
+      .first();
+
+    const isCreator = group.creatorId === userId;
+    const isAdmin = requesterMembership?.role === "admin";
+
+    if (!isCreator && !isAdmin) {
+      throw new Error("Unauthorized");
+    }
+
+    const targetMembership = await ctx.db
+      .query("group_members")
+      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .filter((q) => q.eq(q.field("groupId"), args.groupId))
+      .first();
+
+    if (!targetMembership) throw new Error("Member not found");
+
+    if (targetMembership.userId === group.creatorId) {
+        throw new Error("Cannot remove creator");
+    }
+
+    if (isAdmin && !isCreator) {
+        if (targetMembership.role === "admin") {
+            throw new Error("Admins cannot remove other admins");
+        }
+    }
+
+    await ctx.db.delete(targetMembership._id);
+  },
+});

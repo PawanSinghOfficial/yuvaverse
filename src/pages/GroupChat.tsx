@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer, Settings, Edit, Image as ImageIcon } from "lucide-react";
+import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer, Settings, Edit, Image as ImageIcon, UserMinus } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -50,10 +50,12 @@ export default function GroupChat() {
   const markAsRead = useMutation(api.groups.markAsRead);
   const generateUploadUrl = useMutation(api.groups.generateUploadUrl);
   const updateGroup = useMutation(api.groups.updateGroup);
+  const removeMember = useMutation(api.groups.removeMember);
 
   const isMember = members?.some((m) => m.userId === user?._id);
   const isStudyGroup = group?.type === "study";
   const isCreator = group?.creatorId === user?._id;
+  const currentUserRole = members?.find(m => m.userId === user?._id)?.role;
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -201,6 +203,21 @@ export default function GroupChat() {
     }
   };
 
+  const handleRemoveMember = async (memberId: Id<"users">) => {
+    if (!groupId) return;
+    if (!confirm("Are you sure you want to remove this member?")) return;
+    
+    try {
+        await removeMember({
+            groupId: groupId as Id<"groups">,
+            userId: memberId
+        });
+        toast.success("Member removed");
+    } catch (error) {
+        toast.error("Failed to remove member");
+    }
+  };
+
   if (!group) return <div className="p-8">Loading...</div>;
 
   return (
@@ -248,15 +265,27 @@ export default function GroupChat() {
                     <ScrollArea className="h-[calc(100vh-8rem)] mt-4">
                     <div className="space-y-4">
                         {members?.map((member) => (
-                        <div key={member._id} className="flex items-center gap-3">
-                            <Avatar>
-                            <AvatarImage src={member.user?.image} />
-                            <AvatarFallback>{member.user?.name?.[0] || "?"}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                            <p className="font-medium">{member.user?.name}</p>
-                            <p className="text-xs text-muted-foreground capitalize">{member.role}</p>
+                        <div key={member._id} className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                                <Avatar>
+                                <AvatarImage src={member.user?.image} />
+                                <AvatarFallback>{member.user?.name?.[0] || "?"}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                <p className="font-medium">{member.user?.name}</p>
+                                <p className="text-xs text-muted-foreground capitalize">{member.role}</p>
+                                </div>
                             </div>
+                            {(isCreator || (currentUserRole === "admin" && member.role !== "admin")) && member.userId !== user?._id && (
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="text-destructive hover:bg-destructive/10 h-8 w-8"
+                                    onClick={() => handleRemoveMember(member.userId)}
+                                >
+                                    <UserMinus className="h-4 w-4" />
+                                </Button>
+                            )}
                         </div>
                         ))}
                     </div>
