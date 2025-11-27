@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Users, Calendar, Shield, Linkedin, Mail, BookCheck, BrainCircuit, Trophy } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Calendar, Shield, Linkedin, Mail, BookCheck, BrainCircuit, Trophy, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 
@@ -75,7 +75,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 py-24 max-w-5xl mx-auto">
+      <section className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 py-24 max-w-5xl mx-auto min-h-[80vh]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -96,6 +96,16 @@ export default function Landing() {
               Join Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
+        </motion.div>
+
+        {/* Scroll Indicator */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-muted-foreground/50"
+        >
+          <ChevronDown className="h-12 w-12" />
         </motion.div>
       </section>
 
