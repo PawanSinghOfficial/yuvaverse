@@ -9,13 +9,53 @@ export const getSubjects = query({
     semester: v.number(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const userId = await getAuthUserId(ctx);
+    
+    const subjects = await ctx.db
       .query("syllabus_subjects")
       .withIndex("by_stream_semester", (q) => 
         q.eq("stream", args.stream).eq("semester", args.semester)
       )
       .filter((q) => q.eq(q.field("course"), args.course))
       .collect();
+
+    if (!userId) {
+      return subjects.map(s => ({ ...s, progress: 0, totalTopics: 0, completedTopics: 0 }));
+    }
+
+    const allUserProgress = await ctx.db
+      .query("syllabus_progress")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+    
+    const completedTopicIds = new Set(allUserProgress.filter(p => p.isCompleted).map(p => p.topicId));
+
+    return await Promise.all(subjects.map(async (subject) => {
+      const units = await ctx.db
+        .query("syllabus_units")
+        .withIndex("by_subject", (q) => q.eq("subjectId", subject._id))
+        .collect();
+      
+      let totalTopics = 0;
+      let completedTopics = 0;
+
+      for (const unit of units) {
+        const topics = await ctx.db
+          .query("syllabus_topics")
+          .withIndex("by_unit", (q) => q.eq("unitId", unit._id))
+          .collect();
+        
+        totalTopics += topics.length;
+        topics.forEach(topic => {
+          if (completedTopicIds.has(topic._id)) {
+            completedTopics++;
+          }
+        });
+      }
+
+      const progress = totalTopics === 0 ? 0 : Math.round((completedTopics / totalTopics) * 100);
+      return { ...subject, progress, totalTopics, completedTopics };
+    }));
   },
 });
 

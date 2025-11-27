@@ -61,6 +61,11 @@ export default function Syllabus() {
 
   const progress = calculateProgress();
 
+  // Calculate overall semester progress
+  const totalSemesterTopics = subjects?.reduce((acc, s) => acc + (s.totalTopics || 0), 0) || 0;
+  const totalSemesterCompleted = subjects?.reduce((acc, s) => acc + (s.completedTopics || 0), 0) || 0;
+  const semesterProgress = totalSemesterTopics === 0 ? 0 : Math.round((totalSemesterCompleted / totalSemesterTopics) * 100);
+
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
@@ -128,35 +133,62 @@ export default function Syllabus() {
 
       <div className="grid lg:grid-cols-12 gap-8">
         {/* Subject List */}
-        <div className="lg:col-span-4 space-y-4">
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            Subjects
-          </h2>
-          <div className="space-y-3">
-            {subjects?.length === 0 ? (
-              <div className="p-8 text-center border-2 border-dashed border-gray-300 rounded-lg text-muted-foreground">
-                No subjects found for this selection.
-              </div>
-            ) : (
-              subjects?.map((subject) => (
-                <button
-                  key={subject._id}
-                  onClick={() => setSelectedSubject(subject._id)}
-                  className={`w-full text-left p-4 border-2 border-black transition-all duration-200 flex items-center justify-between group ${
-                    selectedSubject === subject._id
-                      ? "bg-indigo-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] translate-x-[-2px] translate-y-[-2px]"
-                      : "bg-white hover:bg-gray-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                  }`}
-                >
-                  <div>
-                    <div className="font-bold text-lg">{subject.name}</div>
-                    <div className="text-xs font-mono text-muted-foreground mt-1">{subject.code}</div>
-                  </div>
-                  <ChevronRight className={`h-5 w-5 transition-transform ${selectedSubject === subject._id ? "rotate-90" : "group-hover:translate-x-1"}`} />
-                </button>
-              ))
-            )}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="bg-white border-2 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+             <div className="flex justify-between items-end mb-2">
+                <h3 className="font-bold text-lg">Semester Progress</h3>
+                <span className="font-black text-2xl text-indigo-600">{semesterProgress}%</span>
+             </div>
+             <Progress value={semesterProgress} className="h-3 border-2 border-black bg-gray-100 [&>div]:bg-indigo-600" />
+             <p className="text-xs text-muted-foreground mt-2 font-medium">
+                {totalSemesterCompleted} of {totalSemesterTopics} topics completed
+             </p>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <BookOpen className="h-5 w-5" />
+              Subjects
+            </h2>
+            <div className="space-y-3">
+              {subjects?.length === 0 ? (
+                <div className="p-8 text-center border-2 border-dashed border-gray-300 rounded-lg text-muted-foreground">
+                  No subjects found for this selection.
+                </div>
+              ) : (
+                subjects?.map((subject) => (
+                  <button
+                    key={subject._id}
+                    onClick={() => setSelectedSubject(subject._id)}
+                    className={`w-full text-left p-4 border-2 border-black transition-all duration-200 flex flex-col gap-3 group ${
+                      selectedSubject === subject._id
+                        ? "bg-indigo-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] translate-x-[-2px] translate-y-[-2px]"
+                        : "bg-white hover:bg-gray-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    }`}
+                  >
+                    <div className="flex justify-between items-start w-full">
+                        <div>
+                            <div className="font-bold text-lg leading-tight">{subject.name}</div>
+                            <div className="text-xs font-mono text-muted-foreground mt-1">{subject.code}</div>
+                        </div>
+                        <ChevronRight className={`h-5 w-5 shrink-0 transition-transform ${selectedSubject === subject._id ? "rotate-90" : "group-hover:translate-x-1"}`} />
+                    </div>
+                    
+                    <div className="w-full space-y-1.5">
+                        <div className="flex justify-between text-xs font-bold">
+                            <span className="text-muted-foreground">{subject.completedTopics}/{subject.totalTopics}</span>
+                            <span className={subject.progress === 100 ? "text-green-600" : "text-indigo-600"}>{subject.progress}%</span>
+                        </div>
+                        <Progress 
+                            value={subject.progress} 
+                            className="h-2 border border-black/20 bg-white" 
+                            indicatorClassName={subject.progress === 100 ? "bg-green-500" : "bg-indigo-500"} 
+                        />
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
           </div>
         </div>
 
@@ -169,7 +201,7 @@ export default function Syllabus() {
                   <div className="flex justify-between items-end mb-4">
                     <div>
                       <h2 className="text-2xl font-black">{subjects?.find(s => s._id === selectedSubject)?.name}</h2>
-                      <p className="text-muted-foreground font-medium">Course Progress</p>
+                      <p className="text-muted-foreground font-medium">Subject Progress</p>
                     </div>
                     <div className="flex items-center gap-2 bg-white px-3 py-1 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                       <Trophy className="h-4 w-4 text-yellow-500" />
@@ -187,6 +219,17 @@ export default function Syllabus() {
                           <div className="flex flex-col items-start text-left gap-1">
                             <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">Unit {unit.unitNumber}</span>
                             <span className="text-lg font-bold">{unit.title}</span>
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs font-medium text-muted-foreground">
+                                    {unit.topics.filter(t => t.isCompleted).length}/{unit.topics.length} Topics
+                                </span>
+                                <div className="w-20 h-1.5 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
+                                    <div 
+                                        className="h-full bg-indigo-500" 
+                                        style={{ width: `${(unit.topics.filter(t => t.isCompleted).length / unit.topics.length) * 100}%` }}
+                                    />
+                                </div>
+                            </div>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent className="pb-6">
