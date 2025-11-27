@@ -15,6 +15,7 @@ import type * as feedback from "../feedback.js";
 import type * as groups from "../groups.js";
 import type * as http from "../http.js";
 import type * as resources from "../resources.js";
+import type * as syllabus from "../syllabus.js";
 import type * as todos from "../todos.js";
 import type * as users from "../users.js";
 
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   groups: typeof groups;
   http: typeof http;
   resources: typeof resources;
+  syllabus: typeof syllabus;
   todos: typeof todos;
   users: typeof users;
 }>;

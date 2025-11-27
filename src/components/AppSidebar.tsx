@@ -11,7 +11,8 @@ import {
   Shield,
   GraduationCap,
   Lock,
-  BrainCircuit
+  BrainCircuit,
+  BookCheck
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
@@ -35,6 +36,12 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
       icon: Home,
       href: "/dashboard",
       color: "text-sky-500",
+    },
+    {
+      label: "Syllabus Tracker",
+      icon: BookCheck,
+      href: "/syllabus",
+      color: "text-indigo-600",
     },
     {
       label: "Resources",

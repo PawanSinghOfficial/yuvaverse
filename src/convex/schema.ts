@@ -125,6 +125,33 @@ const schema = defineSchema(
       eventId: v.optional(v.id("events")),
       reminderTime: v.optional(v.number()),
     }).index("by_user", ["userId"]).index("by_user_and_date", ["userId", "date"]),
+
+    // Syllabus Tracking Tables
+    syllabus_subjects: defineTable({
+      name: v.string(),
+      code: v.optional(v.string()),
+      stream: v.string(), // "CSE", "IT", "ECE", "Common"
+      semester: v.number(),
+      course: v.string(), // "B.Tech"
+    }).index("by_stream_semester", ["stream", "semester"]),
+
+    syllabus_units: defineTable({
+      subjectId: v.id("syllabus_subjects"),
+      unitNumber: v.number(),
+      title: v.string(),
+    }).index("by_subject", ["subjectId"]),
+
+    syllabus_topics: defineTable({
+      unitId: v.id("syllabus_units"),
+      title: v.string(),
+      order: v.number(),
+    }).index("by_unit", ["unitId"]),
+
+    syllabus_progress: defineTable({
+      userId: v.id("users"),
+      topicId: v.id("syllabus_topics"),
+      isCompleted: v.boolean(),
+    }).index("by_user_topic", ["userId", "topicId"]).index("by_user", ["userId"]),
   },
   {
     schemaValidation: false,

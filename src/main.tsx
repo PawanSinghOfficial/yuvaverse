@@ -20,6 +20,7 @@ import Feedback from "./pages/Feedback.tsx";
 import Admin from "./pages/Admin.tsx";
 import CalendarPage from "./pages/Calendar.tsx";
 import NotebookLM from "./pages/NotebookLM.tsx";
+import Syllabus from "./pages/Syllabus.tsx";
 import "./types/global.d.ts";
 
 // Force light mode
@@ -65,6 +66,7 @@ createRoot(document.getElementById("root")!).render(
             {/* Protected Routes */}
             <Route element={<DashboardLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/syllabus" element={<Syllabus />} />
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/groups/:groupId" element={<GroupChat />} />
