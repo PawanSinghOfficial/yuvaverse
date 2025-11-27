@@ -29,7 +29,7 @@ export default function Syllabus() {
   );
 
   const toggleTopic = useMutation(api.syllabus.toggleTopicCompletion);
-  const seedData = useMutation(api.syllabus.seedInitialData);
+  const seedData = useMutation(api.seed_syllabus.seedInitialData);
 
   // Auto-seed data on first load if needed (for demo purposes)
   useEffect(() => {
