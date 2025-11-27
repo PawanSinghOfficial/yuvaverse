@@ -18,6 +18,15 @@ export default function Syllabus() {
   const [semester, setSemester] = useState("1");
   const [selectedSubject, setSelectedSubject] = useState<Id<"syllabus_subjects"> | null>(null);
 
+  // Reset stream when course changes
+  useEffect(() => {
+    if (course === "B.Tech") {
+      setStream("Common");
+    } else {
+      setStream("General");
+    }
+  }, [course]);
+
   const subjects = useQuery(api.syllabus.getSubjects, {
     course,
     stream,
@@ -115,11 +124,17 @@ export default function Syllabus() {
                   <SelectValue placeholder="Select Stream" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Common">Common (1st Year)</SelectItem>
-                  <SelectItem value="CSE">Computer Science</SelectItem>
-                  <SelectItem value="IT">Information Technology</SelectItem>
-                  <SelectItem value="ECE">Electronics & Comm.</SelectItem>
-                  <SelectItem value="ME">Mechanical</SelectItem>
+                  {course === "B.Tech" ? (
+                    <>
+                      <SelectItem value="Common">Common (1st Year)</SelectItem>
+                      <SelectItem value="CSE">Computer Science</SelectItem>
+                      <SelectItem value="IT">Information Technology</SelectItem>
+                      <SelectItem value="ECE">Electronics & Comm.</SelectItem>
+                      <SelectItem value="ME">Mechanical</SelectItem>
+                    </>
+                  ) : (
+                    <SelectItem value="General">General</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>

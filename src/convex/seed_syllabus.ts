@@ -519,5 +519,226 @@ export const seedInitialData = mutation({
         { title: "Actuators", topics: ["Hydraulic", "Pneumatic", "Electric"] },
         { title: "Control", topics: ["PLC", "Microcontrollers", "Feedback"] }
     ]);
+
+    // Helper for other courses
+    const addCourseSubject = async (course: string, name: string, code: string, stream: string, semester: number, units: {title: string, topics: string[]}[]) => {
+        const existingSubject = await ctx.db
+            .query("syllabus_subjects")
+            .withIndex("by_stream_semester", (q) => q.eq("stream", stream).eq("semester", semester))
+            .filter((q) => q.and(q.eq(q.field("name"), name), q.eq(q.field("course"), course)))
+            .first();
+        
+        if (existingSubject) return;
+
+        const subjectId = await ctx.db.insert("syllabus_subjects", {
+            name,
+            code,
+            course,
+            stream,
+            semester,
+        });
+        
+        for (let i = 0; i < units.length; i++) {
+            const unitId = await ctx.db.insert("syllabus_units", {
+                subjectId,
+                unitNumber: i + 1,
+                title: units[i].title,
+            });
+            
+            for (let j = 0; j < units[i].topics.length; j++) {
+                await ctx.db.insert("syllabus_topics", {
+                    unitId,
+                    title: units[i].topics[j],
+                    order: j + 1,
+                });
+            }
+        }
+    };
+
+    // --- BCA SYLLABUS ---
+    // Semester 1
+    await addCourseSubject("BCA", "Mathematics-I", "BCA-101", "General", 1, [
+        { title: "Determinants and Matrices", topics: ["Definition and Types", "Properties of Determinants", "Inverse of Matrix", "Rank of Matrix", "System of Linear Equations"] },
+        { title: "Calculus", topics: ["Successive Differentiation", "Leibniz Theorem", "Taylor's Series", "Maclaurin's Series", "Asymptotes"] },
+        { title: "Vector Algebra", topics: ["Scalar and Vector Product", "Gradient", "Divergence", "Curl"] }
+    ]);
+    await addCourseSubject("BCA", "Programming in C", "BCA-103", "General", 1, [
+        { title: "Introduction", topics: ["Algorithm and Flowcharts", "Structure of C Program", "Data Types", "Operators and Expressions"] },
+        { title: "Control Structures", topics: ["Decision Making (if-else)", "Switch Case", "Loops (for, while, do-while)", "Break and Continue"] },
+        { title: "Arrays and Functions", topics: ["1D and 2D Arrays", "String Handling", "User Defined Functions", "Recursion", "Storage Classes"] },
+        { title: "Pointers and Structures", topics: ["Pointer Arithmetic", "Array of Pointers", "Structures and Unions", "File Handling"] }
+    ]);
+    await addCourseSubject("BCA", "Introduction to IT", "BCA-105", "General", 1, [
+        { title: "Computer Basics", topics: ["Generations of Computers", "Classification", "Block Diagram", "Input/Output Devices"] },
+        { title: "Memory and Storage", topics: ["RAM/ROM", "Cache Memory", "Secondary Storage Devices", "Number Systems"] },
+        { title: "Software", topics: ["System Software", "Application Software", "Operating System Basics", "Computer Languages"] }
+    ]);
+
+    // Semester 2
+    await addCourseSubject("BCA", "Mathematics-II", "BCA-102", "General", 2, [
+        { title: "Sets and Relations", topics: ["Set Theory", "Relations and Functions", "Partial Order Relations", "Lattices"] },
+        { title: "Graph Theory", topics: ["Graphs and Subgraphs", "Paths and Circuits", "Eulerian and Hamiltonian Graphs", "Trees"] },
+        { title: "Logic", topics: ["Propositional Logic", "Truth Tables", "Tautologies", "Predicates and Quantifiers"] }
+    ]);
+    await addCourseSubject("BCA", "Data Structures", "BCA-104", "General", 2, [
+        { title: "Introduction", topics: ["Time and Space Complexity", "Arrays", "Sparse Matrices"] },
+        { title: "Linear Data Structures", topics: ["Stacks", "Queues", "Linked Lists (Singly, Doubly, Circular)"] },
+        { title: "Non-Linear Data Structures", topics: ["Trees", "Binary Search Trees", "Graphs (BFS, DFS)"] },
+        { title: "Sorting and Searching", topics: ["Bubble Sort", "Selection Sort", "Insertion Sort", "Linear and Binary Search"] }
+    ]);
+    await addCourseSubject("BCA", "Digital Electronics", "BCA-106", "General", 2, [
+        { title: "Number Systems", topics: ["Binary Arithmetic", "Complements", "Codes (BCD, Gray, Excess-3)"] },
+        { title: "Logic Gates", topics: ["Basic Gates", "Universal Gates", "Boolean Algebra", "K-Map Minimization"] },
+        { title: "Combinational Circuits", topics: ["Adders", "Subtractors", "Multiplexers", "Encoders/Decoders"] },
+        { title: "Sequential Circuits", topics: ["Flip-Flops", "Counters", "Shift Registers"] }
+    ]);
+
+    // Semester 3
+    await addCourseSubject("BCA", "Object Oriented Programming", "BCA-201", "General", 3, [
+        { title: "Introduction to C++", topics: ["OOP Concepts", "Classes and Objects", "Constructors and Destructors"] },
+        { title: "Inheritance", topics: ["Types of Inheritance", "Virtual Base Classes", "Polymorphism", "Function Overloading"] },
+        { title: "Advanced Features", topics: ["Operator Overloading", "Virtual Functions", "Templates", "Exception Handling"] }
+    ]);
+    await addCourseSubject("BCA", "Operating Systems", "BCA-203", "General", 3, [
+        { title: "Introduction", topics: ["OS Types", "System Calls", "OS Structure"] },
+        { title: "Process Management", topics: ["Process States", "Scheduling Algorithms", "Threads", "Deadlocks"] },
+        { title: "Memory Management", topics: ["Paging", "Segmentation", "Virtual Memory", "Page Replacement"] }
+    ]);
+    await addCourseSubject("BCA", "Web Technologies", "BCA-205", "General", 3, [
+        { title: "HTML", topics: ["Tags", "Forms", "Tables", "Frames", "HTML5 Features"] },
+        { title: "CSS", topics: ["Selectors", "Box Model", "Positioning", "CSS3 Animations"] },
+        { title: "JavaScript", topics: ["Variables", "Functions", "DOM Manipulation", "Event Handling", "Form Validation"] }
+    ]);
+
+    // Semester 4
+    await addCourseSubject("BCA", "Java Programming", "BCA-202", "General", 4, [
+        { title: "Core Java", topics: ["JVM Architecture", "Data Types", "Control Statements", "Arrays"] },
+        { title: "OOP in Java", topics: ["Classes", "Inheritance", "Interfaces", "Packages", "Exception Handling"] },
+        { title: "Multithreading", topics: ["Thread Life Cycle", "Synchronization", "Inter-thread Communication"] },
+        { title: "Applets and AWT", topics: ["Applet Life Cycle", "Graphics Programming", "Event Handling", "AWT Controls"] }
+    ]);
+    await addCourseSubject("BCA", "DBMS", "BCA-204", "General", 4, [
+        { title: "Introduction", topics: ["DBMS Architecture", "Data Models", "ER Diagrams"] },
+        { title: "Relational Model", topics: ["Relational Algebra", "Codd's Rules", "Keys"] },
+        { title: "SQL", topics: ["DDL", "DML", "DCL", "Joins", "Subqueries", "Views"] },
+        { title: "Normalization", topics: ["Functional Dependency", "1NF, 2NF, 3NF", "BCNF"] }
+    ]);
+    await addCourseSubject("BCA", "Software Engineering", "BCA-206", "General", 4, [
+        { title: "Introduction", topics: ["Software Crisis", "SDLC Models (Waterfall, Spiral, Agile)"] },
+        { title: "Requirements", topics: ["SRS", "Requirement Elicitation", "Feasibility Study"] },
+        { title: "Design and Testing", topics: ["Cohesion and Coupling", "UML", "Black Box vs White Box Testing"] }
+    ]);
+
+    // Semester 5
+    await addCourseSubject("BCA", "Computer Networks", "BCA-301", "General", 5, [
+        { title: "Basics", topics: ["Network Topologies", "OSI Model", "TCP/IP Model", "Transmission Media"] },
+        { title: "Data Link Layer", topics: ["Error Detection", "Flow Control", "MAC Protocols"] },
+        { title: "Network and Transport", topics: ["IP Addressing", "Routing Algorithms", "TCP vs UDP", "Congestion Control"] },
+        { title: "Application Layer", topics: ["DNS", "HTTP", "FTP", "Email Protocols"] }
+    ]);
+    await addCourseSubject("BCA", "Python Programming", "BCA-303", "General", 5, [
+        { title: "Introduction", topics: ["Variables", "Data Types", "Operators", "Control Flow"] },
+        { title: "Data Structures", topics: ["Lists", "Tuples", "Dictionaries", "Sets"] },
+        { title: "Functions and Modules", topics: ["Functions", "Lambda", "Modules", "Packages"] },
+        { title: "File Handling", topics: ["Reading/Writing Files", "Exception Handling", "OOP in Python"] }
+    ]);
+
+    // Semester 6
+    await addCourseSubject("BCA", "Cyber Security", "BCA-302", "General", 6, [
+        { title: "Introduction", topics: ["Cyber Crime", "Information Security", "CIA Triad"] },
+        { title: "Threats", topics: ["Malware", "Viruses", "Worms", "Trojans", "Phishing", "DoS Attacks"] },
+        { title: "Prevention", topics: ["Firewalls", "Antivirus", "Cryptography Basics", "Digital Signatures"] }
+    ]);
+    await addCourseSubject("BCA", "Cloud Computing", "BCA-304", "General", 6, [
+        { title: "Overview", topics: ["Cloud Computing Definition", "Characteristics", "Service Models (IaaS, PaaS, SaaS)"] },
+        { title: "Deployment Models", topics: ["Public", "Private", "Hybrid", "Community Cloud"] },
+        { title: "Virtualization", topics: ["Concept", "Types of Virtualization", "Hypervisors"] }
+    ]);
+
+
+    // --- BBA SYLLABUS ---
+    // Semester 1
+    await addCourseSubject("BBA", "Principles of Management", "BBA-101", "General", 1, [
+        { title: "Introduction", topics: ["Concept", "Nature and Scope", "Levels of Management", "Managerial Skills"] },
+        { title: "Planning", topics: ["Types of Plans", "Decision Making Process", "MBO"] },
+        { title: "Organizing", topics: ["Structure", "Span of Control", "Delegation", "Decentralization"] },
+        { title: "Directing and Controlling", topics: ["Motivation", "Leadership Styles", "Communication", "Control Techniques"] }
+    ]);
+    await addCourseSubject("BBA", "Business Economics", "BBA-103", "General", 1, [
+        { title: "Introduction", topics: ["Micro vs Macro Economics", "Law of Demand", "Elasticity of Demand"] },
+        { title: "Production and Cost", topics: ["Production Function", "Law of Variable Proportions", "Cost Concepts"] },
+        { title: "Market Structure", topics: ["Perfect Competition", "Monopoly", "Monopolistic Competition", "Oligopoly"] }
+    ]);
+    await addCourseSubject("BBA", "Financial Accounting", "BBA-105", "General", 1, [
+        { title: "Basics", topics: ["Accounting Principles", "Concepts and Conventions", "Double Entry System"] },
+        { title: "Process", topics: ["Journal", "Ledger", "Trial Balance", "Final Accounts"] },
+        { title: "Depreciation", topics: ["Methods of Depreciation", "Bank Reconciliation Statement"] }
+    ]);
+
+    // Semester 2
+    await addCourseSubject("BBA", "Business Mathematics", "BBA-102", "General", 2, [
+        { title: "Algebra", topics: ["AP and GP", "Matrices and Determinants", "Permutations and Combinations"] },
+        { title: "Calculus", topics: ["Differentiation", "Maxima and Minima", "Integration Basics"] },
+        { title: "Commercial Math", topics: ["Simple and Compound Interest", "Annuities", "Ratio and Proportion"] }
+    ]);
+    await addCourseSubject("BBA", "Marketing Management", "BBA-104", "General", 2, [
+        { title: "Introduction", topics: ["Marketing Concept", "Marketing Mix (4Ps)", "Marketing Environment"] },
+        { title: "Consumer Behavior", topics: ["Buying Motives", "Buying Process", "Segmentation", "Targeting", "Positioning"] },
+        { title: "Product and Price", topics: ["Product Life Cycle", "New Product Development", "Pricing Strategies"] }
+    ]);
+    await addCourseSubject("BBA", "Business Statistics", "BBA-106", "General", 2, [
+        { title: "Data Analysis", topics: ["Measures of Central Tendency", "Measures of Dispersion", "Skewness"] },
+        { title: "Correlation", topics: ["Karl Pearson's Coefficient", "Rank Correlation", "Regression Analysis"] },
+        { title: "Index Numbers", topics: ["Construction", "Types", "Time Series Analysis"] }
+    ]);
+
+    // Semester 3
+    await addCourseSubject("BBA", "Human Resource Management", "BBA-201", "General", 3, [
+        { title: "Introduction", topics: ["HRM Functions", "HR Planning", "Job Analysis"] },
+        { title: "Acquisition", topics: ["Recruitment", "Selection", "Placement", "Induction"] },
+        { title: "Development", topics: ["Training and Development", "Performance Appraisal", "Compensation Management"] }
+    ]);
+    await addCourseSubject("BBA", "Business Law", "BBA-203", "General", 3, [
+        { title: "Contract Act", topics: ["Essentials of Valid Contract", "Offer and Acceptance", "Consideration", "Capacity"] },
+        { title: "Sales of Goods", topics: ["Sale vs Agreement to Sell", "Conditions and Warranties", "Unpaid Seller"] },
+        { title: "Company Law", topics: ["Formation of Company", "MOA and AOA", "Directors", "Meetings"] }
+    ]);
+
+    // Semester 4
+    await addCourseSubject("BBA", "Financial Management", "BBA-202", "General", 4, [
+        { title: "Introduction", topics: ["Objectives", "Time Value of Money", "Sources of Finance"] },
+        { title: "Decisions", topics: ["Capital Budgeting", "Cost of Capital", "Capital Structure", "Leverage"] },
+        { title: "Working Capital", topics: ["Concept", "Determinants", "Cash Management", "Inventory Management"] }
+    ]);
+    await addCourseSubject("BBA", "Research Methodology", "BBA-204", "General", 4, [
+        { title: "Introduction", topics: ["Research Process", "Research Design", "Hypothesis"] },
+        { title: "Data Collection", topics: ["Primary vs Secondary Data", "Questionnaire Design", "Sampling Techniques"] },
+        { title: "Report Writing", topics: ["Interpretation", "Report Format", "Bibliography"] }
+    ]);
+
+    // Semester 5
+    await addCourseSubject("BBA", "Entrepreneurship Development", "BBA-301", "General", 5, [
+        { title: "Entrepreneur", topics: ["Characteristics", "Types", "Role in Economic Development"] },
+        { title: "Start-up", topics: ["Idea Generation", "Feasibility Analysis", "Business Plan"] },
+        { title: "Support", topics: ["Institutional Support", "Venture Capital", "Government Schemes"] }
+    ]);
+    await addCourseSubject("BBA", "International Business", "BBA-303", "General", 5, [
+        { title: "Overview", topics: ["Globalization", "Modes of Entry", "MNCs"] },
+        { title: "Environment", topics: ["Economic", "Political", "Legal", "Cultural Environment"] },
+        { title: "Trade", topics: ["Balance of Payments", "WTO", "IMF", "World Bank"] }
+    ]);
+
+    // Semester 6
+    await addCourseSubject("BBA", "Strategic Management", "BBA-302", "General", 6, [
+        { title: "Introduction", topics: ["Strategic Process", "Vision and Mission", "Objectives"] },
+        { title: "Analysis", topics: ["SWOT Analysis", "Porter's Five Forces", "PEST Analysis"] },
+        { title: "Implementation", topics: ["Strategy Formulation", "Implementation", "Evaluation and Control"] }
+    ]);
+    await addCourseSubject("BBA", "Business Ethics", "BBA-304", "General", 6, [
+        { title: "Ethics", topics: ["Nature", "Sources", "Values vs Ethics", "Corporate Governance"] },
+        { title: "CSR", topics: ["Corporate Social Responsibility", "Social Audit", "Ethical Dilemmas"] },
+        { title: "Consumer Protection", topics: ["Consumer Rights", "Consumer Protection Act", "Grievance Redressal"] }
+    ]);
+
   },
 });
