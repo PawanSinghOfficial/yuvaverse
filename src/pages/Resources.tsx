@@ -281,10 +281,9 @@ export default function Resources() {
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-muted-foreground capitalize bg-gray-100 px-2 py-1 border border-black/20">{resource.type}</span>
-                    <Button variant="default" size="sm" className="h-8 gap-2 bg-black text-white hover:bg-gray-800 border-2 border-transparent hover:border-black shadow-none hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" asChild>
-                    <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                        <Download className="h-3 w-3" />
-                        Download
+                    <Button variant="default" size="sm" className="h-8 w-8 p-0 bg-black text-white hover:bg-gray-800 border-2 border-transparent hover:border-black shadow-none hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" asChild>
+                    <a href={resource.url} target="_blank" rel="noopener noreferrer" title="Download">
+                        <Download className="h-4 w-4" />
                     </a>
                     </Button>
                 </div>
