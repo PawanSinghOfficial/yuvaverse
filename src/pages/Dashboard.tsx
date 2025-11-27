@@ -326,8 +326,7 @@ export default function Dashboard() {
                 )}
                 {recentResources.length > 3 && (
                   <Button 
-                    variant="ghost" 
-                    className="w-full text-xs font-bold uppercase tracking-wider border border-dashed border-border hover:bg-accent hover:text-white"
+                    className="w-full font-bold uppercase tracking-wider border-2 border-black bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-gray-50"
                     onClick={() => navigate("/resources")}
                   >
                     See More Resources
@@ -404,7 +403,7 @@ export default function Dashboard() {
                 {leaderboard.length > 3 && (
                   <Dialog open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen}>
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="w-full border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-bold uppercase text-xs">
+                      <Button className="w-full font-bold uppercase tracking-wider border-2 border-black bg-yellow-400 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-yellow-500">
                         View Full Leaderboard
                       </Button>
                     </DialogTrigger>
