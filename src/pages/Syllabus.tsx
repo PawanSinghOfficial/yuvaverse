@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { BookCheck, ChevronRight, Trophy, BookOpen } from "lucide-react";
 import { toast } from "sonner";
+import confetti from "canvas-confetti";
 
 export default function Syllabus() {
   const [course, setCourse] = useState("B.Tech");
@@ -38,6 +39,15 @@ export default function Syllabus() {
   const handleToggle = async (topicId: Id<"syllabus_topics">, isCompleted: boolean) => {
     try {
       await toggleTopic({ topicId, isCompleted });
+      if (isCompleted) {
+        confetti({
+          particleCount: 40,
+          spread: 50,
+          origin: { y: 0.7 },
+          colors: ['#4f46e5', '#818cf8', '#c7d2fe'],
+          disableForReducedMotion: true
+        });
+      }
     } catch (error) {
       toast.error("Failed to update progress");
     }
@@ -219,14 +229,17 @@ export default function Syllabus() {
                           <div className="flex flex-col items-start text-left gap-1">
                             <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">Unit {unit.unitNumber}</span>
                             <span className="text-lg font-bold">{unit.title}</span>
-                            <div className="flex items-center gap-2 mt-1">
+                            <div className="flex items-center gap-3 mt-1">
                                 <span className="text-xs font-medium text-muted-foreground">
                                     {unit.topics.filter(t => t.isCompleted).length}/{unit.topics.length} Topics
                                 </span>
+                                <span className="text-xs font-black text-indigo-600">
+                                    {unit.topics.length === 0 ? 0 : Math.round((unit.topics.filter(t => t.isCompleted).length / unit.topics.length) * 100)}%
+                                </span>
                                 <div className="w-20 h-1.5 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
                                     <div 
-                                        className="h-full bg-indigo-500" 
-                                        style={{ width: `${(unit.topics.filter(t => t.isCompleted).length / unit.topics.length) * 100}%` }}
+                                        className="h-full bg-indigo-500 transition-all duration-500" 
+                                        style={{ width: `${unit.topics.length === 0 ? 0 : (unit.topics.filter(t => t.isCompleted).length / unit.topics.length) * 100}%` }}
                                     />
                                 </div>
                             </div>
