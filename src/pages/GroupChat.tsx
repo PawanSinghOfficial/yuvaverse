@@ -20,6 +20,16 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function GroupChat() {
   const { groupId } = useParams<{ groupId: string }>();
@@ -34,6 +44,7 @@ export default function GroupChat() {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [disappearingDuration, setDisappearingDuration] = useState("0");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState<Id<"users"> | null>(null);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
 
@@ -203,16 +214,16 @@ export default function GroupChat() {
     }
   };
 
-  const handleRemoveMember = async (memberId: Id<"users">) => {
-    if (!groupId) return;
-    if (!confirm("Are you sure you want to remove this member?")) return;
+  const handleConfirmRemove = async () => {
+    if (!groupId || !memberToRemove) return;
     
     try {
         await removeMember({
             groupId: groupId as Id<"groups">,
-            userId: memberId
+            userId: memberToRemove
         });
         toast.success("Member removed");
+        setMemberToRemove(null);
     } catch (error) {
         toast.error("Failed to remove member");
     }
@@ -281,7 +292,7 @@ export default function GroupChat() {
                                     variant="ghost" 
                                     size="icon" 
                                     className="text-destructive hover:bg-destructive/10 h-8 w-8"
-                                    onClick={() => handleRemoveMember(member.userId)}
+                                    onClick={() => setMemberToRemove(member.userId)}
                                 >
                                     <UserMinus className="h-4 w-4" />
                                 </Button>
@@ -290,6 +301,22 @@ export default function GroupChat() {
                         ))}
                     </div>
                     </ScrollArea>
+                    <AlertDialog open={!!memberToRemove} onOpenChange={(open) => !open && setMemberToRemove(null)}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Remove Member</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Are you sure you want to remove this member from the group? They will need to rejoin to access the chat.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleConfirmRemove} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                    Remove
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </SheetContent>
                 </Sheet>
             </div>
