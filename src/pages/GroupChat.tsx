@@ -250,7 +250,7 @@ export default function GroupChat() {
   if (!group) return <div className="p-8">Loading...</div>;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)] w-full bg-white rounded-xl border shadow-sm overflow-hidden">
+    <div className="flex flex-col h-full w-full bg-white rounded-xl border shadow-sm overflow-hidden">
       {/* Header */}
       <div className="border-b p-4 flex items-center justify-between bg-white/95 backdrop-blur shadow-sm z-10">
         <div className="flex items-center gap-3">
