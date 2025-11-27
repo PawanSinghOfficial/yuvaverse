@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
-import { BookCheck, ChevronRight, Trophy, BookOpen } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { BookCheck, ChevronRight, Trophy, BookOpen, Search } from "lucide-react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 
@@ -16,6 +17,7 @@ export default function Syllabus() {
   const [course, setCourse] = useState("B.Tech");
   const [stream, setStream] = useState("Common");
   const [semester, setSemester] = useState("1");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubject, setSelectedSubject] = useState<Id<"syllabus_subjects"> | null>(null);
 
   // Reset stream when course changes
@@ -32,6 +34,11 @@ export default function Syllabus() {
     stream,
     semester: parseInt(semester),
   });
+
+  const filteredSubjects = subjects?.filter(subject => 
+    subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (subject.code || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const subjectDetails = useQuery(api.syllabus.getSubjectDetails, 
     selectedSubject ? { subjectId: selectedSubject } : "skip"
@@ -175,13 +182,24 @@ export default function Syllabus() {
               <BookOpen className="h-5 w-5" />
               Subjects
             </h2>
+            
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search subjects..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus-visible:ring-0"
+              />
+            </div>
+
             <div className="space-y-3">
-              {subjects?.length === 0 ? (
+              {filteredSubjects?.length === 0 ? (
                 <div className="p-8 text-center border-2 border-dashed border-gray-300 rounded-lg text-muted-foreground">
-                  No subjects found for this selection.
+                  {searchQuery ? "No subjects match your search." : "No subjects found for this selection."}
                 </div>
               ) : (
-                subjects?.map((subject) => (
+                filteredSubjects?.map((subject) => (
                   <button
                     key={subject._id}
                     onClick={() => setSelectedSubject(subject._id)}
