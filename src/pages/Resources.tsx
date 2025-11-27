@@ -232,7 +232,11 @@ export default function Resources() {
           const hasDisliked = user && resource.dislikes?.includes(user._id);
           
           return (
-          <Card key={resource._id} className={`border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${resource.isFlagged ? "bg-red-50" : "bg-white"}`}>
+          <Card 
+            key={resource._id} 
+            onClick={() => window.open(resource.url, "_blank")}
+            className={`cursor-pointer border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${resource.isFlagged ? "bg-red-50" : "bg-white"}`}
+          >
             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
               <div className="space-y-1">
                 <CardTitle className="text-base font-bold flex items-center gap-2">
@@ -264,7 +268,7 @@ export default function Resources() {
                     variant="ghost" 
                     size="sm" 
                     className={`h-8 px-2 gap-1 border border-transparent hover:border-black hover:bg-gray-100 ${hasLiked ? "text-blue-600 bg-blue-50 border-blue-200" : "text-muted-foreground"}`}
-                    onClick={() => handleLike(resource._id)}
+                    onClick={(e) => { e.stopPropagation(); handleLike(resource._id); }}
                    >
                      <ThumbsUp className={`h-3 w-3 ${hasLiked ? "fill-current" : ""}`} />
                      <span className="text-xs font-bold">{resource.likes?.length || 0}</span>
@@ -273,7 +277,7 @@ export default function Resources() {
                     variant="ghost" 
                     size="sm" 
                     className={`h-8 px-2 gap-1 border border-transparent hover:border-black hover:bg-gray-100 ${hasDisliked ? "text-red-600 bg-red-50 border-red-200" : "text-muted-foreground"}`}
-                    onClick={() => handleDislike(resource._id)}
+                    onClick={(e) => { e.stopPropagation(); handleDislike(resource._id); }}
                    >
                      <ThumbsDown className={`h-3 w-3 ${hasDisliked ? "fill-current" : ""}`} />
                      <span className="text-xs font-bold">{resource.dislikes?.length || 0}</span>
@@ -281,7 +285,13 @@ export default function Resources() {
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-muted-foreground capitalize bg-gray-100 px-2 py-1 border border-black/20">{resource.type}</span>
-                    <Button variant="default" size="sm" className="h-8 w-8 p-0 bg-black text-white hover:bg-gray-800 border-2 border-transparent hover:border-black shadow-none hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" asChild>
+                    <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="h-8 w-8 p-0 bg-black text-white hover:bg-gray-800 border-2 border-transparent hover:border-black shadow-none hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
+                        asChild
+                        onClick={(e) => e.stopPropagation()}
+                    >
                     <a href={resource.url} target="_blank" rel="noopener noreferrer" title="Download">
                         <Download className="h-4 w-4" />
                     </a>
