@@ -286,7 +286,7 @@ export default function Syllabus() {
                                   id={topic._id} 
                                   checked={topic.isCompleted}
                                   onCheckedChange={(checked) => handleToggle(topic._id, checked as boolean)}
-                                  className="mt-1 h-6 w-6 border-2 border-black data-[state=checked]:bg-indigo-600 data-[state=checked]:text-white shrink-0"
+                                  className="mt-1 h-6 w-6 border-2 border-black bg-white data-[state=checked]:bg-indigo-600 data-[state=checked]:text-white shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)] transition-all data-[state=checked]:shadow-none data-[state=checked]:translate-x-[1px] data-[state=checked]:translate-y-[1px]"
                                 />
                                 <label 
                                   htmlFor={topic._id} 
