@@ -19,6 +19,7 @@ import GroupChat from "./pages/GroupChat.tsx";
 import Feedback from "./pages/Feedback.tsx";
 import Admin from "./pages/Admin.tsx";
 import CalendarPage from "./pages/Calendar.tsx";
+import NotebookLM from "./pages/NotebookLM.tsx";
 import "./types/global.d.ts";
 
 // Force light mode
@@ -69,6 +70,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/groups/:groupId" element={<GroupChat />} />
                 <Route path="/events" element={<Events />} />
                 <Route path="/calendar" element={<CalendarPage />} />
+                <Route path="/notebook" element={<NotebookLM />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/admin" element={<Admin />} />
             </Route>

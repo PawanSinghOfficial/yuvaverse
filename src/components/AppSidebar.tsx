@@ -10,7 +10,8 @@ import {
   Users,
   Shield,
   GraduationCap,
-  Lock
+  Lock,
+  BrainCircuit
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
@@ -58,6 +59,12 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
       icon: Calendar,
       href: "/calendar",
       color: "text-yellow-600",
+    },
+    {
+      label: "AI Notebook",
+      icon: BrainCircuit,
+      href: "/notebook",
+      color: "text-purple-600",
     },
     {
       label: "Feedback",
