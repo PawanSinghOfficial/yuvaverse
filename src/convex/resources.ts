@@ -3,10 +3,21 @@ import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const list = query({
-  args: { semester: v.optional(v.number()) },
+  args: { semester: v.optional(v.number()), search: v.optional(v.string()) },
   handler: async (ctx, args) => {
     let resources;
-    if (args.semester !== undefined) {
+    if (args.search) {
+      resources = await ctx.db
+        .query("resources")
+        .withSearchIndex("search_title", (q) => {
+          let search = q.search("title", args.search!);
+          if (args.semester !== undefined) {
+            search = search.eq("semester", args.semester);
+          }
+          return search;
+        })
+        .collect();
+    } else if (args.semester !== undefined) {
       const semester = args.semester;
       resources = await ctx.db
         .query("resources")

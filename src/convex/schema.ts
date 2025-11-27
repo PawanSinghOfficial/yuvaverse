@@ -62,7 +62,13 @@ const schema = defineSchema(
       likes: v.optional(v.array(v.id("users"))),
       dislikes: v.optional(v.array(v.id("users"))),
       isFlagged: v.optional(v.boolean()),
-    }).index("by_semester", ["semester"]).index("by_uploader", ["uploaderId"]),
+    })
+      .index("by_semester", ["semester"])
+      .index("by_uploader", ["uploaderId"])
+      .searchIndex("search_title", {
+        searchField: "title",
+        filterFields: ["semester"],
+      }),
 
     groups: defineTable({
       name: v.string(),
