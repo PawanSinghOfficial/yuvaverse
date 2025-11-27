@@ -51,15 +51,13 @@ export default function DashboardLayout() {
     return null;
   }
 
-  const isChatPage = location.pathname.startsWith("/groups/") && location.pathname.split("/").length > 2;
-
   return (
     <SidebarProvider>
       <ExitIntentPopup />
-      <div className={cn("flex w-full bg-background", isChatPage ? "h-screen overflow-hidden" : "min-h-screen")}>
+      <div className="flex w-full bg-background min-h-screen">
         <AppSidebar onGuideClick={handleGuideClick} className="w-72 hidden md:flex shrink-0 border-r" />
         <SidebarInset className="flex flex-col flex-1 min-w-0">
-          <main className={cn("flex-1", isChatPage ? "p-2 md:p-4 h-full overflow-hidden" : "p-6 pb-10")}>
+          <main className="flex-1 p-6 pb-10">
             <Outlet />
           </main>
           <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
