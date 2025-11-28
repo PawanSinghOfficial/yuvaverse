@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer, Settings, Edit, Image as ImageIcon, UserMinus, Search, Loader2 } from "lucide-react";
+import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer, Settings, Edit, Image as ImageIcon, UserMinus, Search, Loader2, Maximize2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -50,6 +50,7 @@ export default function GroupChat() {
   const [memberSearch, setMemberSearch] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewVideo, setPreviewVideo] = useState<string | null>(null);
 
   const getExpiresInMinutes = () => {
     const minutes = parseInt(disappearingDuration, 10);
@@ -480,11 +481,23 @@ export default function GroupChat() {
                         </div>
                     )}
                     {msg.type === "video" && msg.contentUrl && (
-                        <video 
-                            controls 
-                            src={msg.contentUrl} 
-                            className="max-w-[240px] max-h-[300px] rounded-lg border border-gray-200" 
-                        />
+                        <div className="relative group/video">
+                            <video 
+                                src={msg.contentUrl} 
+                                className="max-w-[240px] max-h-[300px] rounded-lg border border-gray-200 bg-black" 
+                                controls
+                                preload="metadata"
+                            />
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover/video:opacity-100 transition-opacity rounded-full shadow-sm bg-white/80 hover:bg-white"
+                                onClick={() => setPreviewVideo(msg.contentUrl!)}
+                                title="Expand video"
+                            >
+                                <Maximize2 className="h-3 w-3 text-black" />
+                            </Button>
+                        </div>
                     )}
                   </div>
                   {msg.expiresAt && (
@@ -519,6 +532,18 @@ export default function GroupChat() {
              src={previewImage || ""} 
              alt="Preview" 
              className="max-w-full max-h-[85vh] object-contain rounded-md shadow-2xl"
+           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!previewVideo} onOpenChange={(open) => !open && setPreviewVideo(null)}>
+        <DialogContent className="max-w-screen-lg w-auto h-auto p-0 bg-transparent border-none shadow-none flex items-center justify-center overflow-hidden">
+           <DialogTitle className="sr-only">Video Preview</DialogTitle>
+           <video 
+             controls 
+             autoPlay
+             src={previewVideo || ""} 
+             className="max-w-full max-h-[85vh] rounded-md shadow-2xl bg-black"
            />
         </DialogContent>
       </Dialog>
