@@ -149,7 +149,7 @@ export default function Dashboard() {
                 <span className="text-white text-xs font-bold uppercase">Change</span>
                 <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
               </label>
-              <div className={`absolute -bottom-2 -right-2 px-2 py-1 text-xs font-bold text-white border border-border bg-black`}>
+              <div className={`absolute -bottom-3 -right-3 h-10 w-10 flex items-center justify-center rounded-full border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-gradient-to-br ${badge.gradient} text-xl z-10`} title={`${badge.label} Badge`}>
                 {badge.icon}
               </div>
            </div>
@@ -161,8 +161,8 @@ export default function Dashboard() {
                 Welcome to your digital campus.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <Badge className="bg-accent text-white border border-border rounded-none shadow-[2px_2px_0px_0px_var(--shadow)]">
-                  <Medal className="h-4 w-4 mr-1" />
+                <Badge className={`bg-gradient-to-r ${badge.gradient} ${badge.accent} border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-3 py-1 text-sm`}>
+                  <Medal className="h-4 w-4 mr-2" />
                   {badge.label} Badge
                 </Badge>
                 <motion.div
@@ -393,9 +393,9 @@ export default function Dashboard() {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-black text-foreground">{u.points} pts</span>
-                        <span className="text-[10px] font-bold px-1 border border-border bg-gray-100 dark:bg-neutral-800">
+                        <div className={`h-8 w-8 rounded-full border-2 border-black flex items-center justify-center text-sm bg-gradient-to-br ${entryBadge.gradient} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`} title={entryBadge.label}>
                           {entryBadge.icon}
-                        </span>
+                        </div>
                       </div>
                     </div>
                   );
@@ -442,7 +442,7 @@ export default function Dashboard() {
                               </div>
                               <div className="flex items-center gap-3">
                                 <span className="font-black text-foreground">{u.points} pts</span>
-                                <span className="text-xs font-bold px-2 py-0.5 border border-border bg-gray-100 dark:bg-neutral-800 rounded-full">
+                                <span className={`text-xs font-bold px-3 py-1 border-2 border-black bg-gradient-to-r ${entryBadge.gradient} ${entryBadge.accent} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-1`}>
                                   {entryBadge.icon} {entryBadge.label}
                                 </span>
                               </div>
