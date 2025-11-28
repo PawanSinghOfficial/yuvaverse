@@ -246,16 +246,6 @@ export default function Dashboard() {
             <p className="text-sm font-bold text-muted-foreground bg-violet-200 dark:bg-violet-800 dark:text-white inline-block px-1 mt-1">Files available</p>
           </CardContent>
         </Card>
-        <Card className="bg-card hover:bg-pink-100 dark:hover:bg-pink-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#ec4899]" onClick={() => navigate("/groups")}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-black uppercase">Study Groups</CardTitle>
-            <Users className="h-6 w-6 text-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-black">Active</div>
-            <p className="text-sm font-bold text-muted-foreground bg-pink-200 dark:bg-pink-800 dark:text-white inline-block px-1 mt-1">Join sessions</p>
-          </CardContent>
-        </Card>
         <Card className="bg-card hover:bg-orange-100 dark:hover:bg-orange-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#f97316]" onClick={() => navigate("/events")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-black uppercase">My Events</CardTitle>
