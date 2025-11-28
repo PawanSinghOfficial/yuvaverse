@@ -49,6 +49,7 @@ export default function GroupChat() {
   const [editDescription, setEditDescription] = useState("");
   const [memberSearch, setMemberSearch] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const getExpiresInMinutes = () => {
     const minutes = parseInt(disappearingDuration, 10);
@@ -473,8 +474,8 @@ export default function GroupChat() {
                             <img 
                                 src={msg.contentUrl} 
                                 alt="Shared image" 
-                                className="max-w-[240px] max-h-[300px] rounded-lg border border-gray-200 object-cover cursor-pointer"
-                                onClick={() => window.open(msg.contentUrl!, '_blank')}
+                                className="max-w-[240px] max-h-[300px] rounded-lg border border-gray-200 object-cover cursor-pointer hover:opacity-95 transition-opacity"
+                                onClick={() => setPreviewImage(msg.contentUrl!)}
                             />
                         </div>
                     )}
@@ -510,6 +511,17 @@ export default function GroupChat() {
           <div ref={scrollRef} />
         </div>
       </ScrollArea>
+
+      <Dialog open={!!previewImage} onOpenChange={(open) => !open && setPreviewImage(null)}>
+        <DialogContent className="max-w-screen-lg w-auto h-auto p-0 bg-transparent border-none shadow-none flex items-center justify-center overflow-hidden">
+           <DialogTitle className="sr-only">Image Preview</DialogTitle>
+           <img 
+             src={previewImage || ""} 
+             alt="Preview" 
+             className="max-w-full max-h-[85vh] object-contain rounded-md shadow-2xl"
+           />
+        </DialogContent>
+      </Dialog>
 
       {/* Input Area */}
       <div className="p-4 border-t bg-white">
