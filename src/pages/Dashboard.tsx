@@ -10,9 +10,10 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { getBadgeFromPoints } from "@/lib/utils";
+import { getBadgeFromPoints, BADGE_LEVELS } from "@/lib/utils";
 import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
+import { Progress } from "@/components/ui/progress";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -35,7 +36,22 @@ export default function Dashboard() {
   const [streakIncreased, setStreakIncreased] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
 
-  const badge = getBadgeFromPoints(user?.points || 0);
+  const currentPoints = user?.points || 0;
+  const badge = getBadgeFromPoints(currentPoints);
+  
+  // Calculate progress to next badge
+  const currentBadgeIndex = BADGE_LEVELS.findIndex(b => currentPoints >= b.minPoints);
+  const nextBadge = currentBadgeIndex > 0 ? BADGE_LEVELS[currentBadgeIndex - 1] : null;
+  
+  let progressPercentage = 100;
+  if (nextBadge) {
+    const currentLevelMin = BADGE_LEVELS[currentBadgeIndex].minPoints;
+    const nextLevelMin = nextBadge.minPoints;
+    const range = nextLevelMin - currentLevelMin;
+    const gained = currentPoints - currentLevelMin;
+    progressPercentage = Math.min(100, Math.max(0, (gained / range) * 100));
+  }
+
   const streakSyncRef = useRef(false);
 
   useEffect(() => {
@@ -175,6 +191,21 @@ export default function Dashboard() {
                   </Badge>
                 </motion.div>
               </div>
+
+              {nextBadge && (
+                <div className="mt-4 max-w-xs">
+                  <div className="flex justify-between text-xs font-bold mb-1 uppercase tracking-wide">
+                    <span>Progress to {nextBadge.label}</span>
+                    <span className="text-muted-foreground">{Math.round(progressPercentage)}%</span>
+                  </div>
+                  <div className="relative">
+                    <Progress value={progressPercentage} className="h-3 border-2 border-black bg-white" indicatorClassName={`bg-gradient-to-r ${nextBadge.gradient}`} />
+                  </div>
+                  <p className="text-[10px] font-bold text-muted-foreground mt-1 text-right">
+                    {nextBadge.minPoints - currentPoints} pts to unlock next tier
+                  </p>
+                </div>
+              )}
            </div>
         </div>
         <div className="flex gap-2">
