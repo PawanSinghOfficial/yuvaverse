@@ -191,34 +191,33 @@ export default function Dashboard() {
                   </Badge>
                 </motion.div>
               </div>
-
-              {nextBadge && (
-                <div className="mt-6 p-4 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-sm relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-1 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <Trophy className="h-16 w-16" />
-                  </div>
-                  <div className="flex justify-between items-end mb-2 relative z-10">
-                    <span className="text-xs font-black uppercase tracking-wider flex items-center gap-1">
-                      Next: <span className={`text-transparent bg-clip-text bg-gradient-to-r ${nextBadge.gradient}`}>{nextBadge.label}</span>
-                    </span>
-                    <span className="text-xs font-bold bg-black text-white px-2 py-0.5 border border-black">{Math.round(progressPercentage)}%</span>
-                  </div>
-                  <div className="relative h-4 w-full bg-gray-100 border-2 border-black z-10">
-                    <div 
-                      className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} transition-all duration-1000 ease-out`} 
-                      style={{ width: `${progressPercentage}%` }}
-                    />
-                    <div className="absolute inset-0 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==')] opacity-30 pointer-events-none"></div>
-                  </div>
-                  <p className="text-[10px] font-bold text-muted-foreground mt-2 text-right uppercase relative z-10">
-                    {nextBadge.minPoints - currentPoints} pts to unlock
-                  </p>
-                </div>
-              )}
            </div>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" id="dashboard-upload-btn">
+        <div className="flex flex-col items-end gap-4">
+          {nextBadge && (
+            <div className="p-4 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-full max-w-xs relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-1 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Trophy className="h-16 w-16" />
+              </div>
+              <div className="flex justify-between items-end mb-2 relative z-10">
+                <span className="text-xs font-black uppercase tracking-wider flex items-center gap-1">
+                  Next: <span className={`text-transparent bg-clip-text bg-gradient-to-r ${nextBadge.gradient}`}>{nextBadge.label}</span>
+                </span>
+                <span className="text-xs font-bold bg-black text-white px-2 py-0.5 border border-black">{Math.round(progressPercentage)}%</span>
+              </div>
+              <div className="relative h-4 w-full bg-gray-100 border-2 border-black z-10">
+                <div 
+                  className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} transition-all duration-1000 ease-out`} 
+                  style={{ width: `${progressPercentage}%` }}
+                />
+                <div className="absolute inset-0 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==')] opacity-30 pointer-events-none"></div>
+              </div>
+              <p className="text-[10px] font-bold text-muted-foreground mt-2 text-right uppercase relative z-10">
+                {nextBadge.minPoints - currentPoints} pts to unlock
+              </p>
+            </div>
+          )}
+          <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all w-full md:w-auto" id="dashboard-upload-btn">
             <BookOpen className="mr-2 h-4 w-4" />
             Upload Resource
           </Button>
