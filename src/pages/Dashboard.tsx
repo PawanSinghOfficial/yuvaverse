@@ -165,7 +165,7 @@ export default function Dashboard() {
                 <span className="text-white text-xs font-bold uppercase">Change</span>
                 <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
               </label>
-              <div className={`absolute -bottom-3 -right-3 h-10 w-10 flex items-center justify-center rounded-full border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-gradient-to-br ${badge.gradient} text-xl z-10`} title={`${badge.label} Badge`}>
+              <div className={`absolute -bottom-3 -right-3 h-12 w-12 flex items-center justify-center rounded-full border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-gradient-to-br ${badge.gradient} text-2xl z-10 transition-transform hover:scale-110 hover:rotate-12`} title={`${badge.label} Badge`}>
                 {badge.icon}
               </div>
            </div>
@@ -177,32 +177,41 @@ export default function Dashboard() {
                 Welcome to your digital campus.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <Badge className={`bg-gradient-to-r ${badge.gradient} ${badge.accent} border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-3 py-1 text-sm`}>
+                <Badge className={`bg-gradient-to-r ${badge.gradient} ${badge.accent} border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-1.5 text-sm font-black uppercase tracking-wider hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all`}>
                   <Medal className="h-4 w-4 mr-2" />
-                  {badge.label} Badge
+                  {badge.label}
                 </Badge>
                 <motion.div
                   animate={streakIncreased ? { scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] } : {}}
                   transition={{ duration: 0.5, repeat: 2 }}
                 >
-                  <Badge className="bg-orange-500 text-white border border-border rounded-none shadow-[2px_2px_0px_0px_var(--shadow)] flex items-center gap-1">
-                    <Flame className="h-4 w-4" />
+                  <Badge className="bg-orange-500 text-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-1 px-3 py-1.5 text-sm font-bold uppercase tracking-wide">
+                    <Flame className="h-4 w-4 fill-white" />
                     {user?.streakCount || 0} day streak
                   </Badge>
                 </motion.div>
               </div>
 
               {nextBadge && (
-                <div className="mt-4 max-w-xs">
-                  <div className="flex justify-between text-xs font-bold mb-1 uppercase tracking-wide">
-                    <span>Progress to {nextBadge.label}</span>
-                    <span className="text-muted-foreground">{Math.round(progressPercentage)}%</span>
+                <div className="mt-6 p-4 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-sm relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-1 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Trophy className="h-16 w-16" />
                   </div>
-                  <div className="relative">
-                    <Progress value={progressPercentage} className="h-3 border-2 border-black bg-white" indicatorClassName={`bg-gradient-to-r ${nextBadge.gradient}`} />
+                  <div className="flex justify-between items-end mb-2 relative z-10">
+                    <span className="text-xs font-black uppercase tracking-wider flex items-center gap-1">
+                      Next: <span className={`text-transparent bg-clip-text bg-gradient-to-r ${nextBadge.gradient}`}>{nextBadge.label}</span>
+                    </span>
+                    <span className="text-xs font-bold bg-black text-white px-2 py-0.5 border border-black">{Math.round(progressPercentage)}%</span>
                   </div>
-                  <p className="text-[10px] font-bold text-muted-foreground mt-1 text-right">
-                    {nextBadge.minPoints - currentPoints} pts to unlock next tier
+                  <div className="relative h-4 w-full bg-gray-100 border-2 border-black z-10">
+                    <div 
+                      className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} transition-all duration-1000 ease-out`} 
+                      style={{ width: `${progressPercentage}%` }}
+                    />
+                    <div className="absolute inset-0 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==')] opacity-30 pointer-events-none"></div>
+                  </div>
+                  <p className="text-[10px] font-bold text-muted-foreground mt-2 text-right uppercase relative z-10">
+                    {nextBadge.minPoints - currentPoints} pts to unlock
                   </p>
                 </div>
               )}
