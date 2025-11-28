@@ -156,7 +156,7 @@ export const getMessages = query({
     return await Promise.all(
       activeMessages.map(async (msg) => {
         let contentUrl = undefined;
-        if (msg.type === "audio" || msg.type === "image") {
+        if (msg.type === "audio" || msg.type === "image" || msg.type === "video") {
           try {
             contentUrl = await ctx.storage.getUrl(msg.content as Id<"_storage">);
           } catch (e) {

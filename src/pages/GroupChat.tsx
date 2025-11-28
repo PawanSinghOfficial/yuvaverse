@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer, Settings, Edit, Image as ImageIcon, UserMinus, Search } from "lucide-react";
+import { Send, ArrowLeft, Users, Lock, Globe, Video, Mic, Square, Check, CheckCheck, Timer, Settings, Edit, Image as ImageIcon, UserMinus, Search, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -48,6 +48,7 @@ export default function GroupChat() {
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [memberSearch, setMemberSearch] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   const getExpiresInMinutes = () => {
     const minutes = parseInt(disappearingDuration, 10);
@@ -118,6 +119,39 @@ export default function GroupChat() {
       setNewMessage("");
     } catch (error) {
       toast.error("Failed to send message");
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: "image" | "video") => {
+    const file = e.target.files?.[0];
+    if (!file || !groupId) return;
+
+    setIsUploading(true);
+    try {
+      const postUrl = await generateUploadUrl();
+      const result = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      
+      if (!result.ok) throw new Error("Upload failed");
+      const { storageId } = await result.json();
+      const expiresInMinutes = getExpiresInMinutes();
+
+      await sendMessage({
+        groupId: groupId as Id<"groups">,
+        content: storageId,
+        type: type,
+        expiresInMinutes,
+      });
+      toast.success(`${type === 'image' ? 'Image' : 'Video'} sent!`);
+    } catch (error) {
+      toast.error(`Failed to send ${type}`);
+    } finally {
+      setIsUploading(false);
+      // Reset input value to allow selecting same file again
+      e.target.value = '';
     }
   };
 
@@ -434,6 +468,23 @@ export default function GroupChat() {
                     {msg.type === "audio" && msg.contentUrl && (
                         <audio controls src={msg.contentUrl} className="h-8 w-48" />
                     )}
+                    {msg.type === "image" && msg.contentUrl && (
+                        <div className="relative group/image">
+                            <img 
+                                src={msg.contentUrl} 
+                                alt="Shared image" 
+                                className="max-w-[240px] max-h-[300px] rounded-lg border border-gray-200 object-cover cursor-pointer"
+                                onClick={() => window.open(msg.contentUrl!, '_blank')}
+                            />
+                        </div>
+                    )}
+                    {msg.type === "video" && msg.contentUrl && (
+                        <video 
+                            controls 
+                            src={msg.contentUrl} 
+                            className="max-w-[240px] max-h-[300px] rounded-lg border border-gray-200" 
+                        />
+                    )}
                   </div>
                   {msg.expiresAt && (
                     <div className="flex items-center gap-1 mt-1 px-1 text-[10px] text-amber-600">
@@ -487,14 +538,25 @@ export default function GroupChat() {
           )}
           <div className="flex gap-2 items-center">
             {isMember && (
-              <Button
-                variant={isRecording ? "destructive" : "ghost"}
-                size="icon"
-                className="rounded-full shrink-0 hover:bg-gray-100"
-                onClick={isRecording ? stopRecording : startRecording}
-              >
-                {isRecording ? <Square className="h-4 w-4 fill-current" /> : <Mic className="h-5 w-5 text-gray-500" />}
-              </Button>
+              <>
+                <Button
+                    variant={isRecording ? "destructive" : "ghost"}
+                    size="icon"
+                    className="rounded-full shrink-0 hover:bg-gray-100"
+                    onClick={isRecording ? stopRecording : startRecording}
+                    disabled={isUploading}
+                >
+                    {isRecording ? <Square className="h-4 w-4 fill-current" /> : <Mic className="h-5 w-5 text-gray-500" />}
+                </Button>
+                <label className={`cursor-pointer p-2 hover:bg-gray-100 rounded-full transition-colors ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                  {isUploading ? <Loader2 className="h-5 w-5 animate-spin text-gray-500" /> : <ImageIcon className="h-5 w-5 text-gray-500" />}
+                  <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, "image")} disabled={isUploading || isRecording} />
+                </label>
+                <label className={`cursor-pointer p-2 hover:bg-gray-100 rounded-full transition-colors ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <Video className="h-5 w-5 text-gray-500" />
+                  <input type="file" className="hidden" accept="video/*" onChange={(e) => handleFileUpload(e, "video")} disabled={isUploading || isRecording} />
+                </label>
+              </>
             )}
 
             <form onSubmit={handleSendMessage} className="flex-1 flex gap-2">
@@ -502,14 +564,14 @@ export default function GroupChat() {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder={
-                  isRecording ? "Recording..." : isMember ? "Type a message..." : "Join the group to chat"
+                  isRecording ? "Recording..." : isUploading ? "Uploading..." : isMember ? "Type a message..." : "Join the group to chat"
                 }
-                disabled={!isMember || isRecording}
+                disabled={!isMember || isRecording || isUploading}
                 className="flex-1 rounded-full bg-gray-50 border-gray-200 focus:border-blue-500 focus:bg-white transition-all shadow-inner"
               />
               <Button
                 type="submit"
-                disabled={!isMember || !newMessage.trim()}
+                disabled={!isMember || !newMessage.trim() || isUploading}
                 size="icon"
                 className="rounded-full shrink-0 shadow-md hover:shadow-lg transition-all bg-blue-600 hover:bg-blue-700 text-white"
               >
