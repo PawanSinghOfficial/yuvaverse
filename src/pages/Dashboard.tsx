@@ -195,26 +195,41 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-end gap-4">
           {nextBadge && (
-            <div className="p-4 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-full max-w-xs relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-1 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Trophy className="h-16 w-16" />
+            <div className="p-5 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-xs relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity rotate-12">
+                <Trophy className="h-24 w-24" />
               </div>
-              <div className="flex justify-between items-end mb-2 relative z-10">
-                <span className="text-xs font-black uppercase tracking-wider flex items-center gap-1">
-                  Next: <span className={`text-transparent bg-clip-text bg-gradient-to-r ${nextBadge.gradient}`}>{nextBadge.label}</span>
-                </span>
-                <span className="text-xs font-bold bg-black text-white px-2 py-0.5 border border-black">{Math.round(progressPercentage)}%</span>
+              
+              <div className="flex justify-between items-end mb-3 relative z-10">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Next Rank</span>
+                  <span className={`text-lg font-black uppercase italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r ${nextBadge.gradient}`}>
+                    {nextBadge.label}
+                  </span>
+                </div>
+                <div className="text-right">
+                   <span className="text-xs font-black bg-black text-white px-2 py-1 border-2 border-transparent group-hover:border-black group-hover:bg-white group-hover:text-black transition-colors">
+                     {Math.round(progressPercentage)}%
+                   </span>
+                </div>
               </div>
-              <div className="relative h-4 w-full bg-gray-100 border-2 border-black z-10">
+              
+              <div className="relative h-6 w-full bg-gray-100 border-2 border-black z-10 shadow-inner">
                 <div 
-                  className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} transition-all duration-1000 ease-out`} 
+                  className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} border-r-2 border-black transition-all duration-1000 ease-out relative overflow-hidden`} 
                   style={{ width: `${progressPercentage}%` }}
-                />
-                <div className="absolute inset-0 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==')] opacity-30 pointer-events-none"></div>
+                >
+                    <div className="absolute inset-0 bg-white/20 skew-x-12 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                </div>
+                <div className="absolute inset-0 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==')] opacity-20 pointer-events-none mix-blend-multiply"></div>
               </div>
-              <p className="text-[10px] font-bold text-muted-foreground mt-2 text-right uppercase relative z-10">
-                {nextBadge.minPoints - currentPoints} pts to unlock
-              </p>
+              
+              <div className="flex justify-between items-center mt-2 relative z-10">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">Current: {currentPoints}</span>
+                <span className="text-[10px] font-black text-black uppercase">
+                  {nextBadge.minPoints - currentPoints} pts to go
+                </span>
+              </div>
             </div>
           )}
           <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all w-full md:w-auto" id="dashboard-upload-btn">
