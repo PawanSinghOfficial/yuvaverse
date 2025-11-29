@@ -200,7 +200,7 @@ export default function Dashboard() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div 
-                    className="p-4 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-md relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                    className="p-3 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-2xl relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                     tabIndex={0}
                     role="progressbar"
                     aria-valuenow={Math.round(progressPercentage)}
@@ -213,7 +213,7 @@ export default function Dashboard() {
                       animate={{ rotate: [10, 15, 10], y: [0, -5, 0] }}
                       transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     >
-                      <Trophy className="h-24 w-24" />
+                      <Trophy className="h-20 w-20" />
                     </motion.div>
                     
                     <div className="flex justify-between items-end mb-2 relative z-10">
@@ -240,7 +240,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                     
-                    <div className="relative h-4 w-full bg-gray-100 border-2 border-black z-10 shadow-inner overflow-hidden">
+                    <div className="relative h-3 w-full bg-gray-100 border-2 border-black z-10 shadow-inner overflow-hidden">
                       <motion.div 
                         className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} border-r-2 border-black relative`} 
                         initial={{ width: "0%" }}
