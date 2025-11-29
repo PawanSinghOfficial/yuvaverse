@@ -199,7 +199,15 @@ export default function Dashboard() {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="p-4 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-md relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-help">
+                  <div 
+                    className="p-4 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-md relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                    tabIndex={0}
+                    role="progressbar"
+                    aria-valuenow={Math.round(progressPercentage)}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`Progress to ${nextBadge.label} rank: ${Math.round(progressPercentage)}%`}
+                  >
                     <motion.div 
                       className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"
                       animate={{ rotate: [10, 15, 10], y: [0, -5, 0] }}
