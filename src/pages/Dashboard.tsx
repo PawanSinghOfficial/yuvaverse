@@ -14,6 +14,7 @@ import { getBadgeFromPoints, BADGE_LEVELS } from "@/lib/utils";
 import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -195,63 +196,73 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-end gap-4">
           {nextBadge && (
-            <div className="p-4 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-md relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <motion.div 
-                className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"
-                animate={{ rotate: [10, 15, 10], y: [0, -5, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Trophy className="h-24 w-24" />
-              </motion.div>
-              
-              <div className="flex justify-between items-end mb-2 relative z-10">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Next Rank</span>
-                  <motion.span 
-                    className={`text-lg font-black uppercase italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r ${nextBadge.gradient}`}
-                    animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    style={{ backgroundSize: "200% auto" }}
-                  >
-                    {nextBadge.label}
-                  </motion.span>
-                </div>
-                <div className="text-right">
-                   <motion.span 
-                     className="text-xs font-black bg-black text-white px-2 py-1 border-2 border-transparent group-hover:border-black group-hover:bg-white group-hover:text-black transition-colors inline-block"
-                     initial={{ scale: 0.8, opacity: 0 }}
-                     animate={{ scale: 1, opacity: 1 }}
-                     transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
-                   >
-                     {Math.round(progressPercentage)}%
-                   </motion.span>
-                </div>
-              </div>
-              
-              <div className="relative h-4 w-full bg-gray-100 border-2 border-black z-10 shadow-inner overflow-hidden">
-                <motion.div 
-                  className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} border-r-2 border-black relative`} 
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${progressPercentage}%` }}
-                  transition={{ duration: 1.5, ease: "easeOut" }}
-                >
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="p-4 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-md relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-help">
                     <motion.div 
-                      className="absolute inset-0 bg-white/30 skew-x-12"
-                      initial={{ x: "-100%" }}
-                      animate={{ x: "200%" }}
-                      transition={{ repeat: Infinity, duration: 2, ease: "linear", repeatDelay: 1 }}
-                    />
-                </motion.div>
-                <div className="absolute inset-0 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==')] opacity-20 pointer-events-none mix-blend-multiply"></div>
-              </div>
-              
-              <div className="flex justify-between items-center mt-2 relative z-10">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">Current: {currentPoints}</span>
-                <span className="text-[10px] font-black text-black uppercase">
-                  {nextBadge.minPoints - currentPoints} pts to go
-                </span>
-              </div>
-            </div>
+                      className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"
+                      animate={{ rotate: [10, 15, 10], y: [0, -5, 0] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <Trophy className="h-24 w-24" />
+                    </motion.div>
+                    
+                    <div className="flex justify-between items-end mb-2 relative z-10">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Next Rank</span>
+                        <motion.span 
+                          className={`text-lg font-black uppercase italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r ${nextBadge.gradient}`}
+                          animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                          style={{ backgroundSize: "200% auto" }}
+                        >
+                          {nextBadge.label}
+                        </motion.span>
+                      </div>
+                      <div className="text-right">
+                         <motion.span 
+                           className="text-xs font-black bg-black text-white px-2 py-1 border-2 border-transparent group-hover:border-black group-hover:bg-white group-hover:text-black transition-colors inline-block"
+                           initial={{ scale: 0.8, opacity: 0 }}
+                           animate={{ scale: 1, opacity: 1 }}
+                           transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+                         >
+                           {Math.round(progressPercentage)}%
+                         </motion.span>
+                      </div>
+                    </div>
+                    
+                    <div className="relative h-4 w-full bg-gray-100 border-2 border-black z-10 shadow-inner overflow-hidden">
+                      <motion.div 
+                        className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} border-r-2 border-black relative`} 
+                        initial={{ width: "0%" }}
+                        animate={{ width: `${progressPercentage}%` }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                      >
+                          <motion.div 
+                            className="absolute inset-0 bg-white/30 skew-x-12"
+                            initial={{ x: "-100%" }}
+                            animate={{ x: "200%" }}
+                            transition={{ repeat: Infinity, duration: 2, ease: "linear", repeatDelay: 1 }}
+                          />
+                      </motion.div>
+                      <div className="absolute inset-0 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==')] opacity-20 pointer-events-none mix-blend-multiply"></div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center mt-2 relative z-10">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase">Current: {currentPoints}</span>
+                      <span className="text-[10px] font-black text-black uppercase">
+                        {nextBadge.minPoints - currentPoints} pts to go
+                      </span>
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="bg-black text-white border-2 border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+                  <p className="font-bold uppercase tracking-wider text-xs">Keep going!</p>
+                  <p className="text-xs">Earn {nextBadge.minPoints - currentPoints} more points to unlock {nextBadge.label}.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all w-full md:w-auto" id="dashboard-upload-btn">
             <BookOpen className="mr-2 h-4 w-4" />
