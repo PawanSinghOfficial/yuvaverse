@@ -200,7 +200,7 @@ export default function Dashboard() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div 
-                    className="p-3 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-2xl relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                    className="px-5 py-3 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-2xl relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                     tabIndex={0}
                     role="progressbar"
                     aria-valuenow={Math.round(progressPercentage)}
@@ -209,18 +209,20 @@ export default function Dashboard() {
                     aria-label={`Progress to ${nextBadge.label} rank: ${Math.round(progressPercentage)}%`}
                   >
                     <motion.div 
-                      className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"
+                      className="absolute -right-6 -top-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none"
                       animate={{ rotate: [10, 15, 10], y: [0, -5, 0] }}
                       transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     >
-                      <Trophy className="h-20 w-20" />
+                      <Trophy className="h-32 w-32" />
                     </motion.div>
                     
-                    <div className="flex justify-between items-end mb-2 relative z-10">
+                    <div className="flex justify-between items-end mb-1.5 relative z-10">
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Next Rank</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Next Rank</span>
+                        </div>
                         <motion.span 
-                          className={`text-lg font-black uppercase italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r ${nextBadge.gradient}`}
+                          className={`text-xl font-black uppercase italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r ${nextBadge.gradient}`}
                           animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
                           transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                           style={{ backgroundSize: "200% auto" }}
@@ -228,9 +230,9 @@ export default function Dashboard() {
                           {nextBadge.label}
                         </motion.span>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right mb-0.5">
                          <motion.span 
-                           className="text-xs font-black bg-black text-white px-2 py-1 border-2 border-transparent group-hover:border-black group-hover:bg-white group-hover:text-black transition-colors inline-block"
+                           className="text-xs font-black bg-black text-white px-2 py-0.5 border-2 border-transparent group-hover:border-black group-hover:bg-white group-hover:text-black transition-colors inline-block"
                            initial={{ scale: 0.8, opacity: 0 }}
                            animate={{ scale: 1, opacity: 1 }}
                            transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
@@ -240,7 +242,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                     
-                    <div className="relative h-3 w-full bg-gray-100 border-2 border-black z-10 shadow-inner overflow-hidden">
+                    <div className="relative h-3.5 w-full bg-gray-100 border-2 border-black z-10 shadow-inner overflow-hidden rounded-sm">
                       <motion.div 
                         className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} border-r-2 border-black relative`} 
                         initial={{ width: "0%" }}
@@ -257,9 +259,9 @@ export default function Dashboard() {
                       <div className="absolute inset-0 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==')] opacity-20 pointer-events-none mix-blend-multiply"></div>
                     </div>
                     
-                    <div className="flex justify-between items-center mt-2 relative z-10">
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase">Current: {currentPoints}</span>
-                      <span className="text-[10px] font-black text-black uppercase">
+                    <div className="flex justify-between items-center mt-1.5 relative z-10">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Current: {currentPoints} pts</span>
+                      <span className="text-[10px] font-black text-black uppercase tracking-wide">
                         {nextBadge.minPoints - currentPoints} pts to go
                       </span>
                     </div>
