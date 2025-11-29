@@ -195,12 +195,12 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-end gap-4">
           {nextBadge && (
-            <div className="p-5 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-xs relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+            <div className="p-4 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-md relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
               <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity rotate-12">
                 <Trophy className="h-24 w-24" />
               </div>
               
-              <div className="flex justify-between items-end mb-3 relative z-10">
+              <div className="flex justify-between items-end mb-2 relative z-10">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Next Rank</span>
                   <span className={`text-lg font-black uppercase italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r ${nextBadge.gradient}`}>
@@ -214,7 +214,7 @@ export default function Dashboard() {
                 </div>
               </div>
               
-              <div className="relative h-6 w-full bg-gray-100 border-2 border-black z-10 shadow-inner">
+              <div className="relative h-4 w-full bg-gray-100 border-2 border-black z-10 shadow-inner">
                 <div 
                   className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} border-r-2 border-black transition-all duration-1000 ease-out relative overflow-hidden`} 
                   style={{ width: `${progressPercentage}%` }}
