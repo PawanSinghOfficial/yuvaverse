@@ -603,21 +603,21 @@ export default function Pomodoro() {
             </DialogTitle>
           </DialogHeader>
           <div className="text-center py-4">
-            <p className="text-muted-foreground font-medium text-lg">
-              Great job! You've focused for <span className="font-bold text-foreground">{totalTime / 60} minutes</span>.
+            <p className="text-muted-foreground font-medium text-lg px-4">
+              Congratulation for succesfully completing your target here is your reward
             </p>
             {pointsEarned > 0 && (
               <motion.div 
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="mt-4 inline-flex items-center gap-2 bg-yellow-100 border-2 border-black px-4 py-2 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                className="mt-6 inline-flex items-center gap-2 bg-yellow-100 border-2 border-black px-4 py-2 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               >
                 <span className="text-2xl">🏆</span>
                 <span className="font-black uppercase text-yellow-700">+{pointsEarned} Points Earned</span>
               </motion.div>
             )}
-            <p className="text-sm text-muted-foreground mt-4">Take a short break and stretch.</p>
+            <p className="text-sm text-muted-foreground mt-6">Take a short break and stretch.</p>
           </div>
           <DialogFooter className="sm:justify-center pb-4">
             <Button 

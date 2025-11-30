@@ -194,8 +194,8 @@ export const completePomodoroSession = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    // Award 1 point for every 5 minutes of focus
-    const pointsEarned = Math.floor(args.durationMinutes / 5);
+    // Award 2 points for completion of pomodoro timer
+    const pointsEarned = 2;
     const currentCompleted = user.pomodoroSessionsCompleted || 0;
     const currentPoints = user.points || 0;
 
