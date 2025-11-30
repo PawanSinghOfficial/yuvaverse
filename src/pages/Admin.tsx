@@ -253,15 +253,29 @@ export default function Admin() {
             <CardContent>
               <div className="space-y-4">
                 {flaggedResources?.map((res) => (
-                  <div key={res._id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
-                    <div>
+                  <div key={res._id} className="flex items-start justify-between border-b pb-4 last:border-0 last:pb-0">
+                    <div className="flex-1 pr-4">
                       <p className="font-bold text-lg">{res.title}</p>
                       <p className="text-sm text-muted-foreground">
                         By {res.uploaderName} • {res.subject} • {res.dislikes?.length || 0} Dislikes
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">{res.description}</p>
+
+                      {res.detailedReports && res.detailedReports.length > 0 && (
+                        <div className="mt-3 bg-muted/50 p-3 rounded-md text-sm border border-border/50">
+                          <p className="font-bold mb-2 text-xs uppercase text-destructive">Report Reasons:</p>
+                          <ul className="space-y-2">
+                            {res.detailedReports.map((report: any, idx: number) => (
+                              <li key={idx} className="flex flex-col gap-1 border-b last:border-0 pb-2 last:pb-0 border-border/50">
+                                <span className="font-bold text-xs text-muted-foreground">Reported by {report.reporterName}:</span>
+                                <span className="italic text-foreground">"{report.reason}"</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 shrink-0">
                       <Button variant="outline" size="sm" asChild>
                         <a href={res.url} target="_blank" rel="noopener noreferrer">
                           <Download className="h-4 w-4 mr-2" /> Review
