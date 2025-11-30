@@ -338,7 +338,18 @@ export default function Pomodoro() {
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
               {/* SVG Circle */}
-              <svg width="320" height="320" className="transform -rotate-90">
+              <svg width="320" height="320" className="transform -rotate-90 overflow-visible">
+                <defs>
+                  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
+                
+                {/* Track */}
                 <circle
                   cx="160"
                   cy="160"
@@ -346,8 +357,27 @@ export default function Pomodoro() {
                   stroke="currentColor"
                   strokeWidth="16"
                   fill="transparent"
-                  className="text-muted/20"
+                  className="text-muted/10"
                 />
+
+                {/* Pulsing Ghost Ring (when active) */}
+                {isActive && (
+                  <motion.circle
+                    cx="160"
+                    cy="160"
+                    r={radius}
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="transparent"
+                    className={cn("origin-center", getTimerColor())}
+                    initial={{ scale: 1, opacity: 0.3 }}
+                    animate={{ scale: 1.15, opacity: 0, strokeWidth: 0 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+                    style={{ transformOrigin: "160px 160px" }}
+                  />
+                )}
+
+                {/* Progress Circle */}
                 <motion.circle
                   cx="160"
                   cy="160"
@@ -357,9 +387,11 @@ export default function Pomodoro() {
                   fill="transparent"
                   className={cn(
                       "transition-colors duration-1000",
-                      getTimerColor(),
-                      isActive && "drop-shadow-[0_0_15px_rgba(0,0,0,0.15)]"
+                      getTimerColor()
                   )}
+                  style={{ 
+                    filter: isActive ? "url(#glow)" : "none",
+                  }}
                   strokeDasharray={circumference}
                   strokeDashoffset={dashoffset}
                   strokeLinecap="round"
