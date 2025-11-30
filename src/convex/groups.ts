@@ -312,7 +312,10 @@ export const removeMember = mutation({
 });
 
 export const report = mutation({
-  args: { groupId: v.id("groups") },
+  args: { 
+    groupId: v.id("groups"),
+    reason: v.string(),
+  },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
@@ -325,9 +328,72 @@ export const report = mutation({
       throw new Error("You have already reported this group");
     }
 
+    // Add to group_reports table
+    await ctx.db.insert("group_reports", {
+      groupId: args.groupId,
+      reporterId: userId,
+      reason: args.reason,
+    });
+
+    // Update groups table reports array
     await ctx.db.patch(args.groupId, {
       reports: [...reports, userId],
     });
+  },
+});
+
+export const getReportedGroups = query({
+  args: {},
+  handler: async (ctx) => {
+    const groups = await ctx.db.query("groups").collect();
+    const reportedGroups = groups.filter(g => g.reports && g.reports.length > 0);
+
+    return await Promise.all(reportedGroups.map(async (g) => {
+      const reports = await ctx.db
+        .query("group_reports")
+        .withIndex("by_group", q => q.eq("groupId", g._id))
+        .collect();
+      
+      // Get reporter names
+      const reportsWithNames = await Promise.all(reports.map(async (r) => {
+        const reporter = await ctx.db.get(r.reporterId);
+        return {
+          ...r,
+          reporterName: reporter?.name || reporter?.username || "Unknown",
+        };
+      }));
+
+      return {
+        ...g,
+        detailedReports: reportsWithNames,
+      };
+    }));
+  },
+});
+
+export const dismissReports = mutation({
+  args: { groupId: v.id("groups") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await ctx.db.get(userId);
+    if (!user || user.role !== "admin") throw new Error("Unauthorized");
+
+    // Clear reports from group
+    await ctx.db.patch(args.groupId, {
+      reports: [],
+    });
+
+    // Delete from group_reports
+    const reports = await ctx.db
+      .query("group_reports")
+      .withIndex("by_group", q => q.eq("groupId", args.groupId))
+      .collect();
+
+    for (const r of reports) {
+      await ctx.db.delete(r._id);
+    }
   },
 });
 
@@ -364,6 +430,16 @@ export const deleteGroup = mutation({
 
     for (const msg of messages) {
       await ctx.db.delete(msg._id);
+    }
+
+    // Delete reports
+    const reports = await ctx.db
+      .query("group_reports")
+      .withIndex("by_group", (q) => q.eq("groupId", args.groupId))
+      .collect();
+
+    for (const r of reports) {
+      await ctx.db.delete(r._id);
     }
 
     await ctx.db.delete(args.groupId);

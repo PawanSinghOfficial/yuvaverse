@@ -87,6 +87,12 @@ const schema = defineSchema(
       role: v.union(v.literal("admin"), v.literal("member")),
     }).index("by_group", ["groupId"]).index("by_user", ["userId"]),
 
+    group_reports: defineTable({
+      groupId: v.id("groups"),
+      reporterId: v.id("users"),
+      reason: v.string(),
+    }).index("by_group", ["groupId"]),
+
     messages: defineTable({
       groupId: v.id("groups"),
       userId: v.id("users"),

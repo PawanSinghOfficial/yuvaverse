@@ -55,6 +55,11 @@ export default function Groups() {
   const [joinPassword, setJoinPassword] = useState("");
   const [selectedGroup, setSelectedGroup] = useState<Id<"groups"> | null>(null);
   const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
+  
+  // Reporting state
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [groupToReport, setGroupToReport] = useState<Id<"groups"> | null>(null);
 
   const isMember = (groupId: Id<"groups">) => {
     return memberships?.some((m) => m.groupId === groupId);
@@ -138,10 +143,24 @@ export default function Groups() {
     }
   };
 
-  const handleReport = async (groupId: Id<"groups">) => {
+  const openReportDialog = (groupId: Id<"groups">) => {
+    setGroupToReport(groupId);
+    setReportReason("");
+    setIsReportDialogOpen(true);
+  };
+
+  const handleReport = async () => {
+    if (!groupToReport) return;
+    if (!reportReason.trim()) {
+      toast.error("Please provide a reason for reporting.");
+      return;
+    }
+
     try {
-      await reportGroup({ groupId });
+      await reportGroup({ groupId: groupToReport, reason: reportReason });
       toast.success("Group reported to admins.");
+      setIsReportDialogOpen(false);
+      setGroupToReport(null);
     } catch (error: any) {
       toast.error(error.message || "Failed to report group");
     }
@@ -273,6 +292,25 @@ export default function Groups() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Report Group</DialogTitle>
+              <DialogDescription>Please explain why you are reporting this group. Admins will review your report.</DialogDescription>
+            </DialogHeader>
+            <Textarea 
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              placeholder="Reason for reporting (e.g., inappropriate content, spam)..."
+              className="min-h-[100px]"
+            />
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsReportDialogOpen(false)}>Cancel</Button>
+              <Button variant="destructive" onClick={handleReport}>Submit Report</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -344,7 +382,7 @@ export default function Groups() {
                             variant="ghost"
                             size="icon"
                             className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                            onClick={() => handleReport(group._id)}
+                            onClick={() => openReportDialog(group._id)}
                             title="Report Group"
                         >
                             <Flag className="h-4 w-4" />

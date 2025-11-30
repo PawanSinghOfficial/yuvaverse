@@ -21,11 +21,14 @@ export default function Admin() {
   const feedbacks = useQuery(api.feedback.list);
   const resources = useQuery(api.resources.list, {});
   const flaggedResources = useQuery(api.resources.getFlagged);
+  const reportedGroups = useQuery(api.groups.getReportedGroups);
   
   const deleteEvent = useMutation(api.events.deleteEvent);
   const updateFeedback = useMutation(api.feedback.updateStatus);
   const deleteResource = useMutation(api.resources.deleteResource);
   const resolveFlag = useMutation(api.resources.resolveFlag);
+  const dismissGroupReports = useMutation(api.groups.dismissReports);
+  const deleteGroup = useMutation(api.groups.deleteGroup);
 
   const [replyText, setReplyText] = useState("");
   const [selectedFeedback, setSelectedFeedback] = useState<Id<"feedback"> | null>(null);
@@ -66,6 +69,24 @@ export default function Admin() {
     }
   };
 
+  const handleDismissGroupReports = async (id: Id<"groups">) => {
+    try {
+      await dismissGroupReports({ groupId: id });
+      toast.success("Group reports dismissed");
+    } catch (error) {
+      toast.error("Failed to dismiss reports");
+    }
+  };
+
+  const handleDeleteGroup = async (id: Id<"groups">) => {
+    try {
+      await deleteGroup({ groupId: id });
+      toast.success("Group deleted");
+    } catch (error) {
+      toast.error("Failed to delete group");
+    }
+  };
+
   const handleFeedbackAction = async (id: Id<"feedback">, status: string, reply?: string) => {
     try {
       await updateFeedback({ id, status, reply });
@@ -89,6 +110,7 @@ export default function Admin() {
           <TabsTrigger value="feedback">Feedback</TabsTrigger>
           <TabsTrigger value="events">Events</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
+          <TabsTrigger value="groups" className="text-orange-600">Reported Groups</TabsTrigger>
           <TabsTrigger value="flagged" className="text-destructive">Flagged Content</TabsTrigger>
         </TabsList>
 
@@ -149,6 +171,59 @@ export default function Admin() {
             ))}
             {feedbacks?.length === 0 && <p className="text-muted-foreground">No feedback found.</p>}
           </div>
+        </TabsContent>
+
+        <TabsContent value="groups" className="space-y-4">
+          <Card className="border-orange-500/50">
+            <CardHeader>
+              <CardTitle className="text-orange-600 flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5" />
+                Reported Groups
+              </CardTitle>
+              <CardDescription>Review groups flagged by users.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {reportedGroups?.map((group) => (
+                  <div key={group._id} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-bold text-lg">{group.name}</h3>
+                        <p className="text-sm text-muted-foreground">{group.description}</p>
+                        <div className="mt-2 flex gap-2">
+                          <Badge variant="outline">Type: {group.type}</Badge>
+                          <Badge variant="destructive">{group.reports?.length || 0} Reports</Badge>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm" onClick={() => handleDismissGroupReports(group._id)}>
+                          <CheckCircle className="h-4 w-4 mr-2" /> Dismiss Reports
+                        </Button>
+                        <Button variant="destructive" size="sm" onClick={() => handleDeleteGroup(group._id)}>
+                          <Trash2 className="h-4 w-4 mr-2" /> Delete Group
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-muted/50 p-3 rounded-md text-sm">
+                      <p className="font-semibold mb-2">Report Reasons:</p>
+                      <ul className="space-y-2">
+                        {group.detailedReports?.map((report, idx) => (
+                          <li key={idx} className="flex flex-col gap-1 border-b last:border-0 pb-2 last:pb-0 border-border/50">
+                            <span className="font-medium text-xs text-muted-foreground">Reported by {report.reporterName}:</span>
+                            <span>"{report.reason}"</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+                {reportedGroups?.length === 0 && (
+                  <p className="text-muted-foreground text-center py-8">No reported groups.</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="flagged" className="space-y-4">
