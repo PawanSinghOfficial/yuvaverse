@@ -11,6 +11,17 @@ import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Id } from "@/convex/_generated/dataModel";
 
@@ -32,6 +43,8 @@ export default function Admin() {
 
   const [replyText, setReplyText] = useState("");
   const [selectedFeedback, setSelectedFeedback] = useState<Id<"feedback"> | null>(null);
+  
+  const [groupAction, setGroupAction] = useState<{ type: "dismiss" | "delete", id: Id<"groups"> } | null>(null);
 
   useEffect(() => {
     if (user && user.role !== "admin") {
@@ -73,6 +86,7 @@ export default function Admin() {
     try {
       await dismissGroupReports({ groupId: id });
       toast.success("Group reports dismissed");
+      setGroupAction(null);
     } catch (error) {
       toast.error("Failed to dismiss reports");
     }
@@ -82,6 +96,7 @@ export default function Admin() {
     try {
       await deleteGroup({ groupId: id });
       toast.success("Group deleted");
+      setGroupAction(null);
     } catch (error) {
       toast.error("Failed to delete group");
     }
@@ -196,10 +211,10 @@ export default function Admin() {
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={() => handleDismissGroupReports(group._id)}>
+                        <Button variant="outline" size="sm" onClick={() => setGroupAction({ type: "dismiss", id: group._id })}>
                           <CheckCircle className="h-4 w-4 mr-2" /> Dismiss Reports
                         </Button>
-                        <Button variant="destructive" size="sm" onClick={() => handleDeleteGroup(group._id)}>
+                        <Button variant="destructive" size="sm" onClick={() => setGroupAction({ type: "delete", id: group._id })}>
                           <Trash2 className="h-4 w-4 mr-2" /> Delete Group
                         </Button>
                       </div>
@@ -320,6 +335,34 @@ export default function Admin() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={!!groupAction} onOpenChange={(open) => !open && setGroupAction(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {groupAction?.type === "delete" ? "Delete Group?" : "Dismiss Reports?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {groupAction?.type === "delete" 
+                ? "This action cannot be undone. This will permanently delete the group and all its data."
+                : "This will clear all reports for this group. Are you sure the group is safe?"
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                if (groupAction?.type === "delete") handleDeleteGroup(groupAction.id);
+                else if (groupAction?.type === "dismiss") handleDismissGroupReports(groupAction.id);
+              }}
+              className={groupAction?.type === "delete" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}
+            >
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

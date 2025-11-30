@@ -13,6 +13,16 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -60,6 +70,7 @@ export default function Groups() {
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [groupToReport, setGroupToReport] = useState<Id<"groups"> | null>(null);
+  const [isConfirmReportOpen, setIsConfirmReportOpen] = useState(false);
 
   const isMember = (groupId: Id<"groups">) => {
     return memberships?.some((m) => m.groupId === groupId);
@@ -149,16 +160,21 @@ export default function Groups() {
     setIsReportDialogOpen(true);
   };
 
-  const handleReport = async () => {
-    if (!groupToReport) return;
+  const handleReportSubmitClick = () => {
     if (!reportReason.trim()) {
       toast.error("Please provide a reason for reporting.");
       return;
     }
+    setIsConfirmReportOpen(true);
+  };
+
+  const handleConfirmReport = async () => {
+    if (!groupToReport) return;
 
     try {
       await reportGroup({ groupId: groupToReport, reason: reportReason });
       toast.success("Group reported to admins.");
+      setIsConfirmReportOpen(false);
       setIsReportDialogOpen(false);
       setGroupToReport(null);
     } catch (error: any) {
@@ -307,10 +323,27 @@ export default function Groups() {
             />
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsReportDialogOpen(false)}>Cancel</Button>
-              <Button variant="destructive" onClick={handleReport}>Submit Report</Button>
+              <Button variant="destructive" onClick={handleReportSubmitClick}>Submit Report</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <AlertDialog open={isConfirmReportOpen} onOpenChange={setIsConfirmReportOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Report</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to report this group? False reporting may lead to account restrictions.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmReport} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                Confirm Report
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
