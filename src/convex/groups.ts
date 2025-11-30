@@ -310,3 +310,66 @@ export const removeMember = mutation({
     await ctx.db.delete(targetMembership._id);
   },
 });
+
+export const report = mutation({
+  args: {
+    groupId: v.id("groups"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const group = await ctx.db.get(args.groupId);
+    if (!group) throw new Error("Group not found");
+
+    const reportedBy = group.reportedBy || [];
+    if (reportedBy.includes(userId)) {
+      throw new Error("You have already reported this group");
+    }
+
+    const newReportCount = (group.reportCount || 0) + 1;
+    
+    await ctx.db.patch(args.groupId, {
+      reportCount: newReportCount,
+      reportedBy: [...reportedBy, userId],
+    });
+  },
+});
+
+export const deleteGroup = mutation({
+  args: {
+    groupId: v.id("groups"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") throw new Error("Unauthorized");
+
+    const group = await ctx.db.get(args.groupId);
+    if (!group) throw new Error("Group not found");
+
+    // Delete all members
+    const members = await ctx.db
+      .query("group_members")
+      .withIndex("by_group", (q) => q.eq("groupId", args.groupId))
+      .collect();
+    
+    for (const member of members) {
+      await ctx.db.delete(member._id);
+    }
+
+    // Delete all messages
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("by_group", (q) => q.eq("groupId", args.groupId))
+      .collect();
+
+    for (const message of messages) {
+      await ctx.db.delete(message._id);
+    }
+
+    await ctx.db.delete(args.groupId);
+  },
+});

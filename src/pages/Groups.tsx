@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Lock, Globe, Plus, Loader2, Image as ImageIcon } from "lucide-react";
+import { Users, Lock, Globe, Plus, Loader2, Image as ImageIcon, Flag, AlertTriangle, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import {
   Dialog,
@@ -28,13 +28,28 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Id } from "@/convex/_generated/dataModel";
 import confetti from "canvas-confetti";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function Groups() {
+  const { user } = useAuth();
   const groups = useQuery(api.groups.list);
   const memberships = useQuery(api.groups.getUserMemberships);
   const createGroup = useMutation(api.groups.create);
   const generateUploadUrl = useMutation(api.groups.generateUploadUrl);
   const joinGroup = useMutation(api.groups.join);
+  const reportGroup = useMutation(api.groups.report);
+  const deleteGroup = useMutation(api.groups.deleteGroup);
   const navigate = useNavigate();
   
   const [isOpen, setIsOpen] = useState(false);
@@ -54,6 +69,26 @@ export default function Groups() {
 
   const isMember = (groupId: Id<"groups">) => {
     return memberships?.some((m) => m.groupId === groupId);
+  };
+
+  const handleReport = async (groupId: Id<"groups">, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await reportGroup({ groupId });
+      toast.success("Group reported to admins");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to report group");
+    }
+  };
+
+  const handleDelete = async (groupId: Id<"groups">, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await deleteGroup({ groupId });
+      toast.success("Group deleted");
+    } catch (error: any) {
+      toast.error("Failed to delete group");
+    }
   };
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -133,6 +168,8 @@ export default function Groups() {
       toast.error("Incorrect password or failed to join");
     }
   };
+
+  const isAdmin = user?.role === "admin";
 
   return (
     <div className="p-8 space-y-8">
@@ -256,8 +293,11 @@ export default function Groups() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {groups?.map((group) => {
           const member = isMember(group._id);
+          const reportCount = group.reportCount || 0;
+          const isFlagged = reportCount > 0;
+          
           return (
-            <Card key={group._id} className="flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1">
+            <Card key={group._id} className={`flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 ${isFlagged ? 'border-red-500 border-2' : ''}`}>
               <div className="h-24 bg-gradient-to-r from-primary/20 to-primary/5 relative">
                  {group.imageUrl ? (
                     <img src={group.imageUrl} alt={group.name} className="w-full h-full object-cover" />
@@ -266,10 +306,55 @@ export default function Groups() {
                         <Users className="h-12 w-12" />
                     </div>
                  )}
+                 {isFlagged && (
+                   <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-none border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-1 animate-pulse">
+                     <AlertTriangle className="h-3 w-3" />
+                     REPORTED {reportCount > 1 && `(${reportCount})`}
+                   </div>
+                 )}
               </div>
               <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2 relative -mt-6">
-                <div className="space-y-1 bg-card/80 backdrop-blur p-2 rounded-lg shadow-sm">
-                  <CardTitle className="text-base font-medium">{group.name}</CardTitle>
+                <div className="space-y-1 bg-card/80 backdrop-blur p-2 rounded-lg shadow-sm w-full">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-base font-medium truncate pr-2">{group.name}</CardTitle>
+                    <div className="flex gap-1">
+                        {isAdmin && reportCount >= 2 && (
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button 
+                                        variant="destructive" 
+                                        size="icon" 
+                                        className="h-6 w-6 rounded-none border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <Trash2 className="h-3 w-3" />
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Delete Group?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This group has been reported {reportCount} times. As an admin, you can delete it permanently.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={(e) => handleDelete(group._id, e as any)}>Delete</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        )}
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 text-muted-foreground hover:text-red-500"
+                            onClick={(e) => handleReport(group._id, e)}
+                            title="Report Group"
+                        >
+                            <Flag className="h-3 w-3" />
+                        </Button>
+                    </div>
+                  </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     {group.isPrivate ? <Lock className="h-3 w-3" /> : <Globe className="h-3 w-3" />}
                     <span className="capitalize">{group.type} Group</span>

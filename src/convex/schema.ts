@@ -78,6 +78,8 @@ const schema = defineSchema(
       isPrivate: v.boolean(),
       password: v.optional(v.string()),
       creatorId: v.id("users"),
+      reportCount: v.optional(v.number()),
+      reportedBy: v.optional(v.array(v.id("users"))),
     }),
 
     group_members: defineTable({
