@@ -88,6 +88,28 @@ export default function Pomodoro() {
   const successAudioRef = useRef<HTMLAudioElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Request Notification permission
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  // Update document title with timer
+  useEffect(() => {
+    if (isActive) {
+      const mins = Math.floor(timeLeft / 60);
+      const secs = timeLeft % 60;
+      document.title = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} - Focus`;
+    } else {
+      document.title = "Focus Mode | YuvaVerse";
+    }
+    
+    return () => {
+      document.title = "YuvaVerse";
+    };
+  }, [isActive, timeLeft]);
+
   // Timer Logic
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -151,6 +173,15 @@ export default function Pomodoro() {
     if (successAudioRef.current) {
       successAudioRef.current.volume = 0.5;
       successAudioRef.current.play().catch(e => console.error("Success audio failed:", e));
+    }
+
+    // Browser Notification
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("Session Complete! 🎉", {
+        body: `Great job! You've focused for ${Math.floor(totalTime / 60)} minutes. Take a break!`,
+        icon: "/logo.png",
+        silent: false,
+      });
     }
 
     const durationMinutes = Math.floor(totalTime / 60);
