@@ -588,7 +588,7 @@ export default function Pomodoro() {
 
       {/* Completion Dialog */}
       <Dialog open={showCompletion} onOpenChange={setShowCompletion}>
-        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sm:max-w-md bg-white">
+        <DialogContent container={containerRef.current} className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sm:max-w-md bg-white">
           <DialogHeader>
             <DialogTitle className="text-center flex flex-col items-center gap-4 pt-4">
               <motion.div 
@@ -633,7 +633,7 @@ export default function Pomodoro() {
 
       {/* Quit Confirmation Dialog */}
       <AlertDialog open={showQuitConfirm} onOpenChange={setShowQuitConfirm}>
-        <AlertDialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+        <AlertDialogContent container={containerRef.current} className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-2xl font-black uppercase flex items-center gap-2 text-destructive">
               <AlertTriangle className="h-8 w-8" />
