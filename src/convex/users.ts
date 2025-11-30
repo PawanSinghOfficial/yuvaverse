@@ -185,8 +185,31 @@ export const updateStreak = mutation({
   },
 });
 
+export const completePomodoroSession = mutation({
+  args: { durationMinutes: v.number() },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    // Award 1 point for every 5 minutes of focus
+    const pointsEarned = Math.floor(args.durationMinutes / 5);
+
+    if (pointsEarned > 0) {
+      const currentPoints = user.points || 0;
+      await ctx.db.patch(userId, {
+        points: currentPoints + pointsEarned,
+      });
+    }
+    
+    return pointsEarned;
+  },
+});
+
 export const completeOnboarding = mutation({
-  args: {},
+  args: { },
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");

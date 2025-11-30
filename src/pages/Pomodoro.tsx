@@ -19,6 +19,8 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const AMBIENT_SOUNDS = [
   {
@@ -56,8 +58,11 @@ export default function Pomodoro() {
   const [selectedSound, setSelectedSound] = useState<string | null>(null);
   const [volume, setVolume] = useState([50]);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [pointsEarned, setPointsEarned] = useState(0);
   
+  const completeSession = useMutation(api.users.completePomodoroSession);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const successAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // Timer Logic
   useEffect(() => {
@@ -95,9 +100,25 @@ export default function Pomodoro() {
     }
   }, [selectedSound]);
 
-  const handleComplete = () => {
-    setShowCompletion(true);
+  const handleComplete = async () => {
     if (audioRef.current) audioRef.current.pause();
+    
+    // Play success sound
+    if (successAudioRef.current) {
+      successAudioRef.current.volume = 0.5;
+      successAudioRef.current.play().catch(e => console.error("Success audio failed:", e));
+    }
+
+    const durationMinutes = Math.floor(totalTime / 60);
+    try {
+      const points = await completeSession({ durationMinutes });
+      setPointsEarned(points);
+    } catch (error) {
+      console.error("Failed to award points:", error);
+      setPointsEarned(0);
+    }
+
+    setShowCompletion(true);
     confetti({
       particleCount: 200,
       spread: 100,
@@ -134,6 +155,7 @@ export default function Pomodoro() {
   return (
     <div className="p-8 min-h-screen bg-yellow-50/50 dark:bg-background flex flex-col items-center justify-center space-y-8">
       <audio ref={audioRef} loop />
+      <audio ref={successAudioRef} src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" />
       
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
@@ -360,8 +382,19 @@ export default function Pomodoro() {
           <div className="text-center py-4">
             <p className="text-muted-foreground font-medium text-lg">
               Great job! You've focused for <span className="font-bold text-foreground">{totalTime / 60} minutes</span>.
-              <br/>Take a short break and stretch.
             </p>
+            {pointsEarned > 0 && (
+              <motion.div 
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="mt-4 inline-flex items-center gap-2 bg-yellow-100 border-2 border-black px-4 py-2 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              >
+                <span className="text-2xl">🏆</span>
+                <span className="font-black uppercase text-yellow-700">+{pointsEarned} Points Earned</span>
+              </motion.div>
+            )}
+            <p className="text-sm text-muted-foreground mt-4">Take a short break and stretch.</p>
           </div>
           <DialogFooter className="sm:justify-center pb-4">
             <Button 
