@@ -12,7 +12,8 @@ import {
   GraduationCap,
   Lock,
   BrainCircuit,
-  BookCheck
+  BookCheck,
+  Timer
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
@@ -66,6 +67,12 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
       icon: Calendar,
       href: "/calendar",
       color: "text-yellow-600",
+    },
+    {
+      label: "Focus Mode",
+      icon: Timer,
+      href: "/focus",
+      color: "text-teal-600",
     },
     {
       label: "AI Notebook",
