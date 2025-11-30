@@ -171,7 +171,7 @@ export default function Pomodoro() {
     
     // Play success sound
     if (successAudioRef.current) {
-      successAudioRef.current.volume = 0.5;
+      successAudioRef.current.volume = 0.7;
       successAudioRef.current.play().catch(e => console.error("Success audio failed:", e));
     }
 
@@ -284,7 +284,7 @@ export default function Pomodoro() {
       </div>
 
       <audio ref={audioRef} loop />
-      <audio ref={successAudioRef} src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" />
+      <audio ref={successAudioRef} src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Bell_ring_high.ogg" />
       
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
