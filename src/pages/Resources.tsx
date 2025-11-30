@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Upload, Loader2, Code, ThumbsUp, ThumbsDown, AlertTriangle, Search } from "lucide-react";
+import { FileText, Download, Upload, Loader2, Code, ThumbsUp, ThumbsDown, AlertTriangle, Search, Flag } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,16 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -25,6 +35,8 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 import { useAuth } from "@/hooks/use-auth";
+import { Textarea } from "@/components/ui/textarea";
+import { Id } from "@/convex/_generated/dataModel";
 
 export default function Resources() {
   const { user } = useAuth();
@@ -41,6 +53,7 @@ export default function Resources() {
   const createResource = useMutation(api.resources.create);
   const toggleLike = useMutation(api.resources.toggleLike);
   const toggleDislike = useMutation(api.resources.toggleDislike);
+  const reportResource = useMutation(api.resources.report);
   
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -51,6 +64,12 @@ export default function Resources() {
     type: "note",
     file: null as File | null,
   });
+
+  // Reporting state
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [resourceToReport, setResourceToReport] = useState<Id<"resources"> | null>(null);
+  const [isConfirmReportOpen, setIsConfirmReportOpen] = useState(false);
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,6 +133,34 @@ export default function Resources() {
       await toggleDislike({ resourceId: id });
     } catch (error) {
       toast.error("Failed to dislike resource");
+    }
+  };
+
+  const openReportDialog = (resourceId: Id<"resources">) => {
+    setResourceToReport(resourceId);
+    setReportReason("");
+    setIsReportDialogOpen(true);
+  };
+
+  const handleReportSubmitClick = () => {
+    if (!reportReason.trim()) {
+      toast.error("Please provide a reason for reporting.");
+      return;
+    }
+    setIsConfirmReportOpen(true);
+  };
+
+  const handleConfirmReport = async () => {
+    if (!resourceToReport) return;
+
+    try {
+      await reportResource({ resourceId: resourceToReport, reason: reportReason });
+      toast.success("Resource reported to admins.");
+      setIsConfirmReportOpen(false);
+      setIsReportDialogOpen(false);
+      setResourceToReport(null);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to report resource");
     }
   };
 
@@ -226,22 +273,59 @@ export default function Resources() {
         </div>
       </div>
 
+      <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Report Resource</DialogTitle>
+            <DialogDescription>Please explain why you are reporting this resource. Admins will review your report.</DialogDescription>
+          </DialogHeader>
+          <Textarea 
+            value={reportReason}
+            onChange={(e) => setReportReason(e.target.value)}
+            placeholder="Reason for reporting (e.g., inappropriate content, copyright violation)..."
+            className="min-h-[100px]"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsReportDialogOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleReportSubmitClick}>Submit Report</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={isConfirmReportOpen} onOpenChange={setIsConfirmReportOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Report</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to report this resource? False reporting may lead to account restrictions.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmReport} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Confirm Report
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {resources?.map((resource) => {
           const hasLiked = user && resource.likes?.includes(user._id);
           const hasDisliked = user && resource.dislikes?.includes(user._id);
+          const isReported = resource.reports && resource.reports.length > 0;
           
           return (
           <Card 
             key={resource._id} 
             onClick={() => window.open(resource.url, "_blank")}
-            className={`cursor-pointer border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${resource.isFlagged ? "bg-red-50" : "bg-white"}`}
+            className={`cursor-pointer border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${resource.isFlagged || isReported ? "bg-red-50" : "bg-white"}`}
           >
             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
               <div className="space-y-1">
                 <CardTitle className="text-base font-bold flex items-center gap-2">
                   {resource.title}
-                  {resource.isFlagged && <AlertTriangle className="h-4 w-4 text-destructive" />}
+                  {(resource.isFlagged || isReported) && <AlertTriangle className="h-4 w-4 text-destructive" />}
                 </CardTitle>
                 <div className="flex flex-wrap gap-2 mt-1">
                     <span className="text-xs font-bold px-2 py-0.5 bg-indigo-100 text-indigo-700 border border-black rounded-none">
@@ -284,7 +368,15 @@ export default function Resources() {
                    </Button>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-muted-foreground capitalize bg-gray-100 px-2 py-1 border border-black/20">{resource.type}</span>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                        onClick={(e) => { e.stopPropagation(); openReportDialog(resource._id); }}
+                        title="Report Resource"
+                    >
+                        <Flag className="h-4 w-4" />
+                    </Button>
                     <Button 
                         variant="default" 
                         size="sm" 

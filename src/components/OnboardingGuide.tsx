@@ -48,6 +48,11 @@ const steps = [
     targetId: "dashboard-redeem",
   },
   {
+    title: "League Upgrades",
+    description: "Level up your campus life! Upgrading to Premium or Elite leagues unlocks more study group creations (up to 5!), exclusive profile badges, and priority access to new features. Use your points to climb the tiers!",
+    targetId: "dashboard-profile",
+  },
+  {
     title: "Study Groups & Limits",
     description: "Create and join study groups to collaborate! Creation limits depend on your tier: Freemium users can create 1 group, Premium users 2 groups, and Elite users up to 5 groups. Upgrade your tier to lead more squads!",
     targetId: "sidebar-nav-groups",

@@ -62,6 +62,7 @@ const schema = defineSchema(
       likes: v.optional(v.array(v.id("users"))),
       dislikes: v.optional(v.array(v.id("users"))),
       isFlagged: v.optional(v.boolean()),
+      reports: v.optional(v.array(v.id("users"))),
     })
       .index("by_semester", ["semester"])
       .index("by_uploader", ["uploaderId"])
@@ -69,6 +70,12 @@ const schema = defineSchema(
         searchField: "title",
         filterFields: ["semester"],
       }),
+
+    resource_reports: defineTable({
+      resourceId: v.id("resources"),
+      reporterId: v.id("users"),
+      reason: v.string(),
+    }).index("by_resource", ["resourceId"]),
 
     groups: defineTable({
       name: v.string(),

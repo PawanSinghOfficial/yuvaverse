@@ -56,17 +56,65 @@ export const getFlagged = query({
     if (user?.role !== "admin") return [];
 
     const resources = await ctx.db.query("resources").collect();
-    const flagged = resources.filter(r => r.isFlagged);
+    // Filter for flagged OR reported resources
+    const flagged = resources.filter(r => r.isFlagged || (r.reports && r.reports.length > 0));
 
     return await Promise.all(flagged.map(async (r) => {
       const uploader = await ctx.db.get(r.uploaderId);
       const url = await ctx.storage.getUrl(r.fileId);
+      
+      // Get detailed reports if any
+      const reports = await ctx.db
+        .query("resource_reports")
+        .withIndex("by_resource", q => q.eq("resourceId", r._id))
+        .collect();
+        
+      const reportsWithNames = await Promise.all(reports.map(async (rep) => {
+        const reporter = await ctx.db.get(rep.reporterId);
+        return {
+            ...rep,
+            reporterName: reporter?.name || reporter?.username || "Unknown"
+        };
+      }));
+
       return {
         ...r,
         uploaderName: uploader?.username || uploader?.name || "Unknown",
         url: url || "#",
+        detailedReports: reportsWithNames,
       };
     }));
+  },
+});
+
+export const report = mutation({
+  args: { 
+    resourceId: v.id("resources"),
+    reason: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const resource = await ctx.db.get(args.resourceId);
+    if (!resource) throw new Error("Resource not found");
+
+    const reports = resource.reports || [];
+    if (reports.includes(userId)) {
+      throw new Error("You have already reported this resource");
+    }
+
+    // Add to resource_reports table
+    await ctx.db.insert("resource_reports", {
+      resourceId: args.resourceId,
+      reporterId: userId,
+      reason: args.reason,
+    });
+
+    // Update resources table reports array
+    await ctx.db.patch(args.resourceId, {
+      reports: [...reports, userId],
+    });
   },
 });
 
@@ -167,14 +215,31 @@ export const resolveFlag = mutation({
     if (args.action === "delete") {
        const resource = await ctx.db.get(args.resourceId);
        if (resource) {
+          // Delete reports associated with this resource
+          const reports = await ctx.db
+            .query("resource_reports")
+            .withIndex("by_resource", q => q.eq("resourceId", args.resourceId))
+            .collect();
+          for (const r of reports) {
+            await ctx.db.delete(r._id);
+          }
+
           await ctx.storage.delete(resource.fileId);
           await ctx.db.delete(args.resourceId);
        }
     } else {
-      // Keep the resource, maybe clear flag or reset dislikes?
-      // Let's just clear the flag so it doesn't show up in admin anymore
+      // Keep the resource, clear flag and reports
+      const reports = await ctx.db
+        .query("resource_reports")
+        .withIndex("by_resource", q => q.eq("resourceId", args.resourceId))
+        .collect();
+      for (const r of reports) {
+        await ctx.db.delete(r._id);
+      }
+
       await ctx.db.patch(args.resourceId, {
         isFlagged: false,
+        reports: [], // Clear reports
         dislikes: [] // Optional: reset dislikes if admin approves it
       });
     }
@@ -224,6 +289,15 @@ export const deleteResource = mutation({
 
     const resource = await ctx.db.get(args.id);
     if (resource) {
+        // Delete reports associated with this resource
+        const reports = await ctx.db
+            .query("resource_reports")
+            .withIndex("by_resource", q => q.eq("resourceId", args.id))
+            .collect();
+        for (const r of reports) {
+            await ctx.db.delete(r._id);
+        }
+
         // Try to delete from storage if possible, though we might not have the ID directly mapped if not stored
         // But we have fileId
         await ctx.storage.delete(resource.fileId);
