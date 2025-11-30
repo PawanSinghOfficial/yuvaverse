@@ -48,8 +48,8 @@ const steps = [
     targetId: "dashboard-redeem",
   },
   {
-    title: "League Upgrades",
-    description: "Level up your campus life! Upgrading to Premium or Elite leagues unlocks more study group creations (up to 5!), exclusive profile badges, and priority access to new features. Use your points to climb the tiers!",
+    title: "League Upgrades & Ranks",
+    description: "Track your climb to the top! Your profile card now features a progress bar showing exactly how many points you need to reach the next rank. Earning points unlocks Premium and Elite tiers, giving you benefits like creating up to 5 study groups and exclusive profile badges.",
     targetId: "dashboard-profile",
   },
   {
