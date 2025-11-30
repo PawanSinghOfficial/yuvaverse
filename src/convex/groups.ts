@@ -312,9 +312,7 @@ export const removeMember = mutation({
 });
 
 export const report = mutation({
-  args: {
-    groupId: v.id("groups"),
-  },
+  args: { groupId: v.id("groups") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
@@ -322,35 +320,34 @@ export const report = mutation({
     const group = await ctx.db.get(args.groupId);
     if (!group) throw new Error("Group not found");
 
-    const reportedBy = group.reportedBy || [];
-    if (reportedBy.includes(userId)) {
+    const reports = group.reports || [];
+    if (reports.includes(userId)) {
       throw new Error("You have already reported this group");
     }
 
-    const newReportCount = (group.reportCount || 0) + 1;
-    
     await ctx.db.patch(args.groupId, {
-      reportCount: newReportCount,
-      reportedBy: [...reportedBy, userId],
+      reports: [...reports, userId],
     });
   },
 });
 
 export const deleteGroup = mutation({
-  args: {
-    groupId: v.id("groups"),
-  },
+  args: { groupId: v.id("groups") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
 
     const user = await ctx.db.get(userId);
-    if (user?.role !== "admin") throw new Error("Unauthorized");
+    if (!user || user.role !== "admin") throw new Error("Unauthorized");
 
     const group = await ctx.db.get(args.groupId);
     if (!group) throw new Error("Group not found");
 
-    // Delete all members
+    const reportCount = group.reports?.length || 0;
+    if (reportCount < 2 && group.creatorId !== userId) {
+       throw new Error("Cannot delete group unless reported twice or you are the creator");
+    }
+
     const members = await ctx.db
       .query("group_members")
       .withIndex("by_group", (q) => q.eq("groupId", args.groupId))
@@ -360,14 +357,13 @@ export const deleteGroup = mutation({
       await ctx.db.delete(member._id);
     }
 
-    // Delete all messages
     const messages = await ctx.db
       .query("messages")
       .withIndex("by_group", (q) => q.eq("groupId", args.groupId))
       .collect();
 
-    for (const message of messages) {
-      await ctx.db.delete(message._id);
+    for (const msg of messages) {
+      await ctx.db.delete(msg._id);
     }
 
     await ctx.db.delete(args.groupId);
