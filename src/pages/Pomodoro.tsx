@@ -30,17 +30,21 @@ const AMBIENT_SOUNDS = [
     id: "forest",
     label: "Forest",
     icon: Trees,
-    url: "https://actions.google.com/sounds/v1/nature/forest_wind.ogg",
+    url: "https://actions.google.com/sounds/v1/nature/birds_in_forest.ogg",
     color: "text-green-600",
-    bg: "bg-green-100 dark:bg-green-900/20"
+    bg: "bg-green-100 dark:bg-green-900/20",
+    pageBg: "bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950",
+    vibeIcon: Trees
   },
   {
     id: "library",
     label: "Library",
     icon: BookOpen,
-    url: "https://actions.google.com/sounds/v1/ambiences/quiet_office.ogg", // Closest to library
+    url: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Library_sounds.ogg",
     color: "text-blue-600",
-    bg: "bg-blue-100 dark:bg-blue-900/20"
+    bg: "bg-blue-100 dark:bg-blue-900/20",
+    pageBg: "bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-slate-950 dark:via-gray-950 dark:to-zinc-950",
+    vibeIcon: BookOpen
   },
   {
     id: "cafe",
@@ -48,7 +52,9 @@ const AMBIENT_SOUNDS = [
     icon: Coffee,
     url: "https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg",
     color: "text-amber-700",
-    bg: "bg-amber-100 dark:bg-amber-900/20"
+    bg: "bg-amber-100 dark:bg-amber-900/20",
+    pageBg: "bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950 dark:via-orange-950 dark:to-yellow-950",
+    vibeIcon: Coffee
   },
   {
     id: "rain",
@@ -56,7 +62,9 @@ const AMBIENT_SOUNDS = [
     icon: CloudRain,
     url: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg",
     color: "text-blue-400",
-    bg: "bg-blue-50 dark:bg-blue-900/10"
+    bg: "bg-blue-50 dark:bg-blue-900/10",
+    pageBg: "bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-blue-950 dark:via-cyan-950 dark:to-sky-950",
+    vibeIcon: CloudRain
   }
 ];
 
@@ -71,6 +79,9 @@ export default function Pomodoro() {
   const [showCompletion, setShowCompletion] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  
+  const activeSound = AMBIENT_SOUNDS.find(s => s.id === selectedSound);
+  const pageBackground = activeSound?.pageBg || "bg-yellow-50/50 dark:bg-background";
   
   const completeSession = useMutation(api.users.completePomodoroSession);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -191,7 +202,7 @@ export default function Pomodoro() {
     const mins = Math.floor(timeLeft / 60);
     const secs = timeLeft % 60;
     return (
-      <div className="flex items-center justify-center font-black tracking-tighter tabular-nums text-7xl z-10">
+      <div className="flex items-center justify-center font-black tracking-tighter tabular-nums text-7xl z-10 relative">
         <span className="w-[1.2em] text-center">{mins.toString().padStart(2, '0')}</span>
         <motion.span 
           animate={isActive ? { opacity: [1, 0.2, 1] } : { opacity: 1 }}
@@ -206,9 +217,25 @@ export default function Pomodoro() {
   };
 
   return (
-    <div ref={containerRef} className="p-8 min-h-screen bg-yellow-50/50 dark:bg-background flex flex-col items-center justify-center space-y-8 relative overflow-y-auto">
+    <div ref={containerRef} className={cn("p-8 min-h-screen flex flex-col items-center justify-center space-y-8 relative overflow-y-auto transition-colors duration-1000", pageBackground)}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+      
+      {/* Vibe Icon Background */}
+      <AnimatePresence mode="wait">
+        {activeSound && (
+          <motion.div
+            key={activeSound.id}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.05, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.2 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden"
+          >
+            <activeSound.icon className="w-[800px] h-[800px] text-black dark:text-white" />
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Full Screen Toggle */}
       <div className="absolute top-6 right-6 z-50">
