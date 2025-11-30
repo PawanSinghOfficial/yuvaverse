@@ -13,7 +13,10 @@ import {
   Trees,
   BookOpen,
   CheckCircle2,
-  VolumeX
+  VolumeX,
+  Maximize,
+  Minimize,
+  CloudRain
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -46,6 +49,14 @@ const AMBIENT_SOUNDS = [
     url: "https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg",
     color: "text-amber-700",
     bg: "bg-amber-100 dark:bg-amber-900/20"
+  },
+  {
+    id: "rain",
+    label: "Rain",
+    icon: CloudRain,
+    url: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg",
+    color: "text-blue-400",
+    bg: "bg-blue-50 dark:bg-blue-900/10"
   }
 ];
 
@@ -59,10 +70,12 @@ export default function Pomodoro() {
   const [volume, setVolume] = useState([50]);
   const [showCompletion, setShowCompletion] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   
   const completeSession = useMutation(api.users.completePomodoroSession);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const successAudioRef = useRef<HTMLAudioElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Timer Logic
   useEffect(() => {
@@ -99,6 +112,26 @@ export default function Pomodoro() {
       audioRef.current.currentTime = 0;
     }
   }, [selectedSound]);
+
+  // Full Screen Logic
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  }, []);
 
   const handleComplete = async () => {
     if (audioRef.current) audioRef.current.pause();
@@ -173,10 +206,23 @@ export default function Pomodoro() {
   };
 
   return (
-    <div className="p-8 min-h-screen bg-yellow-50/50 dark:bg-background flex flex-col items-center justify-center space-y-8 relative overflow-hidden">
+    <div ref={containerRef} className="p-8 min-h-screen bg-yellow-50/50 dark:bg-background flex flex-col items-center justify-center space-y-8 relative overflow-y-auto">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
       
+      {/* Full Screen Toggle */}
+      <div className="absolute top-6 right-6 z-50">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleFullScreen}
+          className="rounded-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-white"
+          title={isFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
+        >
+          {isFullScreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+        </Button>
+      </div>
+
       <audio ref={audioRef} loop />
       <audio ref={successAudioRef} src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" />
       
