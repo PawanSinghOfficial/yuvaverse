@@ -1,143 +1,16 @@
-import { useQuery, useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Users, Lock, Globe, Plus, Loader2, Image as ImageIcon, Flag, AlertTriangle, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Id } from "@/convex/_generated/dataModel";
-import confetti from "canvas-confetti";
-import { useAuth } from "@/hooks/use-auth";
-
-export default function Groups() {
-  const { user } = useAuth();
-  const groups = useQuery(api.groups.list);
-  const memberships = useQuery(api.groups.getUserMemberships);
-  const createGroup = useMutation(api.groups.create);
-  const generateUploadUrl = useMutation(api.groups.generateUploadUrl);
-  const joinGroup = useMutation(api.groups.join);
-  const reportGroup = useMutation(api.groups.report);
-  const deleteGroup = useMutation(api.groups.deleteGroup);
-  const navigate = useNavigate();
-  
-  const user = await ctx.db.get(userId);
-  if (!user || user.role !== "admin") throw new Error("Unauthorized");
-
-  // Check if reported at least twice
-  const reportCount = group.reports?.length || 0;
-  if (reportCount < 2 && group.creatorId !== userId) {
-
-  }
-  const canDelete = user?.role === "admin" && reportCount >= 2;
-
-  groups: defineTable({
-    name: v.string(),
-    description: v.optional(v.string()),
-    image: v.optional(v.id("_storage")),
-    type: v.union(v.literal("study"), v.literal("social")),
-    isPrivate: v.boolean(),
-    password: v.optional(v.string()),
-    creatorId: v.id("users"),
-    reports: v.optional(v.array(v.id("users"))),
-  }),
-}
-
-const handlePrivateJoin = async () => {
-  // ... keep existing code
-};
-
-const handleReport = async (groupId: Id<"groups">) => {
-  try {
-    await reportGroup({ groupId });
-    toast.success("Group reported to admins.");
-  } catch (error: any) {
-    toast.error(error.message || "Failed to report group");
-  }
-};
-
-const handleDelete = async (groupId: Id<"groups">) => {
-  try {
-    await deleteGroup({ groupId });
-    toast.success("Group deleted.");
-  } catch (error: any) {
-    toast.error(error.message || "Failed to delete group");
-  }
-};
-
-return (
-  <div className="p-8 space-y-8">
-    {/* ... keep existing code */}
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {groups?.map((group) => {
-        const member = isMember(group._id);
-        const reportCount = group.reports?.length || 0;
-        const isReported = reportCount > 0;
-        const canDelete = user?.role === "admin" && reportCount >= 2;
-
-        return (
-          <Card key={group._id} className="flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 relative group">
-            {isReported && (
-              <div className="absolute top-2 right-2 z-10 animate-pulse">
-                 <div className="bg-red-500 text-white text-[10px] font-black uppercase px-2 py-1 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-1">
-                    <AlertTriangle className="h-3 w-3" />
-                    Reported {reportCount > 1 ? `(${reportCount})` : ""}
-                 </div>
-              </div>
-            )}
-            <div className="h-24 bg-gradient-to-r from-primary/20 to-primary/5 relative">
-               {/* ... keep existing code */}
-            </div>
-            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2 relative -mt-6">
-              {/* ... keep existing code */}
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col pt-4">
-              <p className="text-sm text-muted-foreground mt-2 line-clamp-2 flex-1">
-                {group.description || "No description provided."}
-              </p>
-              <div className="flex gap-2 mt-4">
-                  <Button 
-                    className="flex-1" 
-                    variant={member ? "secondary" : "outline"}
-                    onClick={() => {
-                      if (member) {
-                        navigate(`/groups/${group._id}`);
-                      } else {
-                        handleJoin(group._id, group.isPrivate);
-                      }
-                    }}
-                  >
-                    {member ? "View Group" : (group.isPrivate ? "Join Private Group" : "Join Group")}
-                  </Button>
-                  
-                  {canDelete ? (
-                      <Button
-                          variant="destructive"
-                          size="icon"
-                          className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                          onClick={() => handleDelete(group._id)}
-                          title="Delete Reported Group"
-                      >
-                          <Trash2 className="h-4 w-4" />
-                      </Button>
-                  ) : (
-                      <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => handleReport(group._id)}
-                          title="Report Group"
-                      >
-                          <Flag className="h-4 w-4" />
-                      </Button>
-                  )}
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
-      {/* ... keep existing code */}
-    </div>
-  </div>
-);
-}
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  Timer,
+  Music,
+  Volume2,
+  Coffee,
+  Trees,
+  BookOpen,
+  CheckCircle2,
+  VolumeX,
+  Maximize,
+  Minimize,
+  CloudRain
+} from "lucide-react";

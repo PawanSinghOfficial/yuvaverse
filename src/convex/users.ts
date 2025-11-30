@@ -196,15 +196,31 @@ export const completePomodoroSession = mutation({
 
     // Award 1 point for every 5 minutes of focus
     const pointsEarned = Math.floor(args.durationMinutes / 5);
+    const currentCompleted = user.pomodoroSessionsCompleted || 0;
+    const currentPoints = user.points || 0;
 
-    if (pointsEarned > 0) {
-      const currentPoints = user.points || 0;
-      await ctx.db.patch(userId, {
-        points: currentPoints + pointsEarned,
-      });
-    }
+    await ctx.db.patch(userId, {
+      points: currentPoints + pointsEarned,
+      pomodoroSessionsCompleted: currentCompleted + 1,
+    });
     
     return pointsEarned;
+  },
+});
+
+export const abortPomodoroSession = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    const currentAborted = user.pomodoroSessionsAborted || 0;
+    await ctx.db.patch(userId, {
+      pomodoroSessionsAborted: currentAborted + 1,
+    });
   },
 });
 

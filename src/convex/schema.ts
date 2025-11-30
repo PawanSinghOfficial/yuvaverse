@@ -48,6 +48,8 @@ const schema = defineSchema(
       streakCount: v.optional(v.number()),
       lastActiveDate: v.optional(v.number()),
       hasSeenOnboarding: v.optional(v.boolean()),
+      pomodoroSessionsCompleted: v.optional(v.number()),
+      pomodoroSessionsAborted: v.optional(v.number()),
     }).index("email", ["email"]).index("by_username", ["username"]), // index for the email. do not remove or modify
 
     resources: defineTable({

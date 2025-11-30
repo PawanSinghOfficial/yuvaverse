@@ -16,14 +16,26 @@ import {
   VolumeX,
   Maximize,
   Minimize,
-  CloudRain
+  CloudRain,
+  AlertTriangle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 const AMBIENT_SOUNDS = [
   {
@@ -79,14 +91,38 @@ export default function Pomodoro() {
   const [showCompletion, setShowCompletion] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showQuitConfirm, setShowQuitConfirm] = useState(false);
   
   const activeSound = AMBIENT_SOUNDS.find(s => s.id === selectedSound);
   const pageBackground = activeSound?.pageBg || "bg-yellow-50/50 dark:bg-background";
   
+  const user = useQuery(api.users.currentUser);
   const completeSession = useMutation(api.users.completePomodoroSession);
+  const abortSession = useMutation(api.users.abortPomodoroSession);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const successAudioRef = useRef<HTMLAudioElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleComplete = async () => {
+    if (successAudioRef.current) {
+      successAudioRef.current.play().catch(e => console.error("Audio play failed:", e));
+    }
+    
+    try {
+      const points = await completeSession({ durationMinutes: totalTime / 60 });
+      setPointsEarned(points);
+      setShowCompletion(true);
+      
+      if (Notification.permission === "granted") {
+        new Notification("Session Complete!", {
+          body: `Great job! You focused for ${totalTime / 60} minutes.`,
+          icon: "/logo.png"
+        });
+      }
+    } catch (error) {
+      console.error("Failed to complete session:", error);
+    }
+  };
 
   // Request Notification permission
   useEffect(() => {
@@ -166,47 +202,37 @@ export default function Pomodoro() {
     return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
   }, []);
 
-  const handleComplete = async () => {
+  const handlePauseClick = () => {
+    if (isActive) {
+      setShowQuitConfirm(true);
+    } else {
+      setIsActive(true);
+    }
+  };
+
+  const handleQuitConfirm = async () => {
+    setIsActive(false);
+    setShowQuitConfirm(false);
+    setTimeLeft(totalTime);
     if (audioRef.current) audioRef.current.pause();
     
-    // Play success sound
-    if (successAudioRef.current) {
-      successAudioRef.current.volume = 0.7;
-      successAudioRef.current.play().catch(e => console.error("Success audio failed:", e));
-    }
-
-    // Browser Notification
-    if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("Session Complete! 🎉", {
-        body: `Great job! You've focused for ${Math.floor(totalTime / 60)} minutes. Take a break!`,
-        icon: "/logo.png",
-        silent: false,
-      });
-    }
-
-    const durationMinutes = Math.floor(totalTime / 60);
     try {
-      const points = await completeSession({ durationMinutes });
-      setPointsEarned(points);
+      await abortSession({});
+      toast.info("Session aborted. Keep trying!");
     } catch (error) {
-      console.error("Failed to award points:", error);
-      setPointsEarned(0);
+      console.error("Failed to abort session:", error);
     }
-
-    setShowCompletion(true);
-    confetti({
-      particleCount: 200,
-      spread: 100,
-      origin: { y: 0.6 },
-      colors: ['#10B981', '#3B82F6', '#F59E0B']
-    });
   };
 
   const toggleTimer = () => setIsActive(!isActive);
 
   const resetTimer = () => {
-    setIsActive(false);
-    setTimeLeft(totalTime);
+    if (isActive) {
+      setShowQuitConfirm(true);
+    } else {
+      setIsActive(false);
+      setTimeLeft(totalTime);
+    }
   };
 
   const setDuration = (minutes: number) => {
@@ -302,6 +328,18 @@ export default function Pomodoro() {
           Focus Mode
         </h1>
         <p className="text-muted-foreground font-medium text-lg">Select your duration and ambient sound to start focusing.</p>
+        
+        {/* Stats Display */}
+        <div className="flex items-center justify-center gap-6 mt-4 text-sm font-bold uppercase tracking-wide">
+          <div className="flex items-center gap-2 text-green-600 bg-green-100 px-3 py-1 rounded-full border border-green-200">
+            <CheckCircle2 className="h-4 w-4" />
+            <span>Completed: {user?.pomodoroSessionsCompleted || 0}</span>
+          </div>
+          <div className="flex items-center gap-2 text-red-600 bg-red-100 px-3 py-1 rounded-full border border-red-200">
+            <VolumeX className="h-4 w-4" />
+            <span>Aborted: {user?.pomodoroSessionsAborted || 0}</span>
+          </div>
+        </div>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-6xl relative z-10">
@@ -443,7 +481,7 @@ export default function Pomodoro() {
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                onClick={toggleTimer}
+                onClick={handlePauseClick}
                 className={cn(
                   "h-20 w-20 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center transition-colors",
                   isActive ? "bg-amber-400 hover:bg-amber-500" : "bg-green-500 hover:bg-green-600"
@@ -592,6 +630,32 @@ export default function Pomodoro() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Quit Confirmation Dialog */}
+      <AlertDialog open={showQuitConfirm} onOpenChange={setShowQuitConfirm}>
+        <AlertDialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-2xl font-black uppercase flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-8 w-8" />
+              Are you sure you want to quit?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-lg font-medium text-foreground/80">
+              Warrior, don't quit! Come on, let's focus buddy. Quitting now will mark this session as aborted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+              Keep Focusing
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleQuitConfirm}
+              className="font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              I Give Up
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
