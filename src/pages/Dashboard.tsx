@@ -200,6 +200,7 @@ export default function Dashboard() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div 
+                    id="dashboard-rank-progress"
                     className="px-5 py-3 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-2xl relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                     tabIndex={0}
                     role="progressbar"

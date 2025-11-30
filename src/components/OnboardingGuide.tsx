@@ -49,8 +49,8 @@ const steps = [
   },
   {
     title: "League Upgrades & Ranks",
-    description: "Track your climb to the top! Your profile card now features a progress bar showing exactly how many points you need to reach the next rank. Earning points unlocks Premium and Elite tiers, giving you benefits like creating up to 5 study groups and exclusive profile badges.",
-    targetId: "dashboard-profile",
+    description: "This card tracks your journey to the next league! See exactly how many points you need to level up. Reaching higher ranks unlocks exclusive benefits like creating more study groups (up to 5 for Elite!) and special profile badges.",
+    targetId: "dashboard-rank-progress",
   },
   {
     title: "Study Groups & Limits",
