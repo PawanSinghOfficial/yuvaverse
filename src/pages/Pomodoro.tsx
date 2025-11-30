@@ -140,20 +140,43 @@ export default function Pomodoro() {
     setTimeLeft(minutes * 60);
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
   // Circular Progress Calculation
   const radius = 120;
   const circumference = 2 * Math.PI * radius;
   // Timer depletes: Start full (offset 0), End empty (offset circumference)
   const dashoffset = circumference * (1 - (timeLeft / totalTime));
 
+  const getTimerColor = () => {
+    if (!isActive && timeLeft === totalTime) return "text-primary";
+    const ratio = timeLeft / totalTime;
+    if (ratio > 0.6) return "text-emerald-500";
+    if (ratio > 0.25) return "text-amber-500";
+    return "text-rose-500";
+  };
+
+  const renderTimeDisplay = () => {
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    return (
+      <div className="flex items-center justify-center font-black tracking-tighter tabular-nums text-7xl z-10">
+        <span className="w-[1.2em] text-center">{mins.toString().padStart(2, '0')}</span>
+        <motion.span 
+          animate={isActive ? { opacity: [1, 0.2, 1] } : { opacity: 1 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+          className="mx-1 pb-2"
+        >
+          :
+        </motion.span>
+        <span className="w-[1.2em] text-center">{secs.toString().padStart(2, '0')}</span>
+      </div>
+    );
+  };
+
   return (
-    <div className="p-8 min-h-screen bg-yellow-50/50 dark:bg-background flex flex-col items-center justify-center space-y-8">
+    <div className="p-8 min-h-screen bg-yellow-50/50 dark:bg-background flex flex-col items-center justify-center space-y-8 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+      
       <audio ref={audioRef} loop />
       <audio ref={successAudioRef} src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" />
       
@@ -161,16 +184,21 @@ export default function Pomodoro() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center space-y-2"
+        className="text-center space-y-2 relative z-10"
       >
         <h1 className="text-5xl font-black uppercase tracking-tighter flex items-center justify-center gap-3">
-          <Timer className="h-10 w-10" />
+          <motion.div
+            animate={isActive ? { rotate: [0, 10, -10, 0] } : { rotate: 0 }}
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+          >
+            <Timer className="h-10 w-10" />
+          </motion.div>
           Focus Mode
         </h1>
         <p className="text-muted-foreground font-medium text-lg">Select your duration and ambient sound to start focusing.</p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-6xl">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-6xl relative z-10">
         {/* Timer Section */}
         <motion.div 
           className="lg:col-span-2"
@@ -222,8 +250,9 @@ export default function Pomodoro() {
                   strokeWidth="16"
                   fill="transparent"
                   className={cn(
-                      "transition-colors duration-500",
-                      isActive ? "text-primary drop-shadow-[0_0_10px_rgba(0,0,0,0.2)]" : "text-muted-foreground"
+                      "transition-colors duration-1000",
+                      getTimerColor(),
+                      isActive && "drop-shadow-[0_0_15px_rgba(0,0,0,0.15)]"
                   )}
                   strokeDasharray={circumference}
                   strokeDashoffset={dashoffset}
@@ -236,18 +265,20 @@ export default function Pomodoro() {
               
               {/* Time Display */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <motion.span 
-                    key={timeLeft}
+                <motion.div 
+                    key={timeLeft} // Keep key for subtle re-render animations if needed, or remove for smoothness
                     initial={{ opacity: 0.5, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-7xl font-black tracking-tighter tabular-nums"
                 >
-                  {formatTime(timeLeft)}
-                </motion.span>
+                  {renderTimeDisplay()}
+                </motion.div>
                 <motion.span 
                     animate={isActive ? { opacity: [0.5, 1, 0.5] } : { opacity: 1 }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="text-sm font-bold text-muted-foreground uppercase tracking-widest mt-2 bg-secondary/50 px-3 py-1 rounded-full"
+                    className={cn(
+                      "text-sm font-bold uppercase tracking-widest mt-2 px-3 py-1 rounded-full transition-colors",
+                      isActive ? "bg-black text-white" : "bg-secondary/50 text-muted-foreground"
+                    )}
                 >
                   {isActive ? "Focusing..." : "Ready to Start"}
                 </motion.span>
