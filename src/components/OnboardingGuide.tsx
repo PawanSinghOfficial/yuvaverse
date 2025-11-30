@@ -48,6 +48,11 @@ const steps = [
     targetId: "dashboard-redeem",
   },
   {
+    title: "Study Groups & Limits",
+    description: "Create and join study groups to collaborate! Creation limits depend on your tier: Freemium users can create 1 group, Premium users 2 groups, and Elite users up to 5 groups. Upgrade your tier to lead more squads!",
+    targetId: "sidebar-nav-groups",
+  },
+  {
     title: "Syllabus Tracker",
     description: "Stay on top of your academics! Select your course, stream, and semester to track your progress topic by topic. Watch your completion percentage grow as you check off topics.",
     targetId: "sidebar-nav-syllabus",
