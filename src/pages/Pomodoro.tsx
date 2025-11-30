@@ -149,8 +149,8 @@ export default function Pomodoro() {
   // Circular Progress Calculation
   const radius = 120;
   const circumference = 2 * Math.PI * radius;
-  const progress = 1 - (timeLeft / totalTime);
-  const dashoffset = circumference * (1 - progress); // Inverted for countdown effect
+  // Timer depletes: Start full (offset 0), End empty (offset circumference)
+  const dashoffset = circumference * (1 - (timeLeft / totalTime));
 
   return (
     <div className="p-8 min-h-screen bg-yellow-50/50 dark:bg-background flex flex-col items-center justify-center space-y-8">
@@ -223,7 +223,7 @@ export default function Pomodoro() {
                   fill="transparent"
                   className={cn(
                       "transition-colors duration-500",
-                      isActive ? "text-primary" : "text-muted-foreground"
+                      isActive ? "text-primary drop-shadow-[0_0_10px_rgba(0,0,0,0.2)]" : "text-muted-foreground"
                   )}
                   strokeDasharray={circumference}
                   strokeDashoffset={dashoffset}
