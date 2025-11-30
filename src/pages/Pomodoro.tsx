@@ -235,16 +235,16 @@ export default function Pomodoro() {
     const mins = Math.floor(timeLeft / 60);
     const secs = timeLeft % 60;
     return (
-      <div className="flex items-center justify-center font-black tracking-tighter tabular-nums text-7xl z-10 relative">
-        <span className="w-[1.2em] text-center">{mins.toString().padStart(2, '0')}</span>
+      <div className="flex items-center justify-center font-mono font-bold tracking-tight tabular-nums text-6xl z-10 relative text-foreground">
+        <span className="w-[1.1em] text-center">{mins.toString().padStart(2, '0')}</span>
         <motion.span 
           animate={isActive ? { opacity: [1, 0.2, 1] } : { opacity: 1 }}
           transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
-          className="mx-1 pb-2"
+          className="mx-0.5 pb-1"
         >
           :
         </motion.span>
-        <span className="w-[1.2em] text-center">{secs.toString().padStart(2, '0')}</span>
+        <span className="w-[1.1em] text-center">{secs.toString().padStart(2, '0')}</span>
       </div>
     );
   };
@@ -370,7 +370,7 @@ export default function Pomodoro() {
               </svg>
               
               {/* Time Display */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <motion.div 
                     key={timeLeft} // Keep key for subtle re-render animations if needed, or remove for smoothness
                     initial={{ opacity: 0.5, y: 5 }}
@@ -382,7 +382,7 @@ export default function Pomodoro() {
                     animate={isActive ? { opacity: [0.5, 1, 0.5] } : { opacity: 1 }}
                     transition={{ duration: 2, repeat: Infinity }}
                     className={cn(
-                      "text-sm font-bold uppercase tracking-widest mt-2 px-3 py-1 rounded-full transition-colors",
+                      "text-xs font-bold uppercase tracking-widest mt-4 px-3 py-1 rounded-full transition-colors",
                       isActive ? "bg-black text-white" : "bg-secondary/50 text-muted-foreground"
                     )}
                 >
