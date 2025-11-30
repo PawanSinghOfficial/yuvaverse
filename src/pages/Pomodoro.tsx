@@ -229,6 +229,8 @@ export default function Pomodoro() {
     return "text-rose-500";
   };
 
+  const progressPercentage = totalTime > 0 ? ((totalTime - timeLeft) / totalTime) * 100 : 0;
+
   const renderTimeDisplay = () => {
     const mins = Math.floor(timeLeft / 60);
     const secs = timeLeft % 60;
@@ -388,6 +390,22 @@ export default function Pomodoro() {
                 </motion.span>
               </div>
             </motion.div>
+
+            {/* Linear Progress Bar */}
+            <div className="w-full max-w-xs mb-8 space-y-2">
+              <div className="flex justify-between text-xs font-bold uppercase text-muted-foreground">
+                <span>Session Progress</span>
+                <span>{Math.round(progressPercentage)}%</span>
+              </div>
+              <div className="h-4 w-full bg-secondary/20 rounded-full overflow-hidden border-2 border-black/10 shadow-inner">
+                <motion.div 
+                  className={cn("h-full transition-colors duration-1000", getTimerColor().replace("text-", "bg-"))}
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${progressPercentage}%` }}
+                  transition={{ duration: 1, ease: "linear" }}
+                />
+              </div>
+            </div>
 
             <div className="flex items-center gap-6 z-10">
               <motion.button
