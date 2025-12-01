@@ -14,7 +14,7 @@ interface OnboardingGuideProps {
 const steps = [
   {
     title: "Welcome to YuvaVerse!",
-    description: "I'm your AI guide. I'm here to show you around your new digital campus. This platform is designed to help you collaborate, learn, and grow. Let's take a quick tour of your dashboard!",
+    description: "I'm Jojo, your AI guide. I'm here to show you around your new digital campus. This platform is designed to help you collaborate, learn, and grow. Let's take a quick tour of your dashboard!",
     targetId: null,
   },
   {
@@ -167,8 +167,8 @@ export function OnboardingGuide({ isOpen, onClose }: OnboardingGuideProps) {
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center border-2 border-primary shrink-0">
-                 <Bot className="h-7 w-7 text-primary" />
+              <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center border-2 border-primary shrink-0 overflow-hidden">
+                 <img src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" alt="Jojo" className="h-full w-full object-cover" />
               </div>
               <div>
                   <CardTitle className="text-xl font-black uppercase leading-tight">{steps[currentStep].title}</CardTitle>
