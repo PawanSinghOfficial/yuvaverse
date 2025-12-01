@@ -1,16 +1,36 @@
-import {
-  Play,
-  Pause,
-  RotateCcw,
-  Timer,
-  Music,
-  Volume2,
-  Coffee,
-  Trees,
-  BookOpen,
-  CheckCircle2,
-  VolumeX,
-  Maximize,
-  Minimize,
-  CloudRain
-} from "lucide-react";
+const handleKeyDown = (e: React.KeyboardEvent) => {
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+    e.preventDefault();
+  }
+  switch (e.key) {
+    case "ArrowUp":
+      if (direction !== "down") {
+        setDirection("up");
+      }
+      break;
+    case "ArrowDown":
+      if (direction !== "up") {
+        setDirection("down");
+      }
+      break;
+    case "ArrowLeft":
+      if (direction !== "right") {
+        setDirection("left");
+      }
+      break;
+    case "ArrowRight":
+      if (direction !== "left") {
+        setDirection("right");
+      }
+      break;
+  }
+};
+
+useEffect(() => {
+  if (isPlaying && !gameOver) {
+    gameLoopRef.current = setInterval(moveSnake, 150);
+  }
+  return () => {
+    if (gameLoopRef.current) clearInterval(gameLoopRef.current);
+  };
+}, [isPlaying, gameOver, snake, direction]);

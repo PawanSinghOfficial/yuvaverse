@@ -13,7 +13,8 @@ import {
   Lock,
   BrainCircuit,
   BookCheck,
-  Timer
+  Timer,
+  Gamepad2
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
@@ -79,6 +80,12 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
       icon: BrainCircuit,
       href: "/notebook",
       color: "text-purple-600",
+    },
+    {
+      label: "Arcade Zone",
+      icon: Gamepad2,
+      href: "/games",
+      color: "text-rose-500",
     },
     {
       label: "Feedback",

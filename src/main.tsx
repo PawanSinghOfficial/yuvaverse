@@ -21,7 +21,8 @@ import Admin from "./pages/Admin.tsx";
 import CalendarPage from "./pages/Calendar.tsx";
 import NotebookLM from "./pages/NotebookLM.tsx";
 import Syllabus from "./pages/Syllabus.tsx";
-import Pomodoro from "./pages/Pomodoro.tsx";
+import Pomodoro from "./pages/Pomodoro";
+import Games from "./pages/Games";
 import "./types/global.d.ts";
 
 // Force light mode
@@ -75,6 +76,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/calendar" element={<CalendarPage />} />
                 <Route path="/notebook" element={<NotebookLM />} />
                 <Route path="/focus" element={<Pomodoro />} />
+                <Route path="/games" element={<Games />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/admin" element={<Admin />} />
             </Route>
