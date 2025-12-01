@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { RotateCcw, Check, Timer } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useGameSounds } from "@/hooks/use-game-sounds";
@@ -23,6 +23,7 @@ export default function MathChallenge() {
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   const { playSound } = useGameSounds();
   
+  const user = useQuery(api.users.currentUser);
   const recordResult = useMutation(api.users.recordGameResult);
 
   const generateProblem = () => {
@@ -76,11 +77,25 @@ export default function MathChallenge() {
     setGameOver(true);
     playSound('gameover');
     
+    const isWin = score > 0;
+
+    if (!isWin) {
+        const username = user?.username || user?.name || "Player";
+        const teases = [
+            `Is that all you got, ${username}? 😏`,
+            `My calculator runs faster than you, ${username}! 🤖`,
+            `Zero points? Really, ${username}? 😂`,
+            `Jojo is disappointed, ${username}. 📉`
+        ];
+        const randomTease = teases[Math.floor(Math.random() * teases.length)];
+        toast.error(randomTease);
+    }
+
     try {
       const result = await recordResult({
         gameId: "math",
         score: score,
-        win: score > 0, // Consider it a "win" if they got at least some points
+        win: isWin, // Consider it a "win" if they got at least some points
         difficulty: difficulty
       });
       
