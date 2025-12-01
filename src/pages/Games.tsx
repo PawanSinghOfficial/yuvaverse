@@ -65,27 +65,33 @@ const ArcadeBackground = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none bg-slate-950 -z-10">
+      {/* CRT Scanline Effect */}
+      <div className="absolute inset-0 z-[5] opacity-20 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%]" />
+      
+      {/* Vignette */}
+      <div className="absolute inset-0 z-[4] pointer-events-none bg-[radial-gradient(circle_at_center,transparent_50%,rgba(0,0,0,0.6)_100%)]" />
+
       {/* Cyberpunk Grid */}
       <motion.div 
         style={{ y: bgY }}
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-30"
       >
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8b5cf62e_1px,transparent_1px),linear-gradient(to_bottom,#8b5cf62e_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
       </motion.div>
 
       {/* Moving Grid Effect */}
       <motion.div 
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-30"
         style={{
           y: gridY,
-          backgroundImage: "linear-gradient(0deg, transparent 24%, rgba(168, 85, 247, .3) 25%, rgba(168, 85, 247, .3) 26%, transparent 27%, transparent 74%, rgba(59, 130, 246, .3) 75%, rgba(59, 130, 246, .3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(59, 130, 246, .3) 25%, rgba(59, 130, 246, .3) 26%, transparent 27%, transparent 74%, rgba(168, 85, 247, .3) 75%, rgba(168, 85, 247, .3) 76%, transparent 77%, transparent)",
-          backgroundSize: "50px 50px"
+          backgroundImage: "linear-gradient(0deg, transparent 24%, rgba(236, 72, 153, .3) 25%, rgba(236, 72, 153, .3) 26%, transparent 27%, transparent 74%, rgba(34, 211, 238, .3) 75%, rgba(34, 211, 238, .3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(34, 211, 238, .3) 25%, rgba(34, 211, 238, .3) 26%, transparent 27%, transparent 74%, rgba(236, 72, 153, .3) 75%, rgba(236, 72, 153, .3) 76%, transparent 77%, transparent)",
+          backgroundSize: "60px 60px"
         }}
         animate={{
-          backgroundPosition: ["0px 0px", "0px 50px"]
+          backgroundPosition: ["0px 0px", "0px 60px"]
         }}
         transition={{
-          duration: 2,
+          duration: 3,
           repeat: Infinity,
           ease: "linear"
         }}
@@ -94,29 +100,29 @@ const ArcadeBackground = () => {
       {/* Neon Glows */}
       <motion.div style={{ y: glowY }} className="absolute inset-0">
         <motion.div 
-          animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.2, 1] }}
+          animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.2, 1] }}
           transition={{ duration: 4, repeat: Infinity }}
-          className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/40 rounded-full blur-[128px]"
+          className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/50 rounded-full blur-[128px]"
         />
         <motion.div 
-          animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.2, 1] }}
+          animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.2, 1] }}
           transition={{ duration: 6, repeat: Infinity, delay: 2 }}
-          className="absolute top-1/2 -right-20 w-80 h-80 bg-blue-600/40 rounded-full blur-[128px]"
+          className="absolute top-1/2 -right-20 w-80 h-80 bg-cyan-600/50 rounded-full blur-[128px]"
         />
         <motion.div 
-          animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.1, 1] }}
+          animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.1, 1] }}
           transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-          className="absolute -bottom-40 left-1/3 w-96 h-96 bg-pink-600/40 rounded-full blur-[128px]"
+          className="absolute -bottom-40 left-1/3 w-96 h-96 bg-pink-600/50 rounded-full blur-[128px]"
         />
       </motion.div>
 
       {/* Floating Pixels/Particles */}
       <motion.div style={{ y: iconsY }} className="absolute inset-0">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {Array.from({ length: 30 }).map((_, i) => (
           <motion.div
             key={`pixel-${i}`}
             className={`absolute w-1 h-1 sm:w-2 sm:h-2 rounded-sm ${
-              i % 3 === 0 ? "bg-yellow-400" : i % 3 === 1 ? "bg-cyan-400" : "bg-fuchsia-400"
+              i % 3 === 0 ? "bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.8)]" : i % 3 === 1 ? "bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]" : "bg-fuchsia-400 shadow-[0_0_10px_rgba(232,121,249,0.8)]"
             }`}
             initial={{
               x: Math.random() * 100 + "%",
@@ -139,13 +145,13 @@ const ArcadeBackground = () => {
         ))}
 
         {/* Floating Icons with Neon Effect */}
-        {Array.from({ length: 12 }).map((_, i) => {
+        {Array.from({ length: 15 }).map((_, i) => {
           const Icon = icons[i % icons.length];
-          const color = i % 3 === 0 ? "text-yellow-400" : i % 3 === 1 ? "text-cyan-400" : "text-fuchsia-400";
+          const color = i % 3 === 0 ? "text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" : i % 3 === 1 ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" : "text-fuchsia-400 drop-shadow-[0_0_8px_rgba(232,121,249,0.8)]";
           return (
             <motion.div
               key={`icon-${i}`}
-              className={`absolute ${color} opacity-30`}
+              className={`absolute ${color} opacity-40`}
               initial={{
                 x: Math.random() * 100 + "%",
                 y: Math.random() * 100 + "%",
@@ -155,7 +161,7 @@ const ArcadeBackground = () => {
               animate={{
                 y: [null, Math.random() * -100],
                 rotate: [null, Math.random() * 360],
-                opacity: [0.2, 0.5, 0.2],
+                opacity: [0.2, 0.6, 0.2],
               }}
               transition={{
                 duration: 15 + Math.random() * 10,
