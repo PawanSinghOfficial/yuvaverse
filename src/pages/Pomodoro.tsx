@@ -257,6 +257,12 @@ export default function Pomodoro() {
 
   const progressPercentage = totalTime > 0 ? ((totalTime - timeLeft) / totalTime) * 100 : 0;
 
+  const getProgressFillColor = (percent: number) => {
+    if (percent >= 75) return "bg-green-500";
+    if (percent >= 40) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
   const renderTimeDisplay = () => {
     const mins = Math.floor(timeLeft / 60);
     const secs = timeLeft % 60;
@@ -469,7 +475,7 @@ export default function Pomodoro() {
               </div>
               <div className="h-4 w-full bg-secondary/20 rounded-full overflow-hidden border-2 border-black/10 shadow-inner">
                 <motion.div 
-                  className={cn("h-full transition-colors duration-1000", getTimerColor().replace("text-", "bg-"))}
+                  className={cn("h-full transition-colors duration-1000", getProgressFillColor(progressPercentage))}
                   initial={{ width: "0%" }}
                   animate={{ width: `${progressPercentage}%` }}
                   transition={{ duration: 1, ease: "linear" }}

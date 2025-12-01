@@ -53,6 +53,12 @@ export default function Dashboard() {
     progressPercentage = Math.min(100, Math.max(0, (gained / range) * 100));
   }
 
+  const getProgressColor = (percent: number) => {
+    if (percent >= 75) return "bg-gradient-to-r from-green-400 to-emerald-600";
+    if (percent >= 40) return "bg-gradient-to-r from-yellow-400 to-orange-500";
+    return "bg-gradient-to-r from-red-500 to-rose-600";
+  };
+
   const streakSyncRef = useRef(false);
 
   useEffect(() => {
@@ -245,7 +251,7 @@ export default function Dashboard() {
                     
                     <div className="relative h-3.5 w-full bg-gray-100 border-2 border-black z-10 shadow-inner overflow-hidden rounded-sm">
                       <motion.div 
-                        className={`absolute top-0 left-0 h-full bg-gradient-to-r ${nextBadge.gradient} border-r-2 border-black relative`} 
+                        className={`absolute top-0 left-0 h-full ${getProgressColor(progressPercentage)} border-r-2 border-black relative`} 
                         initial={{ width: "0%" }}
                         animate={{ width: `${progressPercentage}%` }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
