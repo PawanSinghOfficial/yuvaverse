@@ -63,6 +63,11 @@ const steps = [
     targetId: "sidebar-nav-syllabus",
   },
   {
+    title: "Focus Mode & Rewards",
+    description: "Boost your productivity with our Pomodoro timer! Choose your ambient sound (Forest, Library, etc.), set your duration, and focus. Completing a session earns you 2 points! But be careful, quitting early counts as an aborted session.",
+    targetId: "sidebar-nav-focus",
+  },
+  {
     title: "AI Notebook",
     description: "Your personal AI study companion. Use this to launch NotebookLM, where you can upload documents and get AI-generated summaries, quizzes, and insights to help you study smarter.",
     targetId: "sidebar-nav-notebook",
