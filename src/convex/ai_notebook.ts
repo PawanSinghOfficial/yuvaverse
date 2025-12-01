@@ -81,6 +81,12 @@ export const deleteNotebook = mutation({
     const notes = await ctx.db.query("ai_notes").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
     for (const n of notes) await ctx.db.delete(n._id);
 
+    const quizzes = await ctx.db.query("ai_quizzes").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const q of quizzes) await ctx.db.delete(q._id);
+
+    const mindmaps = await ctx.db.query("ai_mindmaps").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const m of mindmaps) await ctx.db.delete(m._id);
+
     await ctx.db.delete(args.notebookId);
   }
 });
@@ -265,5 +271,148 @@ export const deleteNote = mutation({
     args: { noteId: v.id("ai_notes") },
     handler: async (ctx, args) => {
         await ctx.db.delete(args.noteId);
+    }
+});
+
+// Quizzes
+export const getQuizzes = query({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("ai_quizzes")
+      .withIndex("by_notebook", (q) => q.eq("notebookId", args.notebookId))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const generateQuiz = mutation({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    // Mock Quiz Generation based on sources
+    const sources = await ctx.db
+        .query("ai_sources")
+        .withIndex("by_notebook", q => q.eq("notebookId", args.notebookId))
+        .collect();
+
+    if (sources.length === 0) throw new Error("No sources to generate quiz from");
+
+    // In a real app, this would call an LLM
+    const mockQuestions = [
+        {
+            question: "What is the main concept discussed in the uploaded documents?",
+            options: ["Quantum Physics", "The concept found in the source", "Ancient History", "Cooking Recipes"],
+            correctAnswer: 1,
+            explanation: "Based on the source title, this seems to be the most relevant topic."
+        },
+        {
+            question: "Which of the following is NOT mentioned in the text?",
+            options: ["Key Feature A", "Key Feature B", "Alien Invasion", "Key Feature C"],
+            correctAnswer: 2,
+            explanation: "Alien Invasion is not typically found in academic notes."
+        },
+        {
+            question: "True or False: The documents support the primary hypothesis.",
+            options: ["True", "False"],
+            correctAnswer: 0,
+            explanation: "Most academic texts tend to support their hypothesis."
+        }
+    ];
+
+    await ctx.db.insert("ai_quizzes", {
+        notebookId: args.notebookId,
+        title: `Quiz generated on ${new Date().toLocaleDateString()}`,
+        questions: mockQuestions,
+        isCompleted: false,
+    });
+  },
+});
+
+export const saveQuizResult = mutation({
+    args: { quizId: v.id("ai_quizzes"), score: v.number() },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.quizId, {
+            userScore: args.score,
+            isCompleted: true
+        });
+    }
+});
+
+export const deleteQuiz = mutation({
+    args: { quizId: v.id("ai_quizzes") },
+    handler: async (ctx, args) => {
+        await ctx.db.delete(args.quizId);
+    }
+});
+
+// Mindmaps
+export const getMindmaps = query({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("ai_mindmaps")
+      .withIndex("by_notebook", (q) => q.eq("notebookId", args.notebookId))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const generateMindmap = mutation({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    const sources = await ctx.db
+        .query("ai_sources")
+        .withIndex("by_notebook", q => q.eq("notebookId", args.notebookId))
+        .collect();
+
+    if (sources.length === 0) throw new Error("No sources to generate mindmap from");
+
+    // Mock Mindmap Generation
+    const rootLabel = sources[0].title.substring(0, 20) + "...";
+    
+    const mockMindmap = {
+        id: "root",
+        label: "Main Topic: " + rootLabel,
+        children: [
+            {
+                id: "c1",
+                label: "Key Concepts",
+                children: [
+                    { id: "c1-1", label: "Definition" },
+                    { id: "c1-2", label: "Importance" },
+                    { id: "c1-3", label: "History" }
+                ]
+            },
+            {
+                id: "c2",
+                label: "Methodology",
+                children: [
+                    { id: "c2-1", label: "Process A" },
+                    { id: "c2-2", label: "Process B" }
+                ]
+            },
+            {
+                id: "c3",
+                label: "Conclusions",
+                children: [
+                    { id: "c3-1", label: "Result X" },
+                    { id: "c3-2", label: "Result Y" }
+                ]
+            }
+        ]
+    };
+
+    await ctx.db.insert("ai_mindmaps", {
+        notebookId: args.notebookId,
+        title: `Mindmap: ${rootLabel}`,
+        rootNode: mockMindmap,
+    });
+  },
+});
+
+export const deleteMindmap = mutation({
+    args: { mindmapId: v.id("ai_mindmaps") },
+    handler: async (ctx, args) => {
+        await ctx.db.delete(args.mindmapId);
     }
 });

@@ -8,13 +8,16 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
     Sparkles, Plus, FileText, MessageSquare, Headphones, 
     Trash2, Upload, Link as LinkIcon, MoreVertical, 
-    ChevronRight, BookOpen, Send, Play, Pause, StickyNote
+    ChevronRight, BookOpen, Send, Play, Pause, StickyNote,
+    BrainCircuit, Network
 } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { QuizInterface } from "@/components/notebook/QuizInterface";
+import { MindmapInterface } from "@/components/notebook/MindmapInterface";
 
 export default function NotebookLM() {
   const [selectedNotebookId, setSelectedNotebookId] = useState<Id<"ai_notebooks"> | null>(null);
@@ -137,7 +140,7 @@ export default function NotebookLM() {
 }
 
 function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
-    const [activeTab, setActiveTab] = useState<"chat" | "notes">("chat");
+    const [activeTab, setActiveTab] = useState<"chat" | "notes" | "quiz" | "mindmap">("chat");
     const [isSourcePanelOpen, setIsSourcePanelOpen] = useState(true);
     
     const notebook = useQuery(api.ai_notebook.getNotebook, { notebookId });
@@ -168,7 +171,7 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                             <div className="space-y-3">
                                 <AddSourceButton notebookId={notebookId} />
                                 {sources?.map((source) => (
-                                    <Card key={source._id} className="p-3 hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-primary">
+                                    <Card key={source._id} className="p-3 hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-primary group">
                                         <div className="flex items-start gap-3">
                                             <div className="mt-1">
                                                 {source.type === "pdf" ? <FileText className="h-4 w-4 text-red-500" /> : <LinkIcon className="h-4 w-4 text-blue-500" />}
@@ -177,6 +180,17 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                                                 <h4 className="text-sm font-medium truncate" title={source.title}>{source.title}</h4>
                                                 <p className="text-xs text-muted-foreground truncate">{source.type}</p>
                                             </div>
+                                            <Button 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="h-6 w-6 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    // Add delete logic here if needed
+                                                }}
+                                            >
+                                                <MoreVertical className="h-3 w-3" />
+                                            </Button>
                                         </div>
                                     </Card>
                                 ))}
@@ -198,25 +212,35 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                 </Button>
             </div>
 
-            {/* Main Chat/Notes Area */}
+            {/* Main Content Area */}
             <div className="flex-1 flex flex-col bg-slate-50/50">
                 {/* Header */}
                 <header className="h-16 border-b bg-white px-6 flex items-center justify-between shadow-sm">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-black tracking-tight">{notebook?.title}</h2>
-                        <div className="flex bg-muted p-1 rounded-lg">
-                            <button 
-                                onClick={() => setActiveTab("chat")}
-                                className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${activeTab === "chat" ? "bg-white shadow text-primary" : "text-muted-foreground hover:text-foreground"}`}
-                            >
-                                Chat
-                            </button>
-                            <button 
-                                onClick={() => setActiveTab("notes")}
-                                className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${activeTab === "notes" ? "bg-white shadow text-primary" : "text-muted-foreground hover:text-foreground"}`}
-                            >
-                                Saved Notes
-                            </button>
+                        <h2 className="text-xl font-black tracking-tight flex items-center gap-2">
+                            {notebook?.icon} {notebook?.title}
+                        </h2>
+                        <div className="h-6 w-px bg-border mx-2"></div>
+                        <div className="flex bg-muted/50 p-1 rounded-lg gap-1">
+                            {[
+                                { id: "chat", label: "Chat", icon: MessageSquare },
+                                { id: "notes", label: "Notes", icon: StickyNote },
+                                { id: "quiz", label: "Quiz", icon: BrainCircuit },
+                                { id: "mindmap", label: "Mind Map", icon: Network },
+                            ].map((tab) => (
+                                <button 
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id as any)}
+                                    className={`px-3 py-1.5 text-sm font-bold rounded-md transition-all flex items-center gap-2 ${
+                                        activeTab === tab.id 
+                                            ? "bg-white shadow-sm text-primary ring-1 ring-black/5" 
+                                            : "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                                    }`}
+                                >
+                                    <tab.icon className="h-3.5 w-3.5" />
+                                    {tab.label}
+                                </button>
+                            ))}
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -226,11 +250,12 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
 
                 {/* Content */}
                 <div className="flex-1 overflow-hidden relative">
-                    {activeTab === "chat" ? (
-                        activeChatId ? <ChatInterface notebookId={notebookId} chatId={activeChatId} /> : <div>Loading chat...</div>
-                    ) : (
-                        <NotesInterface notebookId={notebookId} />
+                    {activeTab === "chat" && (
+                        activeChatId ? <ChatInterface notebookId={notebookId} chatId={activeChatId} /> : <div className="p-8 text-center text-muted-foreground">Initializing chat...</div>
                     )}
+                    {activeTab === "notes" && <NotesInterface notebookId={notebookId} />}
+                    {activeTab === "quiz" && <QuizInterface notebookId={notebookId} />}
+                    {activeTab === "mindmap" && <MindmapInterface notebookId={notebookId} />}
                 </div>
             </div>
         </div>

@@ -210,6 +210,30 @@ const schema = defineSchema(
       content: v.string(),
       tags: v.optional(v.array(v.string())),
     }).index("by_notebook", ["notebookId"]),
+
+    ai_quizzes: defineTable({
+      notebookId: v.id("ai_notebooks"),
+      title: v.string(),
+      questions: v.array(v.object({
+        question: v.string(),
+        options: v.array(v.string()),
+        correctAnswer: v.number(), // index
+        explanation: v.optional(v.string()),
+      })),
+      userScore: v.optional(v.number()),
+      isCompleted: v.boolean(),
+    }).index("by_notebook", ["notebookId"]),
+
+    ai_mindmaps: defineTable({
+      notebookId: v.id("ai_notebooks"),
+      title: v.string(),
+      // Simple node structure for visualization: { id, label, children: [] }
+      rootNode: v.object({
+        id: v.string(),
+        label: v.string(),
+        children: v.optional(v.array(v.any())), // Recursive structure is hard to validate strictly in v.object, using v.any for children for flexibility or stringified JSON
+      }), 
+    }).index("by_notebook", ["notebookId"]),
   },
   {
     schemaValidation: false,
