@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Users, Calendar, Shield, Linkedin, Mail, BookCheck, BrainCircuit, Trophy, ChevronDown } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Calendar, Shield, Linkedin, Mail, BookCheck, BrainCircuit, Trophy, ChevronDown, Gamepad2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 
@@ -89,7 +89,7 @@ export default function Landing() {
             <span className="text-indigo-600 bg-indigo-50 px-2 border-2 border-transparent">Reimagined.</span>
           </h1>
           <p className="text-xl font-medium text-muted-foreground max-w-2xl mx-auto mb-10">
-            The all-in-one platform for students. Track your syllabus, get AI study help, join societies, and climb the leaderboard.
+            The all-in-one platform for students. Track your syllabus, get AI study help, play arcade games, and climb the leaderboard.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="h-14 px-8 text-lg font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={() => navigate("/auth")}>
@@ -145,10 +145,10 @@ export default function Landing() {
               className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#eab308]"
             >
               <div className="h-14 w-14 bg-yellow-100 flex items-center justify-center mb-4 text-yellow-600 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <Trophy className="h-8 w-8" />
+                <Gamepad2 className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Gamified Learning</h3>
-              <p className="text-muted-foreground font-medium">Earn points for contributions, maintain streaks, unlock badges, and climb the campus leaderboard.</p>
+              <h3 className="text-xl font-black mb-2 uppercase">Arcade & Gamification</h3>
+              <p className="text-muted-foreground font-medium">Challenge Jojo in retro mini-games, earn points, unlock badges, and climb the campus leaderboard.</p>
             </motion.div>
 
             <motion.div 
