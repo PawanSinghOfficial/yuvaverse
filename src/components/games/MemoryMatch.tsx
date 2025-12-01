@@ -242,34 +242,41 @@ export default function MemoryMatch() {
         </div>
       </div>
 
-      <div className={`grid ${getGridClass()} gap-3 perspective-1000`}>
+      <div className={`grid ${getGridClass()} gap-3`} style={{ perspective: "1000px" }}>
         {cards.map((card) => (
           <div
             key={card.id}
-            className="relative h-16 w-16 sm:h-20 sm:w-20 cursor-pointer group perspective-1000"
+            className="relative h-16 w-16 sm:h-20 sm:w-20 cursor-pointer group"
             onClick={() => handleCardClick(card.id)}
+            style={{ perspective: "1000px" }}
           >
             <motion.div
-              className="w-full h-full relative preserve-3d transition-all duration-500"
+              className="w-full h-full relative"
+              initial={false}
               animate={{ rotateY: card.isFlipped || card.isMatched ? 180 : 0 }}
               transition={{ duration: 0.4 }}
               style={{ transformStyle: "preserve-3d" }}
             >
               {/* Front Face (Brain Icon) */}
               <div 
-                className="absolute inset-0 flex items-center justify-center bg-indigo-500 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] backface-hidden"
-                style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
+                className="absolute inset-0 flex items-center justify-center bg-indigo-500 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                style={{ 
+                  backfaceVisibility: "hidden", 
+                  WebkitBackfaceVisibility: "hidden",
+                  zIndex: 2
+                }}
               >
                 <Brain className="text-white h-8 w-8" />
               </div>
 
               {/* Back Face (Emoji) */}
               <div 
-                className="absolute inset-0 flex items-center justify-center bg-white rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-3xl sm:text-4xl backface-hidden"
+                className="absolute inset-0 flex items-center justify-center bg-white rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-3xl sm:text-4xl"
                 style={{ 
                   backfaceVisibility: "hidden", 
                   WebkitBackfaceVisibility: "hidden",
-                  transform: "rotateY(180deg)" 
+                  transform: "rotateY(180deg)",
+                  zIndex: 1
                 }}
               >
                 {card.emoji}
