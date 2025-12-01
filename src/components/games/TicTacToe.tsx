@@ -4,10 +4,11 @@ import { Card } from "@/components/ui/card";
 import { RotateCcw, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useGameSounds } from "@/hooks/use-game-sounds";
+import { JojoTease } from "@/components/JojoTease";
 
 export default function TicTacToe() {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -16,8 +17,10 @@ export default function TicTacToe() {
   const [winningLine, setWinningLine] = useState<number[] | null>(null);
   const [gameRecorded, setGameRecorded] = useState(false);
   const [isCpuThinking, setIsCpuThinking] = useState(false);
+  const [teaseMessage, setTeaseMessage] = useState<string | null>(null);
   const { playSound } = useGameSounds();
   
+  const user = useQuery(api.users.currentUser);
   const recordResult = useMutation(api.users.recordGameResult);
 
   const calculateWinner = useCallback((squares: any[]) => {
@@ -109,6 +112,17 @@ export default function TicTacToe() {
          handleGameEnd(true);
       } else {
          playSound('lose');
+         
+         const username = user?.username || user?.name || "Player";
+         const teases = [
+            `Tic-Tac-Toe? More like Tic-Tac-NO, ${username}! ❌`,
+            `I can see your moves before you make them, ${username}. 🔮`,
+            `Better luck next time, ${username}! 🤖`,
+            `Jojo: 1, ${username}: 0. 😎`
+         ];
+         const randomTease = teases[Math.floor(Math.random() * teases.length)];
+         setTeaseMessage(randomTease);
+
          handleGameEnd(false);
       }
     } else if (!board.includes(null)) {
@@ -147,6 +161,7 @@ export default function TicTacToe() {
 
   return (
     <div className="flex flex-col items-center gap-6 p-4">
+      <JojoTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
       <div className="flex justify-between items-center w-full max-w-xs">
         <div className={`text-xl font-black ${xIsNext && !winner ? "text-primary scale-110" : "text-muted-foreground"} transition-all`}>
           You (X)
