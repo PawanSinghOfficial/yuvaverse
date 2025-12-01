@@ -254,7 +254,7 @@ export default function MemoryMatch() {
               className="w-full h-full relative"
               initial={false}
               animate={{ rotateY: card.isFlipped || card.isMatched ? 180 : 0 }}
-              transition={{ duration: 0.4 }}
+              transition={{ type: "spring", stiffness: 260, damping: 20 }}
               style={{ transformStyle: "preserve-3d" }}
             >
               {/* Front Face (Brain Icon) */}
