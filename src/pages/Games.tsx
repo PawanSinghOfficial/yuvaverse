@@ -167,6 +167,35 @@ const ArcadeBackground = () => {
         })}
       </motion.div>
 
+      {/* Shooting Lasers */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <motion.div
+            key={`laser-${i}`}
+            className={`absolute h-[2px] w-[100px] sm:w-[200px] bg-gradient-to-r from-transparent to-transparent blur-[2px] ${i % 2 === 0 ? "via-cyan-400" : "via-fuchsia-400"}`}
+            style={{ top: `${Math.random() * 100}%` }}
+            initial={{ x: "-100%", opacity: 0 }}
+            animate={{ 
+              x: "200vw", 
+              opacity: [0, 1, 0] 
+            }}
+            transition={{
+              duration: 2 + Math.random() * 5,
+              repeat: Infinity,
+              delay: Math.random() * 5,
+              ease: "linear"
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Scanner Bar */}
+      <motion.div
+        className="absolute inset-x-0 h-[100px] bg-gradient-to-b from-transparent via-purple-500/10 to-transparent pointer-events-none z-[1]"
+        animate={{ top: ["-20%", "120%"] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+      />
+
       {/* CRT Scanline Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] z-[5] bg-[size:100%_3px,3px_100%] pointer-events-none" />
       
