@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Gamepad2, Brain, Scissors, Calculator, Grid3X3, Sparkles } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import TicTacToe from "@/components/games/TicTacToe";
 import MemoryMatch from "@/components/games/MemoryMatch";
 import RockPaperScissors from "@/components/games/RockPaperScissors";
@@ -55,17 +55,29 @@ const GAMES = [
 
 const ArcadeBackground = () => {
   const icons = [Gamepad2, Brain, Scissors, Calculator, Grid3X3, Sparkles];
+  const { scrollY } = useScroll();
+  
+  // Parallax transforms
+  const bgY = useTransform(scrollY, [0, 1000], [0, 200]);
+  const gridY = useTransform(scrollY, [0, 1000], [0, 100]);
+  const glowY = useTransform(scrollY, [0, 1000], [0, -100]);
+  const iconsY = useTransform(scrollY, [0, 1000], [0, -300]);
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none bg-slate-950">
+    <div className="fixed inset-0 overflow-hidden pointer-events-none bg-slate-950 -z-10">
       {/* Cyberpunk Grid */}
-      <div className="absolute inset-0 opacity-20">
+      <motion.div 
+        style={{ y: bgY }}
+        className="absolute inset-0 opacity-20"
+      >
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
-      </div>
+      </motion.div>
 
       {/* Moving Grid Effect */}
       <motion.div 
         className="absolute inset-0 opacity-20"
         style={{
+          y: gridY,
           backgroundImage: "linear-gradient(0deg, transparent 24%, rgba(168, 85, 247, .3) 25%, rgba(168, 85, 247, .3) 26%, transparent 27%, transparent 74%, rgba(59, 130, 246, .3) 75%, rgba(59, 130, 246, .3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(59, 130, 246, .3) 25%, rgba(59, 130, 246, .3) 26%, transparent 27%, transparent 74%, rgba(168, 85, 247, .3) 75%, rgba(168, 85, 247, .3) 76%, transparent 77%, transparent)",
           backgroundSize: "50px 50px"
         }}
@@ -80,78 +92,82 @@ const ArcadeBackground = () => {
       />
 
       {/* Neon Glows */}
-      <motion.div 
-        animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.2, 1] }}
-        transition={{ duration: 4, repeat: Infinity }}
-        className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/40 rounded-full blur-[128px]"
-      />
-      <motion.div 
-        animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.2, 1] }}
-        transition={{ duration: 6, repeat: Infinity, delay: 2 }}
-        className="absolute top-1/2 -right-20 w-80 h-80 bg-blue-600/40 rounded-full blur-[128px]"
-      />
-      <motion.div 
-        animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.1, 1] }}
-        transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-        className="absolute -bottom-40 left-1/3 w-96 h-96 bg-pink-600/40 rounded-full blur-[128px]"
-      />
+      <motion.div style={{ y: glowY }} className="absolute inset-0">
+        <motion.div 
+          animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.2, 1] }}
+          transition={{ duration: 4, repeat: Infinity }}
+          className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/40 rounded-full blur-[128px]"
+        />
+        <motion.div 
+          animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.2, 1] }}
+          transition={{ duration: 6, repeat: Infinity, delay: 2 }}
+          className="absolute top-1/2 -right-20 w-80 h-80 bg-blue-600/40 rounded-full blur-[128px]"
+        />
+        <motion.div 
+          animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.1, 1] }}
+          transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+          className="absolute -bottom-40 left-1/3 w-96 h-96 bg-pink-600/40 rounded-full blur-[128px]"
+        />
+      </motion.div>
 
       {/* Floating Pixels/Particles */}
-      {Array.from({ length: 20 }).map((_, i) => (
-        <motion.div
-          key={`pixel-${i}`}
-          className={`absolute w-1 h-1 sm:w-2 sm:h-2 rounded-sm ${
-            i % 3 === 0 ? "bg-yellow-400" : i % 3 === 1 ? "bg-cyan-400" : "bg-fuchsia-400"
-          }`}
-          initial={{
-            x: Math.random() * 100 + "%",
-            y: "110%",
-            opacity: 0,
-            rotate: 0,
-          }}
-          animate={{
-            y: "-10%",
-            opacity: [0, 1, 1, 0],
-            rotate: 360,
-          }}
-          transition={{
-            duration: 5 + Math.random() * 10,
-            repeat: Infinity,
-            ease: "linear",
-            delay: Math.random() * 5,
-          }}
-        />
-      ))}
-
-      {/* Floating Icons with Neon Effect */}
-      {Array.from({ length: 12 }).map((_, i) => {
-        const Icon = icons[i % icons.length];
-        const color = i % 3 === 0 ? "text-yellow-400" : i % 3 === 1 ? "text-cyan-400" : "text-fuchsia-400";
-        return (
+      <motion.div style={{ y: iconsY }} className="absolute inset-0">
+        {Array.from({ length: 20 }).map((_, i) => (
           <motion.div
-            key={`icon-${i}`}
-            className={`absolute ${color} opacity-30`}
+            key={`pixel-${i}`}
+            className={`absolute w-1 h-1 sm:w-2 sm:h-2 rounded-sm ${
+              i % 3 === 0 ? "bg-yellow-400" : i % 3 === 1 ? "bg-cyan-400" : "bg-fuchsia-400"
+            }`}
             initial={{
               x: Math.random() * 100 + "%",
-              y: Math.random() * 100 + "%",
-              scale: 0.5 + Math.random(),
-              rotate: Math.random() * 360,
+              y: "110%",
+              opacity: 0,
+              rotate: 0,
             }}
             animate={{
-              y: [null, Math.random() * -100],
-              rotate: [null, Math.random() * 360],
-              opacity: [0.2, 0.5, 0.2],
+              y: "-10%",
+              opacity: [0, 1, 1, 0],
+              rotate: 360,
             }}
             transition={{
-              duration: 15 + Math.random() * 10,
+              duration: 5 + Math.random() * 10,
               repeat: Infinity,
               ease: "linear",
+              delay: Math.random() * 5,
             }}
-          >
-            <Icon size={30 + Math.random() * 40} />
-          </motion.div>
-        );
-      })}
+          />
+        ))}
+
+        {/* Floating Icons with Neon Effect */}
+        {Array.from({ length: 12 }).map((_, i) => {
+          const Icon = icons[i % icons.length];
+          const color = i % 3 === 0 ? "text-yellow-400" : i % 3 === 1 ? "text-cyan-400" : "text-fuchsia-400";
+          return (
+            <motion.div
+              key={`icon-${i}`}
+              className={`absolute ${color} opacity-30`}
+              initial={{
+                x: Math.random() * 100 + "%",
+                y: Math.random() * 100 + "%",
+                scale: 0.5 + Math.random(),
+                rotate: Math.random() * 360,
+              }}
+              animate={{
+                y: [null, Math.random() * -100],
+                rotate: [null, Math.random() * 360],
+                opacity: [0.2, 0.5, 0.2],
+              }}
+              transition={{
+                duration: 15 + Math.random() * 10,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            >
+              <Icon size={30 + Math.random() * 40} />
+            </motion.div>
+          );
+        })}
+      </motion.div>
     </div>
   );
 };
@@ -162,7 +178,7 @@ export default function Games() {
   const ActiveGame = GAMES.find(g => g.id === selectedGame)?.component;
 
   return (
-    <div className="p-8 min-h-screen bg-slate-950 space-y-8 relative overflow-hidden">
+    <div className="p-8 min-h-screen space-y-8 relative overflow-hidden">
       <ArcadeBackground />
       
       <div className="relative z-10 flex flex-col items-center text-center space-y-4 mb-12">
