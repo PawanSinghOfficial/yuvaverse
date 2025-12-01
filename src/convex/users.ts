@@ -232,3 +232,52 @@ export const completeOnboarding = mutation({
     await ctx.db.patch(userId, { hasSeenOnboarding: true });
   },
 });
+
+export const recordGameResult = mutation({
+  args: {
+    gameId: v.string(),
+    score: v.optional(v.number()),
+    win: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+
+    const user = await ctx.db.get(userId);
+    if (!user) return null;
+
+    // Points system: 10 for a win, 2 for playing/participation
+    const pointsAwarded = args.win ? 10 : 2;
+    const currentPoints = user.points || 0;
+    
+    let patchData: any = {
+      points: currentPoints + pointsAwarded,
+      totalGamesPlayed: (user.totalGamesPlayed || 0) + 1,
+    };
+
+    if (args.win) {
+      patchData.totalGamesWon = (user.totalGamesWon || 0) + 1;
+    }
+
+    // Update High Scores
+    if (args.gameId === "snake" && args.score !== undefined) {
+      if (args.score > (user.snakeHighScore || 0)) {
+        patchData.snakeHighScore = args.score;
+      }
+    }
+    
+    if (args.gameId === "math" && args.score !== undefined) {
+      if (args.score > (user.mathHighScore || 0)) {
+        patchData.mathHighScore = args.score;
+      }
+    }
+
+    await ctx.db.patch(userId, patchData);
+    
+    return { 
+      pointsAwarded, 
+      newHighScore: args.gameId === "snake" ? patchData.snakeHighScore : 
+                    args.gameId === "math" ? patchData.mathHighScore : undefined
+    };
+  },
+});

@@ -4,6 +4,9 @@ import { Input } from "@/components/ui/input";
 import { RotateCcw, Check, Timer } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 export default function MathChallenge() {
   const [num1, setNum1] = useState(0);
@@ -14,6 +17,8 @@ export default function MathChallenge() {
   const [timeLeft, setTimeLeft] = useState(30);
   const [isActive, setIsActive] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  
+  const recordResult = useMutation(api.users.recordGameResult);
 
   const generateProblem = () => {
     const ops = ["+", "-", "*"];
@@ -45,11 +50,32 @@ export default function MathChallenge() {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
     } else if (timeLeft === 0 && isActive) {
-      setIsActive(false);
-      setGameOver(true);
+      handleGameOver();
     }
     return () => clearInterval(interval);
   }, [isActive, timeLeft]);
+
+  const handleGameOver = async () => {
+    setIsActive(false);
+    setGameOver(true);
+    
+    try {
+      const result = await recordResult({
+        gameId: "math",
+        score: score,
+        win: score > 0 // Consider it a "win" if they got at least some points
+      });
+      
+      if (result) {
+        toast.success(`Time's Up! You earned ${result.pointsAwarded} points.`);
+        if (result.newHighScore && result.newHighScore === score) {
+          toast.success("New High Score! 🏆");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to record score:", error);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

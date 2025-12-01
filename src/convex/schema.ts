@@ -50,6 +50,12 @@ const schema = defineSchema(
       hasSeenOnboarding: v.optional(v.boolean()),
       pomodoroSessionsCompleted: v.optional(v.number()),
       pomodoroSessionsAborted: v.optional(v.number()),
+      
+      // Game Stats
+      snakeHighScore: v.optional(v.number()),
+      mathHighScore: v.optional(v.number()),
+      totalGamesPlayed: v.optional(v.number()),
+      totalGamesWon: v.optional(v.number()),
     }).index("email", ["email"]).index("by_username", ["username"]), // index for the email. do not remove or modify
 
     resources: defineTable({

@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Brain } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 const EMOJIS = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼"];
 
@@ -11,6 +14,9 @@ export default function MemoryMatch() {
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
   const [isWon, setIsWon] = useState(false);
+  const [gameRecorded, setGameRecorded] = useState(false);
+  
+  const recordResult = useMutation(api.users.recordGameResult);
 
   const shuffleCards = () => {
     const shuffled = [...EMOJIS, ...EMOJIS]
@@ -25,6 +31,7 @@ export default function MemoryMatch() {
     setFlippedCards([]);
     setMoves(0);
     setIsWon(false);
+    setGameRecorded(false);
   };
 
   useEffect(() => {
@@ -56,15 +63,23 @@ export default function MemoryMatch() {
   }, [flippedCards]);
 
   useEffect(() => {
-    if (cards.length > 0 && cards.every((card) => card.isMatched)) {
+    if (cards.length > 0 && cards.every((card) => card.isMatched) && !gameRecorded) {
       setIsWon(true);
+      setGameRecorded(true);
       confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 }
       });
+      
+      recordResult({
+        gameId: "memory",
+        win: true
+      }).then((res) => {
+        if (res) toast.success(`Memory Master! +${res.pointsAwarded} Points`);
+      }).catch(console.error);
     }
-  }, [cards]);
+  }, [cards, gameRecorded, recordResult]);
 
   const handleCardClick = (id: number) => {
     if (flippedCards.length === 2 || cards[id].isFlipped || cards[id].isMatched) return;

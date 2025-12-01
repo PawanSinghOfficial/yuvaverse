@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Play, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 const GRID_SIZE = 20;
 const CELL_SIZE = 20; // px
@@ -15,6 +18,8 @@ export default function SnakeGame() {
   const [score, setScore] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const recordResult = useMutation(api.users.recordGameResult);
 
   const generateFood = () => {
     return {
@@ -63,8 +68,7 @@ export default function SnakeGame() {
       newHead.y >= GRID_SIZE ||
       snake.some((segment) => segment.x === newHead.x && segment.y === newHead.y)
     ) {
-      setGameOver(true);
-      setIsPlaying(false);
+      handleGameOver();
       return;
     }
 
@@ -79,6 +83,29 @@ export default function SnakeGame() {
     }
 
     setSnake(newSnake);
+  };
+
+  const handleGameOver = async () => {
+    setGameOver(true);
+    setIsPlaying(false);
+    if (gameLoopRef.current) clearInterval(gameLoopRef.current);
+    
+    try {
+      const result = await recordResult({
+        gameId: "snake",
+        score: score,
+        win: false // Snake is endless, so just participation/score
+      });
+      
+      if (result) {
+        toast.success(`Game Over! You earned ${result.pointsAwarded} points.`);
+        if (result.newHighScore && result.newHighScore === score) {
+          toast.success("New High Score! 🏆");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to record score:", error);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

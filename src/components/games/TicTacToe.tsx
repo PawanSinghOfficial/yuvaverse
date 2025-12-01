@@ -4,12 +4,18 @@ import { Card } from "@/components/ui/card";
 import { RotateCcw, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 export default function TicTacToe() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
   const [winner, setWinner] = useState<string | null>(null);
   const [winningLine, setWinningLine] = useState<number[] | null>(null);
+  const [gameRecorded, setGameRecorded] = useState(false);
+  
+  const recordResult = useMutation(api.users.recordGameResult);
 
   const calculateWinner = (squares: any[]) => {
     const lines = [
@@ -45,17 +51,40 @@ export default function TicTacToe() {
             spread: 70,
             origin: { y: 0.6 }
          });
+         handleGameEnd(true);
+      } else {
+         handleGameEnd(false);
       }
     } else if (!board.includes(null)) {
       setWinner("Draw");
+      handleGameEnd(false);
     }
   }, [board]);
+
+  const handleGameEnd = async (isWin: boolean) => {
+    if (gameRecorded) return;
+    setGameRecorded(true);
+    
+    try {
+      const result = await recordResult({
+        gameId: "tictactoe",
+        win: isWin
+      });
+      
+      if (result) {
+        toast.success(isWin ? `Victory! +${result.pointsAwarded} Points` : `Game Over. +${result.pointsAwarded} Points`);
+      }
+    } catch (error) {
+      console.error("Failed to record result:", error);
+    }
+  };
 
   const resetGame = () => {
     setBoard(Array(9).fill(null));
     setXIsNext(true);
     setWinner(null);
     setWinningLine(null);
+    setGameRecorded(false);
   };
 
   return (

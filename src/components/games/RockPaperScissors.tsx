@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Hand, Scissors, Scroll, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 const CHOICES = [
   { id: "rock", label: "Rock", icon: Hand, color: "bg-stone-500" },
@@ -14,24 +17,44 @@ export default function RockPaperScissors() {
   const [computerChoice, setComputerChoice] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [score, setScore] = useState({ user: 0, computer: 0 });
+  
+  const recordResult = useMutation(api.users.recordGameResult);
 
-  const playGame = (choiceId: string) => {
+  const playGame = async (choiceId: string) => {
     const randomChoice = CHOICES[Math.floor(Math.random() * CHOICES.length)].id;
     setUserChoice(choiceId);
     setComputerChoice(randomChoice);
 
+    let isWin = false;
+    let resultText = "";
+
     if (choiceId === randomChoice) {
-      setResult("Draw!");
+      resultText = "Draw!";
     } else if (
       (choiceId === "rock" && randomChoice === "scissors") ||
       (choiceId === "paper" && randomChoice === "rock") ||
       (choiceId === "scissors" && randomChoice === "paper")
     ) {
-      setResult("You Win!");
+      resultText = "You Win!";
       setScore(s => ({ ...s, user: s.user + 1 }));
+      isWin = true;
     } else {
-      setResult("You Lose!");
+      resultText = "You Lose!";
       setScore(s => ({ ...s, computer: s.computer + 1 }));
+    }
+    
+    setResult(resultText);
+    
+    try {
+      const res = await recordResult({
+        gameId: "rps",
+        win: isWin
+      });
+      if (res && isWin) {
+        toast.success(`You Won! +${res.pointsAwarded} Points`);
+      }
+    } catch (error) {
+      console.error("Failed to record result:", error);
     }
   };
 
