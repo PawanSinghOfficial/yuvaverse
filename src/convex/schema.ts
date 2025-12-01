@@ -174,6 +174,42 @@ const schema = defineSchema(
       topicId: v.id("syllabus_topics"),
       isCompleted: v.boolean(),
     }).index("by_user_topic", ["userId", "topicId"]).index("by_user", ["userId"]),
+
+    // AI Notebook Tables
+    ai_notebooks: defineTable({
+      userId: v.id("users"),
+      title: v.string(),
+      description: v.optional(v.string()),
+      icon: v.optional(v.string()),
+    }).index("by_user", ["userId"]),
+
+    ai_sources: defineTable({
+      notebookId: v.id("ai_notebooks"),
+      title: v.string(),
+      type: v.string(), // "pdf", "text", "url", "youtube"
+      content: v.optional(v.string()), // Extracted text or raw content
+      fileId: v.optional(v.id("_storage")),
+      summary: v.optional(v.string()),
+      isProcessing: v.optional(v.boolean()),
+    }).index("by_notebook", ["notebookId"]),
+
+    ai_chats: defineTable({
+      notebookId: v.id("ai_notebooks"),
+      title: v.string(),
+      lastMessageAt: v.number(),
+    }).index("by_notebook", ["notebookId"]),
+
+    ai_messages: defineTable({
+      chatId: v.id("ai_chats"),
+      role: v.union(v.literal("user"), v.literal("assistant")),
+      content: v.string(),
+    }).index("by_chat", ["chatId"]),
+
+    ai_notes: defineTable({
+      notebookId: v.id("ai_notebooks"),
+      content: v.string(),
+      tags: v.optional(v.array(v.string())),
+    }).index("by_notebook", ["notebookId"]),
   },
   {
     schemaValidation: false,
