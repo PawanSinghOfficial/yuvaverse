@@ -68,7 +68,7 @@ export default function RockPaperScissors() {
     <div className="flex flex-col items-center gap-8 p-4 w-full max-w-md mx-auto">
       <div className="flex justify-between w-full text-xl font-black uppercase">
         <div className="text-green-600">You: {score.user}</div>
-        <div className="text-red-600">CPU: {score.computer}</div>
+        <div className="text-red-600">Jojo: {score.computer}</div>
       </div>
 
       <div className="h-48 flex items-center justify-center w-full">
@@ -107,7 +107,7 @@ export default function RockPaperScissors() {
                 animate={{ x: 0, opacity: 1 }}
                 className="text-center"
               >
-                <p className="text-sm font-bold mb-2">CPU</p>
+                <p className="text-sm font-bold mb-2">JOJO</p>
                 {(() => {
                   const choice = CHOICES.find(c => c.id === computerChoice);
                   return choice ? (

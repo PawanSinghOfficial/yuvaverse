@@ -173,7 +173,7 @@ export default function MemoryMatch() {
         difficulty: difficulty
       }).then((res) => {
         if (res) {
-          toast.success(isWin ? `You Won! +${res.pointsAwarded} Points` : `CPU Won. +${res.pointsAwarded} Points`);
+          toast.success(isWin ? `You Won! +${res.pointsAwarded} Points` : `Jojo Won. +${res.pointsAwarded} Points`);
         }
       }).catch(console.error);
     }
@@ -209,12 +209,12 @@ export default function MemoryMatch() {
               <span className="text-xs font-bold uppercase bg-green-100 text-green-800 px-2 py-1 rounded animate-pulse">Your Turn</span>
             )}
             {turn === "cpu" && !isGameOver && (
-              <span className="text-xs font-bold uppercase bg-red-100 text-red-800 px-2 py-1 rounded animate-pulse">CPU Thinking...</span>
+              <span className="text-xs font-bold uppercase bg-red-100 text-red-800 px-2 py-1 rounded animate-pulse">Jojo Thinking...</span>
             )}
           </div>
 
           <div className={`flex items-center gap-2 text-xl font-black ${turn === "cpu" ? "text-red-600 scale-110" : "text-muted-foreground"} transition-all`}>
-            CPU: {scores.cpu}
+            Jojo: {scores.cpu}
             <Bot className="h-6 w-6" />
           </div>
         </div>
@@ -293,7 +293,7 @@ export default function MemoryMatch() {
           className="text-center mt-4 p-6 bg-white rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
         >
           <h3 className={`text-3xl font-black uppercase ${scores.player > scores.cpu ? "text-green-600" : scores.player < scores.cpu ? "text-red-600" : "text-yellow-600"}`}>
-            {scores.player > scores.cpu ? "You Won!" : scores.player < scores.cpu ? "CPU Won!" : "It's a Draw!"}
+            {scores.player > scores.cpu ? "You Won!" : scores.player < scores.cpu ? "Jojo Won!" : "It's a Draw!"}
           </h3>
           <p className="text-muted-foreground font-bold text-xl mt-2">
             {scores.player} - {scores.cpu}

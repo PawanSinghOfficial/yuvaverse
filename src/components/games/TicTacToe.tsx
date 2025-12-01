@@ -145,7 +145,7 @@ export default function TicTacToe() {
           You (X)
         </div>
         <div className={`text-xl font-black ${!xIsNext && !winner ? "text-primary scale-110" : "text-muted-foreground"} transition-all`}>
-          CPU (O)
+          Jojo (O)
         </div>
       </div>
 
@@ -181,7 +181,7 @@ export default function TicTacToe() {
           className="text-center space-y-4"
         >
           <div className="text-3xl font-black uppercase">
-            {winner === "Draw" ? "It's a Draw!" : winner === "X" ? "You Win!" : "CPU Wins!"}
+            {winner === "Draw" ? "It's a Draw!" : winner === "X" ? "You Win!" : "Jojo Wins!"}
           </div>
           <Button onClick={resetGame} className="gap-2 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <RotateCcw className="h-4 w-4" /> Play Again

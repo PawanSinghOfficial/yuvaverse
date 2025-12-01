@@ -74,7 +74,7 @@ const steps = [
   },
   {
     title: "Arcade Zone",
-    description: "Take a break and have some fun! Challenge the CPU in mini-games like Tic-Tac-Toe, Snake, and Memory Match. Earn points for winning and participating to climb the leaderboard!",
+    description: "Take a break and have some fun! Challenge Jojo in mini-games like Tic-Tac-Toe, Snake, and Memory Match. Earn points for winning and participating to climb the leaderboard!",
     targetId: "sidebar-nav-games",
   },
   {
