@@ -138,8 +138,8 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
             onClick={onGuideClick}
           >
              <div className="flex items-center flex-1">
-                <img src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" alt="Jojo" className="h-6 w-6 mr-3 rounded-full object-cover border border-indigo-500" />
-                Jojo Guide
+                <img src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" alt="Vayuu" className="h-6 w-6 mr-3 rounded-full object-cover border border-indigo-500" />
+                Vayuu Guide
              </div>
           </button>
         </div>

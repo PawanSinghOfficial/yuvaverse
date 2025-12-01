@@ -31,7 +31,7 @@ const GAMES = [
   {
     id: "rps",
     title: "Rock Paper Scissors",
-    description: "Battle against Jojo",
+    description: "Battle against Vayuu",
     icon: Scissors,
     color: "bg-red-100 text-red-600",
     component: RockPaperScissors

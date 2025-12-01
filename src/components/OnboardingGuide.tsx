@@ -14,7 +14,7 @@ interface OnboardingGuideProps {
 const steps = [
   {
     title: "Welcome to YuvaVerse!",
-    description: "I'm Jojo, your AI guide. I'm here to show you around your new digital campus. This platform is designed to help you collaborate, learn, and grow. Let's take a quick tour of your dashboard!",
+    description: "I'm Vayuu, your AI guide. I'm here to show you around your new digital campus. This platform is designed to help you collaborate, learn, and grow. Let's take a quick tour of your dashboard!",
     targetId: null,
   },
   {
@@ -74,7 +74,7 @@ const steps = [
   },
   {
     title: "Arcade Zone",
-    description: "Take a break and have some fun! Challenge Jojo in mini-games like Tic-Tac-Toe, Snake, and Memory Match. Earn points for winning and participating to climb the leaderboard!",
+    description: "Take a break and have some fun! Challenge Vayuu in mini-games like Tic-Tac-Toe, Snake, and Memory Match. Earn points for winning and participating to climb the leaderboard!",
     targetId: "sidebar-nav-games",
   },
   {
@@ -184,7 +184,7 @@ export function OnboardingGuide({ isOpen, onClose }: OnboardingGuideProps) {
                   animate={{ y: [0, -4, 0] }}
                   transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
                 >
-                   <img src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" alt="Jojo" className="h-full w-full object-cover" />
+                   <img src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" alt="Vayuu" className="h-full w-full object-cover" />
                 </motion.div>
                 <div className="overflow-hidden">
                   <AnimatePresence mode="wait">

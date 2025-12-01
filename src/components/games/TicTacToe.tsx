@@ -8,7 +8,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useGameSounds } from "@/hooks/use-game-sounds";
-import { JojoTease } from "@/components/JojoTease";
+import { VayuuTease } from "@/components/VayuuTease";
 
 export default function TicTacToe() {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -118,7 +118,7 @@ export default function TicTacToe() {
             `Tic-Tac-Toe? More like Tic-Tac-NO, ${username}! ❌`,
             `I can see your moves before you make them, ${username}. 🔮`,
             `Better luck next time, ${username}! 🤖`,
-            `Jojo: 1, ${username}: 0. 😎`
+            `Vayuu: 1, ${username}: 0. 😎`
          ];
          const randomTease = teases[Math.floor(Math.random() * teases.length)];
          setTeaseMessage(randomTease);
@@ -161,13 +161,13 @@ export default function TicTacToe() {
 
   return (
     <div className="flex flex-col items-center gap-6 p-4">
-      <JojoTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
+      <VayuuTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
       <div className="flex justify-between items-center w-full max-w-xs">
         <div className={`text-xl font-black ${xIsNext && !winner ? "text-primary scale-110" : "text-muted-foreground"} transition-all`}>
           You (X)
         </div>
         <div className={`text-xl font-black ${!xIsNext && !winner ? "text-primary scale-110" : "text-muted-foreground"} transition-all`}>
-          Jojo (O)
+          Vayuu (O)
         </div>
       </div>
 
@@ -203,7 +203,7 @@ export default function TicTacToe() {
           className="text-center space-y-4"
         >
           <div className="text-3xl font-black uppercase">
-            {winner === "Draw" ? "It's a Draw!" : winner === "X" ? "You Win!" : "Jojo Wins!"}
+            {winner === "Draw" ? "It's a Draw!" : winner === "X" ? "You Win!" : "Vayuu Wins!"}
           </div>
           <Button onClick={resetGame} className="gap-2 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <RotateCcw className="h-4 w-4" /> Play Again

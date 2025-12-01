@@ -7,7 +7,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useGameSounds } from "@/hooks/use-game-sounds";
-import { JojoTease } from "@/components/JojoTease";
+import { VayuuTease } from "@/components/VayuuTease";
 
 const EMOJIS = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮"];
 
@@ -179,7 +179,7 @@ export default function MemoryMatch() {
             const teases = [
                 `I have a photographic memory, ${username}. Do you? 📸`,
                 `Forgot where that card was, ${username}? 😂`,
-                `Jojo wins again! Better focus next time, ${username}. 🧠`,
+                `Vayuu wins again! Better focus next time, ${username}. 🧠`,
                 `Too easy for me, ${username}! 🤖`
             ];
             const randomTease = teases[Math.floor(Math.random() * teases.length)];
@@ -193,7 +193,7 @@ export default function MemoryMatch() {
         difficulty: difficulty
       }).then((res) => {
         if (res) {
-          toast.success(isWin ? `You Won! +${res.pointsAwarded} Points` : `Jojo Won. +${res.pointsAwarded} Points`);
+          toast.success(isWin ? `You Won! +${res.pointsAwarded} Points` : `Vayuu Won. +${res.pointsAwarded} Points`);
         }
       }).catch(console.error);
     }
@@ -218,7 +218,7 @@ export default function MemoryMatch() {
 
   return (
     <div className="flex flex-col items-center gap-6 p-4 w-full max-w-4xl mx-auto">
-      <JojoTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
+      <VayuuTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
       <div className="flex flex-col w-full gap-4">
         <div className="flex justify-between items-center px-4 bg-secondary/20 p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           <div className={`flex items-center gap-2 text-xl font-black ${turn === "player" ? "text-green-600 scale-110" : "text-muted-foreground"} transition-all`}>
@@ -231,12 +231,12 @@ export default function MemoryMatch() {
               <span className="text-xs font-bold uppercase bg-green-100 text-green-800 px-2 py-1 rounded animate-pulse">Your Turn</span>
             )}
             {turn === "cpu" && !isGameOver && (
-              <span className="text-xs font-bold uppercase bg-red-100 text-red-800 px-2 py-1 rounded animate-pulse">Jojo Thinking...</span>
+              <span className="text-xs font-bold uppercase bg-red-100 text-red-800 px-2 py-1 rounded animate-pulse">Vayuu Thinking...</span>
             )}
           </div>
 
           <div className={`flex items-center gap-2 text-xl font-black ${turn === "cpu" ? "text-red-600 scale-110" : "text-muted-foreground"} transition-all`}>
-            Jojo: {scores.cpu}
+            Vayuu: {scores.cpu}
             <Bot className="h-6 w-6" />
           </div>
         </div>
@@ -315,7 +315,7 @@ export default function MemoryMatch() {
           className="text-center mt-4 p-6 bg-white rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
         >
           <h3 className={`text-3xl font-black uppercase ${scores.player > scores.cpu ? "text-green-600" : scores.player < scores.cpu ? "text-red-600" : "text-yellow-600"}`}>
-            {scores.player > scores.cpu ? "You Won!" : scores.player < scores.cpu ? "Jojo Won!" : "It's a Draw!"}
+            {scores.player > scores.cpu ? "You Won!" : scores.player < scores.cpu ? "Vayuu Won!" : "It's a Draw!"}
           </h3>
           <p className="text-muted-foreground font-bold text-xl mt-2">
             {scores.player} - {scores.cpu}

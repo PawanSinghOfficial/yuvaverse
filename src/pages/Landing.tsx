@@ -148,7 +148,7 @@ export default function Landing() {
                 <Gamepad2 className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-black mb-2 uppercase">Arcade & Gamification</h3>
-              <p className="text-muted-foreground font-medium">Challenge Jojo in retro mini-games, earn points, unlock badges, and climb the campus leaderboard.</p>
+              <p className="text-muted-foreground font-medium">Challenge Vayuu in retro mini-games, earn points, unlock badges, and climb the campus leaderboard.</p>
             </motion.div>
 
             <motion.div 

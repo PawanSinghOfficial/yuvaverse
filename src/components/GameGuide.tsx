@@ -15,10 +15,10 @@ export function GameGuide() {
         <Button variant="outline" className="gap-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-white text-black font-bold">
           <img 
             src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" 
-            alt="Jojo" 
+            alt="Vayuu" 
             className="h-6 w-6 rounded-full border border-black"
           />
-          Jojo's Game Rules
+          Vayuu's Game Rules
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
@@ -26,7 +26,7 @@ export function GameGuide() {
           <DialogTitle className="flex items-center gap-3 text-2xl font-black uppercase">
             <img 
               src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" 
-              alt="Jojo" 
+              alt="Vayuu" 
               className="h-12 w-12 rounded-full border-2 border-black"
             />
             Arcade Guide
