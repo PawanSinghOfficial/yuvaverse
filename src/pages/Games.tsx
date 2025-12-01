@@ -8,6 +8,7 @@ import MemoryMatch from "@/components/games/MemoryMatch";
 import RockPaperScissors from "@/components/games/RockPaperScissors";
 import SnakeGame from "@/components/games/SnakeGame";
 import MathChallenge from "@/components/games/MathChallenge";
+import { GameGuide } from "@/components/GameGuide";
 
 const GAMES = [
   {
@@ -130,6 +131,15 @@ export default function Games() {
           Take a break from studying and challenge yourself with these mini-games.
           Earn bragging rights (and maybe some fun)!
         </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="pt-4"
+        >
+          <GameGuide />
+        </motion.div>
       </div>
 
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
