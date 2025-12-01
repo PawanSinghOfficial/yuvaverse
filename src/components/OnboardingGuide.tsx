@@ -73,6 +73,11 @@ const steps = [
     targetId: "sidebar-nav-notebook",
   },
   {
+    title: "Arcade Zone",
+    description: "Take a break and have some fun! Challenge the CPU in mini-games like Tic-Tac-Toe, Snake, and Memory Match. Earn points for winning and participating to climb the leaderboard!",
+    targetId: "sidebar-nav-games",
+  },
+  {
     title: "Feedback & Suggestions",
     description: "The feedback form is for the features you want in future or any complain regarding the same. We value your input to make YuvaVerse better!",
     targetId: "sidebar-nav-feedback",
