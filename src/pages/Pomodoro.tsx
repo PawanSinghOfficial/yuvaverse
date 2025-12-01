@@ -36,6 +36,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { VayuuTease } from "@/components/VayuuTease";
 
 const AMBIENT_SOUNDS = [
   {
@@ -92,6 +93,7 @@ export default function Pomodoro() {
   const [pointsEarned, setPointsEarned] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showQuitConfirm, setShowQuitConfirm] = useState(false);
+  const [teaseMessage, setTeaseMessage] = useState<string | null>(null);
   
   const activeSound = AMBIENT_SOUNDS.find(s => s.id === selectedSound);
   const pageBackground = activeSound?.pageBg || "bg-yellow-50/50 dark:bg-background";
@@ -216,6 +218,17 @@ export default function Pomodoro() {
     setTimeLeft(totalTime);
     if (audioRef.current) audioRef.current.pause();
     
+    const username = user?.username || user?.name || "Warrior";
+    const teases = [
+        `Giving up already, ${username}? Focus is a muscle! 💪`,
+        `Distracted again, ${username}? Vayuu is watching! 👀`,
+        `You can do better than that, ${username}. Try again! 📉`,
+        `Focus broken! ${username}, get back in the zone! 🧘`,
+        `Quitting is not an option, ${username}! 🚫`
+    ];
+    const randomTease = teases[Math.floor(Math.random() * teases.length)];
+    setTeaseMessage(randomTease);
+
     try {
       await abortSession({});
       toast.info("Session aborted. Keep trying!");
@@ -283,6 +296,8 @@ export default function Pomodoro() {
 
   return (
     <div ref={containerRef} className={cn("p-8 min-h-screen flex flex-col items-center justify-center space-y-8 relative overflow-y-auto transition-colors duration-1000", pageBackground)}>
+      <VayuuTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
+      
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
       
