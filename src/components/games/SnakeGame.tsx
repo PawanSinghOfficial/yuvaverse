@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Play, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
+import { Play, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Settings2 } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
@@ -10,6 +10,8 @@ const CELL_SIZE = 20; // px
 const INITIAL_SNAKE = [{ x: 10, y: 10 }];
 const INITIAL_DIRECTION = { x: 0, y: 0 };
 
+type Difficulty = "easy" | "medium" | "hard";
+
 export default function SnakeGame() {
   const [snake, setSnake] = useState(INITIAL_SNAKE);
   const [food, setFood] = useState({ x: 15, y: 15 });
@@ -17,9 +19,19 @@ export default function SnakeGame() {
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   
   const recordResult = useMutation(api.users.recordGameResult);
+
+  const getSpeed = () => {
+    switch (difficulty) {
+      case "easy": return 200;
+      case "medium": return 150;
+      case "hard": return 80;
+      default: return 150;
+    }
+  };
 
   const generateFood = () => {
     return {
@@ -45,12 +57,12 @@ export default function SnakeGame() {
 
   useEffect(() => {
     if (isPlaying && !gameOver) {
-      gameLoopRef.current = setInterval(moveSnake, 150);
+      gameLoopRef.current = setInterval(moveSnake, getSpeed());
     }
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     };
-  }, [isPlaying, gameOver, snake, direction]);
+  }, [isPlaying, gameOver, snake, direction, difficulty]);
 
   const moveSnake = () => {
     if (direction.x === 0 && direction.y === 0) return;
@@ -125,8 +137,25 @@ export default function SnakeGame() {
 
   return (
     <div className="flex flex-col items-center gap-4 p-4 outline-none" onKeyDown={handleKeyDown} tabIndex={0}>
-      <div className="flex justify-between w-full max-w-[300px] font-black uppercase">
+      <div className="flex justify-between w-full max-w-[300px] font-black uppercase items-center">
         <div>Score: {score}</div>
+        {!isPlaying && !gameOver && (
+          <div className="flex gap-1">
+            {(["easy", "medium", "hard"] as const).map((d) => (
+              <button
+                key={d}
+                onClick={() => setDifficulty(d)}
+                className={`px-2 py-1 text-xs rounded border-2 border-black transition-all ${
+                  difficulty === d 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-white hover:bg-gray-100"
+                }`}
+              >
+                {d}
+              </button>
+            ))}
+          </div>
+        )}
         {gameOver && <div className="text-red-500">Game Over!</div>}
       </div>
 
@@ -158,10 +187,13 @@ export default function SnakeGame() {
         />
         
         {!isPlaying && !gameOver && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-            <Button onClick={startGame} className="font-bold border-2 border-white">
-              <Play className="mr-2 h-4 w-4" /> Start Game
-            </Button>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 gap-4">
+            <div className="bg-white p-4 rounded-xl border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center">
+              <p className="font-bold mb-2 uppercase text-sm">Difficulty: {difficulty}</p>
+              <Button onClick={startGame} className="font-bold border-2 border-black w-full">
+                <Play className="mr-2 h-4 w-4" /> Start Game
+              </Button>
+            </div>
           </div>
         )}
       </div>

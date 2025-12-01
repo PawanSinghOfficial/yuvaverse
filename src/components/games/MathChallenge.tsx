@@ -8,6 +8,8 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 
+type Difficulty = "easy" | "medium" | "hard";
+
 export default function MathChallenge() {
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
@@ -17,20 +19,32 @@ export default function MathChallenge() {
   const [timeLeft, setTimeLeft] = useState(30);
   const [isActive, setIsActive] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   
   const recordResult = useMutation(api.users.recordGameResult);
 
   const generateProblem = () => {
-    const ops = ["+", "-", "*"];
+    let ops = ["+", "-"];
+    let maxNum = 20;
+
+    if (difficulty === "medium") {
+      ops = ["+", "-", "*"];
+      maxNum = 50;
+    } else if (difficulty === "hard") {
+      ops = ["+", "-", "*"]; // Could add division but keeping it integer friendly
+      maxNum = 100;
+    }
+
     const op = ops[Math.floor(Math.random() * ops.length)];
     setOperator(op);
     
     if (op === "*") {
-      setNum1(Math.floor(Math.random() * 10) + 1);
-      setNum2(Math.floor(Math.random() * 10) + 1);
+      const limit = difficulty === "easy" ? 5 : difficulty === "medium" ? 10 : 15;
+      setNum1(Math.floor(Math.random() * limit) + 1);
+      setNum2(Math.floor(Math.random() * limit) + 1);
     } else {
-      setNum1(Math.floor(Math.random() * 50) + 1);
-      setNum2(Math.floor(Math.random() * 50) + 1);
+      setNum1(Math.floor(Math.random() * maxNum) + 1);
+      setNum2(Math.floor(Math.random() * maxNum) + 1);
     }
     setAnswer("");
   };
@@ -106,7 +120,7 @@ export default function MathChallenge() {
 
   return (
     <div className="flex flex-col items-center gap-6 p-4 w-full max-w-md mx-auto">
-      <div className="flex justify-between w-full font-black uppercase text-xl">
+      <div className="flex justify-between w-full font-black uppercase text-xl items-center">
         <div className="flex items-center gap-2 text-yellow-600">
           <Timer className="h-6 w-6" /> {timeLeft}s
         </div>
@@ -114,11 +128,31 @@ export default function MathChallenge() {
       </div>
 
       {!isActive && !gameOver ? (
-        <div className="text-center space-y-4 py-8">
+        <div className="text-center space-y-6 py-8">
           <h3 className="text-2xl font-black uppercase">Ready to Calculate?</h3>
+          
+          <div className="flex flex-col gap-2 items-center">
+            <span className="text-sm font-bold uppercase text-muted-foreground">Select Difficulty</span>
+            <div className="flex gap-2">
+              {(["easy", "medium", "hard"] as const).map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setDifficulty(d)}
+                  className={`px-4 py-2 rounded-lg border-2 border-black font-bold uppercase transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] ${
+                    difficulty === d 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <p className="text-muted-foreground">Solve as many problems as you can in 30 seconds!</p>
-          <Button onClick={startGame} size="lg" className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            Start Challenge
+          <Button onClick={startGame} size="lg" className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-full">
+            Start Challenge ({difficulty})
           </Button>
         </div>
       ) : gameOver ? (
