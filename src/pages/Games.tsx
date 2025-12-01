@@ -53,15 +53,46 @@ const GAMES = [
   }
 ];
 
-const BackgroundIcons = () => {
+const ArcadeBackground = () => {
   const icons = [Gamepad2, Brain, Scissors, Calculator, Grid3X3, Sparkles];
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {Array.from({ length: 15 }).map((_, i) => {
+      {/* Animated Grid */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+      </div>
+
+      {/* Floating Pixels/Particles */}
+      {Array.from({ length: 30 }).map((_, i) => (
+        <motion.div
+          key={`pixel-${i}`}
+          className={`absolute w-2 h-2 rounded-full ${
+            i % 3 === 0 ? "bg-primary/20" : i % 3 === 1 ? "bg-blue-500/20" : "bg-purple-500/20"
+          }`}
+          initial={{
+            x: Math.random() * 100 + "%",
+            y: "110%",
+            opacity: 0,
+          }}
+          animate={{
+            y: "-10%",
+            opacity: [0, 1, 0],
+          }}
+          transition={{
+            duration: 5 + Math.random() * 10,
+            repeat: Infinity,
+            ease: "linear",
+            delay: Math.random() * 5,
+          }}
+        />
+      ))}
+
+      {/* Floating Icons */}
+      {Array.from({ length: 12 }).map((_, i) => {
         const Icon = icons[i % icons.length];
         return (
           <motion.div
-            key={i}
+            key={`icon-${i}`}
             className="absolute text-foreground/5"
             initial={{
               x: Math.random() * 100 + "%",
@@ -74,12 +105,12 @@ const BackgroundIcons = () => {
               rotate: [null, Math.random() * 360],
             }}
             transition={{
-              duration: 20 + Math.random() * 20,
+              duration: 25 + Math.random() * 15,
               repeat: Infinity,
               ease: "linear",
             }}
           >
-            <Icon size={40 + Math.random() * 60} />
+            <Icon size={30 + Math.random() * 50} />
           </motion.div>
         );
       })}
@@ -93,8 +124,8 @@ export default function Games() {
   const ActiveGame = GAMES.find(g => g.id === selectedGame)?.component;
 
   return (
-    <div className="p-8 min-h-screen bg-secondary/20 space-y-8 relative overflow-hidden">
-      <BackgroundIcons />
+    <div className="p-8 min-h-screen bg-gradient-to-br from-indigo-50/50 via-purple-50/50 to-pink-50/50 dark:from-indigo-950/20 dark:via-purple-950/20 dark:to-pink-950/20 space-y-8 relative overflow-hidden">
+      <ArcadeBackground />
       
       <div className="relative z-10 flex flex-col items-center text-center space-y-4 mb-12">
         <motion.div
