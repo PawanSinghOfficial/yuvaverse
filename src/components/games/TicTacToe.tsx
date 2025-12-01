@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { RotateCcw, Trophy } from "lucide-react";
@@ -10,14 +10,15 @@ import { toast } from "sonner";
 
 export default function TicTacToe() {
   const [board, setBoard] = useState(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
+  const [xIsNext, setXIsNext] = useState(true); // User is X
   const [winner, setWinner] = useState<string | null>(null);
   const [winningLine, setWinningLine] = useState<number[] | null>(null);
   const [gameRecorded, setGameRecorded] = useState(false);
+  const [isCpuThinking, setIsCpuThinking] = useState(false);
   
   const recordResult = useMutation(api.users.recordGameResult);
 
-  const calculateWinner = (squares: any[]) => {
+  const calculateWinner = useCallback((squares: any[]) => {
     const lines = [
       [0, 1, 2], [3, 4, 5], [6, 7, 8],
       [0, 3, 6], [1, 4, 7], [2, 5, 8],
@@ -30,22 +31,71 @@ export default function TicTacToe() {
       }
     }
     return null;
-  };
+  }, []);
 
   const handleClick = (i: number) => {
-    if (winner || board[i]) return;
+    if (winner || board[i] || !xIsNext || isCpuThinking) return;
     const newBoard = [...board];
-    newBoard[i] = xIsNext ? "X" : "O";
+    newBoard[i] = "X";
     setBoard(newBoard);
-    setXIsNext(!xIsNext);
+    setXIsNext(false);
   };
+
+  // CPU Turn
+  useEffect(() => {
+    if (!xIsNext && !winner && !board.every(Boolean)) {
+      setIsCpuThinking(true);
+      const timer = setTimeout(() => {
+        const emptyIndices = board.map((val, idx) => val === null ? idx : null).filter(val => val !== null) as number[];
+        
+        if (emptyIndices.length > 0) {
+          // Simple AI: Try to win, then block, then random
+          let move = -1;
+
+          // 1. Try to win
+          for (let i of emptyIndices) {
+            const testBoard = [...board];
+            testBoard[i] = "O";
+            if (calculateWinner(testBoard)?.winner === "O") {
+              move = i;
+              break;
+            }
+          }
+
+          // 2. Block player
+          if (move === -1) {
+            for (let i of emptyIndices) {
+              const testBoard = [...board];
+              testBoard[i] = "X";
+              if (calculateWinner(testBoard)?.winner === "X") {
+                move = i;
+                break;
+              }
+            }
+          }
+
+          // 3. Random
+          if (move === -1) {
+            move = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+          }
+
+          const newBoard = [...board];
+          newBoard[move] = "O";
+          setBoard(newBoard);
+          setXIsNext(true);
+        }
+        setIsCpuThinking(false);
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [xIsNext, winner, board, calculateWinner]);
 
   useEffect(() => {
     const result = calculateWinner(board);
     if (result) {
       setWinner(result.winner);
       setWinningLine(result.line);
-      if (result.winner === "X") { // User wins (assuming user is X)
+      if (result.winner === "X") { // User wins
          confetti({
             particleCount: 100,
             spread: 70,
@@ -59,7 +109,7 @@ export default function TicTacToe() {
       setWinner("Draw");
       handleGameEnd(false);
     }
-  }, [board]);
+  }, [board, calculateWinner]);
 
   const handleGameEnd = async (isWin: boolean) => {
     if (gameRecorded) return;
@@ -85,16 +135,17 @@ export default function TicTacToe() {
     setWinner(null);
     setWinningLine(null);
     setGameRecorded(false);
+    setIsCpuThinking(false);
   };
 
   return (
     <div className="flex flex-col items-center gap-6 p-4">
       <div className="flex justify-between items-center w-full max-w-xs">
         <div className={`text-xl font-black ${xIsNext && !winner ? "text-primary scale-110" : "text-muted-foreground"} transition-all`}>
-          Player X
+          You (X)
         </div>
         <div className={`text-xl font-black ${!xIsNext && !winner ? "text-primary scale-110" : "text-muted-foreground"} transition-all`}>
-          Player O
+          CPU (O)
         </div>
       </div>
 
@@ -102,12 +153,13 @@ export default function TicTacToe() {
         {board.map((square, i) => (
           <motion.button
             key={i}
-            whileHover={{ scale: 0.95 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: square ? 1 : 0.95 }}
+            whileTap={{ scale: square ? 1 : 0.9 }}
             onClick={() => handleClick(i)}
+            disabled={!!square || !xIsNext || !!winner}
             className={`h-24 w-24 bg-white rounded-lg text-5xl font-black flex items-center justify-center transition-colors ${
               winningLine?.includes(i) ? "bg-green-200 text-green-700" : "text-black"
-            }`}
+            } ${!square && xIsNext && !winner ? "hover:bg-gray-50 cursor-pointer" : "cursor-default"}`}
           >
             {square && (
               <motion.span
@@ -129,7 +181,7 @@ export default function TicTacToe() {
           className="text-center space-y-4"
         >
           <div className="text-3xl font-black uppercase">
-            {winner === "Draw" ? "It's a Draw!" : `${winner} Wins!`}
+            {winner === "Draw" ? "It's a Draw!" : winner === "X" ? "You Win!" : "CPU Wins!"}
           </div>
           <Button onClick={resetGame} className="gap-2 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <RotateCcw className="h-4 w-4" /> Play Again

@@ -141,19 +141,23 @@ export default function MemoryMatch() {
             whileTap={{ scale: 0.95 }}
           >
             <motion.div
-              className={`absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 ${
-                card.isFlipped || card.isMatched ? "rotate-y-180" : ""
-              }`}
+              className={`absolute inset-0 w-full h-full`}
               initial={false}
               animate={{ rotateY: card.isFlipped || card.isMatched ? 180 : 0 }}
               transition={{ duration: 0.3 }}
-              style={{ backfaceVisibility: "hidden" }}
+              style={{ transformStyle: "preserve-3d" }}
             >
-              <div className="absolute inset-0 flex items-center justify-center bg-indigo-500 rounded-xl" style={{ backfaceVisibility: "hidden", transform: "rotateY(0deg)" }}>
+              {/* Front Face (Brain Icon) - Visible when NOT flipped (0deg) */}
+              <div 
+                className="absolute inset-0 flex items-center justify-center bg-indigo-500 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" 
+                style={{ backfaceVisibility: "hidden", transform: "rotateY(0deg)" }}
+              >
                 <Brain className="text-white h-8 w-8" />
               </div>
+
+              {/* Back Face (Emoji) - Visible when flipped (180deg) */}
               <div 
-                className="absolute inset-0 flex items-center justify-center bg-white rounded-xl" 
+                className="absolute inset-0 flex items-center justify-center bg-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-3xl sm:text-4xl" 
                 style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
               >
                 {card.emoji}
