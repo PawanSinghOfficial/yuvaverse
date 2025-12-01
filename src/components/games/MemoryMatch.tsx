@@ -6,6 +6,7 @@ import confetti from "canvas-confetti";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
+import { useGameSounds } from "@/hooks/use-game-sounds";
 
 const EMOJIS = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮"];
 
@@ -21,6 +22,7 @@ export default function MemoryMatch() {
   const [gameRecorded, setGameRecorded] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   const [cpuMemory, setCpuMemory] = useState<Map<number, string>>(new Map());
+  const { playSound } = useGameSounds();
   
   const recordResult = useMutation(api.users.recordGameResult);
 
@@ -66,6 +68,7 @@ export default function MemoryMatch() {
 
       if (cards[first].emoji === cards[second].emoji) {
         // Match found
+        playSound('correct');
         setCards((prev) =>
           prev.map((card) =>
             card.id === first || card.id === second ? { ...card, isMatched: true } : card
@@ -90,7 +93,7 @@ export default function MemoryMatch() {
         }, 1000);
       }
     }
-  }, [flippedCards]);
+  }, [flippedCards, playSound]);
 
   // CPU Turn Logic
   useEffect(() => {
@@ -160,11 +163,14 @@ export default function MemoryMatch() {
       const isWin = scores.player > scores.cpu;
       
       if (isWin) {
+        playSound('win');
         confetti({
           particleCount: 100,
           spread: 70,
           origin: { y: 0.6 }
         });
+      } else {
+        playSound('lose');
       }
       
       recordResult({
@@ -177,12 +183,13 @@ export default function MemoryMatch() {
         }
       }).catch(console.error);
     }
-  }, [cards, gameRecorded, scores, difficulty]);
+  }, [cards, gameRecorded, scores, difficulty, playSound]);
 
   const handleCardClick = (id: number, isCpu = false) => {
     if (!isCpu && turn === "cpu") return;
     if (flippedCards.length === 2 || cards[id].isFlipped || cards[id].isMatched) return;
     
+    playSound('click');
     setCards((prev) =>
       prev.map((card) => (card.id === id ? { ...card, isFlipped: true } : card))
     );

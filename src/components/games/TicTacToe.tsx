@@ -7,6 +7,7 @@ import confetti from "canvas-confetti";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
+import { useGameSounds } from "@/hooks/use-game-sounds";
 
 export default function TicTacToe() {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -15,6 +16,7 @@ export default function TicTacToe() {
   const [winningLine, setWinningLine] = useState<number[] | null>(null);
   const [gameRecorded, setGameRecorded] = useState(false);
   const [isCpuThinking, setIsCpuThinking] = useState(false);
+  const { playSound } = useGameSounds();
   
   const recordResult = useMutation(api.users.recordGameResult);
 
@@ -35,6 +37,7 @@ export default function TicTacToe() {
 
   const handleClick = (i: number) => {
     if (winner || board[i] || !xIsNext || isCpuThinking) return;
+    playSound('move');
     const newBoard = [...board];
     newBoard[i] = "X";
     setBoard(newBoard);
@@ -83,12 +86,13 @@ export default function TicTacToe() {
           newBoard[move] = "O";
           setBoard(newBoard);
           setXIsNext(true);
+          playSound('move');
         }
         setIsCpuThinking(false);
       }, 600);
       return () => clearTimeout(timer);
     }
-  }, [xIsNext, winner, board, calculateWinner]);
+  }, [xIsNext, winner, board, calculateWinner, playSound]);
 
   useEffect(() => {
     const result = calculateWinner(board);
@@ -96,6 +100,7 @@ export default function TicTacToe() {
       setWinner(result.winner);
       setWinningLine(result.line);
       if (result.winner === "X") { // User wins
+         playSound('win');
          confetti({
             particleCount: 100,
             spread: 70,
@@ -103,13 +108,15 @@ export default function TicTacToe() {
          });
          handleGameEnd(true);
       } else {
+         playSound('lose');
          handleGameEnd(false);
       }
     } else if (!board.includes(null)) {
       setWinner("Draw");
+      playSound('gameover');
       handleGameEnd(false);
     }
-  }, [board, calculateWinner]);
+  }, [board, calculateWinner, playSound]);
 
   const handleGameEnd = async (isWin: boolean) => {
     if (gameRecorded) return;

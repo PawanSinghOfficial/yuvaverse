@@ -9,6 +9,7 @@ import RockPaperScissors from "@/components/games/RockPaperScissors";
 import SnakeGame from "@/components/games/SnakeGame";
 import MathChallenge from "@/components/games/MathChallenge";
 import { GameGuide } from "@/components/GameGuide";
+import { useGameSounds } from "@/hooks/use-game-sounds";
 
 const GAMES = [
   {
@@ -207,6 +208,7 @@ const ArcadeBackground = () => {
 
 export default function Games() {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
+  const { playSound } = useGameSounds();
 
   const ActiveGame = GAMES.find(g => g.id === selectedGame)?.component;
 
@@ -268,10 +270,14 @@ export default function Games() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
             whileHover={{ y: -10 }}
+            onMouseEnter={() => playSound('hover')}
           >
             <Card 
               className="h-full cursor-pointer border-2 border-white/10 bg-slate-900/80 backdrop-blur-sm hover:border-primary/50 hover:shadow-[0_0_30px_-5px_rgba(124,58,237,0.3)] transition-all duration-300 group overflow-hidden"
-              onClick={() => setSelectedGame(game.id)}
+              onClick={() => {
+                playSound('click');
+                setSelectedGame(game.id);
+              }}
             >
               <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ${game.color.split(" ")[0]}`} />
               

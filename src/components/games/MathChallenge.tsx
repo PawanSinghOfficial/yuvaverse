@@ -7,6 +7,7 @@ import confetti from "canvas-confetti";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
+import { useGameSounds } from "@/hooks/use-game-sounds";
 
 type Difficulty = "easy" | "medium" | "hard";
 
@@ -20,6 +21,7 @@ export default function MathChallenge() {
   const [isActive, setIsActive] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
+  const { playSound } = useGameSounds();
   
   const recordResult = useMutation(api.users.recordGameResult);
 
@@ -72,6 +74,7 @@ export default function MathChallenge() {
   const handleGameOver = async () => {
     setIsActive(false);
     setGameOver(true);
+    playSound('gameover');
     
     try {
       const result = await recordResult({
@@ -105,6 +108,7 @@ export default function MathChallenge() {
     }
 
     if (parseInt(answer) === correctAnswer) {
+      playSound('correct');
       setScore((s) => s + 10);
       generateProblem();
       confetti({
@@ -115,6 +119,7 @@ export default function MathChallenge() {
       });
     } else {
       // Shake effect or error feedback could go here
+      playSound('wrong');
       setAnswer("");
     }
   };

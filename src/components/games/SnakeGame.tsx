@@ -4,6 +4,7 @@ import { Play, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Settings2 }
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
+import { useGameSounds } from "@/hooks/use-game-sounds";
 
 const GRID_SIZE = 20;
 const CELL_SIZE = 20; // px
@@ -21,6 +22,7 @@ export default function SnakeGame() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const { playSound } = useGameSounds();
   
   const recordResult = useMutation(api.users.recordGameResult);
 
@@ -88,6 +90,7 @@ export default function SnakeGame() {
 
     // Check food
     if (newHead.x === food.x && newHead.y === food.y) {
+      playSound('correct');
       setScore((s) => s + 1);
       setFood(generateFood());
     } else {
@@ -98,6 +101,7 @@ export default function SnakeGame() {
   };
 
   const handleGameOver = async () => {
+    playSound('gameover');
     setGameOver(true);
     setIsPlaying(false);
     if (gameLoopRef.current) clearInterval(gameLoopRef.current);

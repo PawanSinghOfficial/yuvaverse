@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
+import { useGameSounds } from "@/hooks/use-game-sounds";
 
 const CHOICES = [
   { id: "rock", label: "Rock", icon: Hand, color: "bg-stone-500" },
@@ -17,10 +18,12 @@ export default function RockPaperScissors() {
   const [computerChoice, setComputerChoice] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [score, setScore] = useState({ user: 0, computer: 0 });
+  const { playSound } = useGameSounds();
   
   const recordResult = useMutation(api.users.recordGameResult);
 
   const playGame = async (choiceId: string) => {
+    playSound('click');
     const randomChoice = CHOICES[Math.floor(Math.random() * CHOICES.length)].id;
     setUserChoice(choiceId);
     setComputerChoice(randomChoice);
@@ -30,6 +33,7 @@ export default function RockPaperScissors() {
 
     if (choiceId === randomChoice) {
       resultText = "Draw!";
+      playSound('gameover');
     } else if (
       (choiceId === "rock" && randomChoice === "scissors") ||
       (choiceId === "paper" && randomChoice === "rock") ||
@@ -38,9 +42,11 @@ export default function RockPaperScissors() {
       resultText = "You Win!";
       setScore(s => ({ ...s, user: s.user + 1 }));
       isWin = true;
+      playSound('win');
     } else {
       resultText = "You Lose!";
       setScore(s => ({ ...s, computer: s.computer + 1 }));
+      playSound('lose');
     }
     
     setResult(resultText);
