@@ -64,27 +64,21 @@ const ArcadeBackground = () => {
   const iconsY = useTransform(scrollY, [0, 1000], [0, -300]);
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none bg-slate-950 -z-10">
-      {/* CRT Scanline Effect */}
-      <div className="absolute inset-0 z-[5] opacity-20 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%]" />
-      
-      {/* Vignette */}
-      <div className="absolute inset-0 z-[4] pointer-events-none bg-[radial-gradient(circle_at_center,transparent_50%,rgba(0,0,0,0.6)_100%)]" />
-
-      {/* Cyberpunk Grid */}
+    <div className="fixed inset-0 overflow-hidden pointer-events-none bg-[#09090b] -z-10">
+      {/* Retro Grid Floor */}
       <motion.div 
-        style={{ y: bgY }}
-        className="absolute inset-0 opacity-30"
+        style={{ y: bgY, rotateX: 60 }}
+        className="absolute inset-0 opacity-30 perspective-1000"
       >
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8b5cf62e_1px,transparent_1px),linear-gradient(to_bottom,#8b5cf62e_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8b5cf6_1px,transparent_1px),linear-gradient(to_bottom,#8b5cf6_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:linear-gradient(to_bottom,transparent,black)]" />
       </motion.div>
 
-      {/* Moving Grid Effect */}
+      {/* Moving Grid Effect - Synthwave Style */}
       <motion.div 
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-20"
         style={{
           y: gridY,
-          backgroundImage: "linear-gradient(0deg, transparent 24%, rgba(236, 72, 153, .3) 25%, rgba(236, 72, 153, .3) 26%, transparent 27%, transparent 74%, rgba(34, 211, 238, .3) 75%, rgba(34, 211, 238, .3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(34, 211, 238, .3) 25%, rgba(34, 211, 238, .3) 26%, transparent 27%, transparent 74%, rgba(236, 72, 153, .3) 75%, rgba(236, 72, 153, .3) 76%, transparent 77%, transparent)",
+          backgroundImage: "linear-gradient(0deg, transparent 24%, rgba(236, 72, 153, .5) 25%, rgba(236, 72, 153, .5) 26%, transparent 27%, transparent 74%, rgba(34, 211, 238, .5) 75%, rgba(34, 211, 238, .5) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(34, 211, 238, .5) 25%, rgba(34, 211, 238, .5) 26%, transparent 27%, transparent 74%, rgba(236, 72, 153, .5) 75%, rgba(236, 72, 153, .5) 76%, transparent 77%, transparent)",
           backgroundSize: "60px 60px"
         }}
         animate={{
@@ -100,19 +94,19 @@ const ArcadeBackground = () => {
       {/* Neon Glows */}
       <motion.div style={{ y: glowY }} className="absolute inset-0">
         <motion.div 
-          animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.2, 1] }}
+          animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.1, 1] }}
           transition={{ duration: 4, repeat: Infinity }}
-          className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/50 rounded-full blur-[128px]"
+          className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-purple-600/30 rounded-full blur-[120px]"
         />
         <motion.div 
-          animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.2, 1] }}
+          animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.2, 1] }}
           transition={{ duration: 6, repeat: Infinity, delay: 2 }}
-          className="absolute top-1/2 -right-20 w-80 h-80 bg-cyan-600/50 rounded-full blur-[128px]"
+          className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] bg-cyan-600/30 rounded-full blur-[120px]"
         />
         <motion.div 
-          animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.1, 1] }}
+          animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.1, 1] }}
           transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-          className="absolute -bottom-40 left-1/3 w-96 h-96 bg-pink-600/50 rounded-full blur-[128px]"
+          className="absolute -bottom-[10%] left-[20%] w-[60%] h-[40%] bg-pink-600/30 rounded-full blur-[120px]"
         />
       </motion.div>
 
@@ -121,22 +115,20 @@ const ArcadeBackground = () => {
         {Array.from({ length: 30 }).map((_, i) => (
           <motion.div
             key={`pixel-${i}`}
-            className={`absolute w-1 h-1 sm:w-2 sm:h-2 rounded-sm ${
-              i % 3 === 0 ? "bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.8)]" : i % 3 === 1 ? "bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]" : "bg-fuchsia-400 shadow-[0_0_10px_rgba(232,121,249,0.8)]"
-            }`}
+            className={`absolute w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${
+              i % 3 === 0 ? "bg-yellow-400" : i % 3 === 1 ? "bg-cyan-400" : "bg-fuchsia-400"
+            } shadow-[0_0_10px_currentColor]`}
             initial={{
               x: Math.random() * 100 + "%",
               y: "110%",
               opacity: 0,
-              rotate: 0,
             }}
             animate={{
               y: "-10%",
               opacity: [0, 1, 1, 0],
-              rotate: 360,
             }}
             transition={{
-              duration: 5 + Math.random() * 10,
+              duration: 8 + Math.random() * 10,
               repeat: Infinity,
               ease: "linear",
               delay: Math.random() * 5,
@@ -147,11 +139,11 @@ const ArcadeBackground = () => {
         {/* Floating Icons with Neon Effect */}
         {Array.from({ length: 15 }).map((_, i) => {
           const Icon = icons[i % icons.length];
-          const color = i % 3 === 0 ? "text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" : i % 3 === 1 ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" : "text-fuchsia-400 drop-shadow-[0_0_8px_rgba(232,121,249,0.8)]";
+          const color = i % 3 === 0 ? "text-yellow-400" : i % 3 === 1 ? "text-cyan-400" : "text-fuchsia-400";
           return (
             <motion.div
               key={`icon-${i}`}
-              className={`absolute ${color} opacity-40`}
+              className={`absolute ${color} opacity-20 drop-shadow-[0_0_8px_currentColor]`}
               initial={{
                 x: Math.random() * 100 + "%",
                 y: Math.random() * 100 + "%",
@@ -161,19 +153,25 @@ const ArcadeBackground = () => {
               animate={{
                 y: [null, Math.random() * -100],
                 rotate: [null, Math.random() * 360],
-                opacity: [0.2, 0.6, 0.2],
+                opacity: [0.1, 0.3, 0.1],
               }}
               transition={{
-                duration: 15 + Math.random() * 10,
+                duration: 20 + Math.random() * 10,
                 repeat: Infinity,
                 ease: "linear",
               }}
             >
-              <Icon size={30 + Math.random() * 40} />
+              <Icon size={24 + Math.random() * 30} />
             </motion.div>
           );
         })}
       </motion.div>
+
+      {/* CRT Scanline Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] z-[5] bg-[size:100%_3px,3px_100%] pointer-events-none" />
+      
+      {/* Vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] z-[4] pointer-events-none" />
     </div>
   );
 };
