@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Brain } from "lucide-react";
-import { motion } from "framer-motion";
+import { RotateCcw, Brain, User, Bot } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -10,14 +10,17 @@ import { toast } from "sonner";
 const EMOJIS = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮"];
 
 type Difficulty = "easy" | "medium" | "hard";
+type Turn = "player" | "cpu";
 
 export default function MemoryMatch() {
   const [cards, setCards] = useState<{ id: number; emoji: string; isFlipped: boolean; isMatched: boolean }[]>([]);
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
-  const [moves, setMoves] = useState(0);
-  const [isWon, setIsWon] = useState(false);
+  const [scores, setScores] = useState({ player: 0, cpu: 0 });
+  const [turn, setTurn] = useState<Turn>("player");
+  const [isGameOver, setIsGameOver] = useState(false);
   const [gameRecorded, setGameRecorded] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
+  const [cpuMemory, setCpuMemory] = useState<Map<number, string>>(new Map());
   
   const recordResult = useMutation(api.users.recordGameResult);
 
@@ -37,26 +40,45 @@ export default function MemoryMatch() {
       }));
     setCards(shuffled);
     setFlippedCards([]);
-    setMoves(0);
-    setIsWon(false);
+    setScores({ player: 0, cpu: 0 });
+    setTurn("player");
+    setIsGameOver(false);
     setGameRecorded(false);
+    setCpuMemory(new Map());
   };
 
   useEffect(() => {
     shuffleCards();
-  }, [difficulty]); // Re-shuffle when difficulty changes
+  }, [difficulty]);
 
+  // Handle Match Logic
   useEffect(() => {
     if (flippedCards.length === 2) {
       const [first, second] = flippedCards;
+      
+      // Add to CPU memory
+      setCpuMemory(prev => {
+        const newMemory = new Map(prev);
+        newMemory.set(first, cards[first].emoji);
+        newMemory.set(second, cards[second].emoji);
+        return newMemory;
+      });
+
       if (cards[first].emoji === cards[second].emoji) {
+        // Match found
         setCards((prev) =>
           prev.map((card) =>
             card.id === first || card.id === second ? { ...card, isMatched: true } : card
           )
         );
         setFlippedCards([]);
+        setScores(prev => ({
+          ...prev,
+          [turn]: prev[turn] + 1
+        }));
+        // Keep turn if match found
       } else {
+        // No match
         setTimeout(() => {
           setCards((prev) =>
             prev.map((card) =>
@@ -64,33 +86,101 @@ export default function MemoryMatch() {
             )
           );
           setFlippedCards([]);
+          setTurn(prev => prev === "player" ? "cpu" : "player");
         }, 1000);
       }
-      setMoves((m) => m + 1);
     }
   }, [flippedCards]);
 
+  // CPU Turn Logic
+  useEffect(() => {
+    if (turn === "cpu" && !isGameOver && flippedCards.length === 0) {
+      const makeCpuMove = async () => {
+        // Wait a bit before starting turn
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const unMatchedCards = cards.filter(c => !c.isMatched);
+        if (unMatchedCards.length === 0) return;
+
+        // 1. Check for known pairs in memory
+        let firstPickId = -1;
+        let secondPickId = -1;
+
+        // Find pairs in memory that are currently unmatched
+        const memoryArray = Array.from(cpuMemory.entries()).filter(([id]) => !cards[id].isMatched);
+        const emojiCounts: Record<string, number[]> = {};
+        
+        memoryArray.forEach(([id, emoji]) => {
+          if (!emojiCounts[emoji]) emojiCounts[emoji] = [];
+          emojiCounts[emoji].push(id);
+        });
+
+        const knownPairEmoji = Object.keys(emojiCounts).find(e => emojiCounts[e].length === 2);
+
+        if (knownPairEmoji) {
+          // We know a pair!
+          [firstPickId, secondPickId] = emojiCounts[knownPairEmoji];
+        } else {
+          // 2. Pick a random card (prefer unknown ones)
+          const unknownCards = unMatchedCards.filter(c => !cpuMemory.has(c.id));
+          const candidates = unknownCards.length > 0 ? unknownCards : unMatchedCards;
+          
+          const firstCard = candidates[Math.floor(Math.random() * candidates.length)];
+          firstPickId = firstCard.id;
+
+          // 3. Check if we know the match for this card
+          const matchInMemory = memoryArray.find(([id, emoji]) => emoji === firstCard.emoji && id !== firstCard.id);
+          
+          if (matchInMemory) {
+            secondPickId = matchInMemory[0];
+          } else {
+            // 4. Pick another random card
+            const remaining = unMatchedCards.filter(c => c.id !== firstPickId);
+            const secondCard = remaining[Math.floor(Math.random() * remaining.length)];
+            secondPickId = secondCard.id;
+          }
+        }
+
+        // Execute moves
+        handleCardClick(firstPickId, true);
+        await new Promise(resolve => setTimeout(resolve, 800));
+        handleCardClick(secondPickId, true);
+      };
+
+      makeCpuMove();
+    }
+  }, [turn, isGameOver, cards, cpuMemory]);
+
+  // Game Over Check
   useEffect(() => {
     if (cards.length > 0 && cards.every((card) => card.isMatched) && !gameRecorded) {
-      setIsWon(true);
+      setIsGameOver(true);
       setGameRecorded(true);
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
+      
+      const isWin = scores.player > scores.cpu;
+      
+      if (isWin) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
       
       recordResult({
         gameId: "memory",
-        win: true,
+        win: isWin,
         difficulty: difficulty
       }).then((res) => {
-        if (res) toast.success(`Memory Master! +${res.pointsAwarded} Points`);
+        if (res) {
+          toast.success(isWin ? `You Won! +${res.pointsAwarded} Points` : `CPU Won. +${res.pointsAwarded} Points`);
+        }
       }).catch(console.error);
     }
-  }, [cards, gameRecorded, recordResult, difficulty]);
+  }, [cards, gameRecorded, scores, difficulty]);
 
-  const handleCardClick = (id: number) => {
+  const handleCardClick = (id: number, isCpu = false) => {
+    if (!isCpu && turn === "cpu") return;
     if (flippedCards.length === 2 || cards[id].isFlipped || cards[id].isMatched) return;
     
     setCards((prev) =>
@@ -106,19 +196,40 @@ export default function MemoryMatch() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 p-4">
-      <div className="flex flex-col w-full max-w-2xl gap-4">
-        <div className="flex justify-between items-center px-4">
-          <div className="text-xl font-black">Moves: {moves}</div>
+    <div className="flex flex-col items-center gap-6 p-4 w-full max-w-4xl mx-auto">
+      <div className="flex flex-col w-full gap-4">
+        <div className="flex justify-between items-center px-4 bg-secondary/20 p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className={`flex items-center gap-2 text-xl font-black ${turn === "player" ? "text-green-600 scale-110" : "text-muted-foreground"} transition-all`}>
+            <User className="h-6 w-6" />
+            You: {scores.player}
+          </div>
+          
+          <div className="flex gap-1">
+            {turn === "player" && !isGameOver && (
+              <span className="text-xs font-bold uppercase bg-green-100 text-green-800 px-2 py-1 rounded animate-pulse">Your Turn</span>
+            )}
+            {turn === "cpu" && !isGameOver && (
+              <span className="text-xs font-bold uppercase bg-red-100 text-red-800 px-2 py-1 rounded animate-pulse">CPU Thinking...</span>
+            )}
+          </div>
+
+          <div className={`flex items-center gap-2 text-xl font-black ${turn === "cpu" ? "text-red-600 scale-110" : "text-muted-foreground"} transition-all`}>
+            CPU: {scores.cpu}
+            <Bot className="h-6 w-6" />
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center">
           <div className="flex gap-2">
             {(["easy", "medium", "hard"] as const).map((d) => (
               <button
                 key={d}
                 onClick={() => setDifficulty(d)}
+                disabled={flippedCards.length > 0 || scores.player > 0 || scores.cpu > 0}
                 className={`px-3 py-1 text-xs font-bold uppercase rounded border-2 border-black transition-all ${
                   difficulty === d 
                     ? "bg-primary text-primary-foreground" 
-                    : "bg-white hover:bg-gray-100"
+                    : "bg-white hover:bg-gray-100 disabled:opacity-50"
                 }`}
               >
                 {d}
@@ -131,50 +242,58 @@ export default function MemoryMatch() {
         </div>
       </div>
 
-      <div className={`grid ${getGridClass()} gap-3`}>
+      <div className={`grid ${getGridClass()} gap-3 perspective-1000`}>
         {cards.map((card) => (
-          <motion.div
+          <div
             key={card.id}
-            className="relative h-16 w-16 sm:h-20 sm:w-20 cursor-pointer"
+            className="relative h-16 w-16 sm:h-20 sm:w-20 cursor-pointer group perspective-1000"
             onClick={() => handleCardClick(card.id)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
           >
             <motion.div
-              className={`absolute inset-0 w-full h-full`}
-              initial={false}
+              className="w-full h-full relative preserve-3d transition-all duration-500"
               animate={{ rotateY: card.isFlipped || card.isMatched ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.4 }}
               style={{ transformStyle: "preserve-3d" }}
             >
-              {/* Front Face (Brain Icon) - Visible when NOT flipped (0deg) */}
+              {/* Front Face (Brain Icon) */}
               <div 
-                className="absolute inset-0 flex items-center justify-center bg-indigo-500 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" 
-                style={{ backfaceVisibility: "hidden", transform: "rotateY(0deg)" }}
+                className="absolute inset-0 flex items-center justify-center bg-indigo-500 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] backface-hidden"
+                style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
               >
                 <Brain className="text-white h-8 w-8" />
               </div>
 
-              {/* Back Face (Emoji) - Visible when flipped (180deg) */}
+              {/* Back Face (Emoji) */}
               <div 
-                className="absolute inset-0 flex items-center justify-center bg-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-3xl sm:text-4xl" 
-                style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+                className="absolute inset-0 flex items-center justify-center bg-white rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-3xl sm:text-4xl backface-hidden"
+                style={{ 
+                  backfaceVisibility: "hidden", 
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)" 
+                }}
               >
                 {card.emoji}
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      {isWon && (
+      {isGameOver && (
         <motion.div 
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center mt-4"
+          className="text-center mt-4 p-6 bg-white rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
         >
-          <h3 className="text-2xl font-black text-green-600 uppercase">Memory Master!</h3>
-          <p className="text-muted-foreground font-medium">Completed in {moves} moves ({difficulty})</p>
+          <h3 className={`text-3xl font-black uppercase ${scores.player > scores.cpu ? "text-green-600" : scores.player < scores.cpu ? "text-red-600" : "text-yellow-600"}`}>
+            {scores.player > scores.cpu ? "You Won!" : scores.player < scores.cpu ? "CPU Won!" : "It's a Draw!"}
+          </h3>
+          <p className="text-muted-foreground font-bold text-xl mt-2">
+            {scores.player} - {scores.cpu}
+          </p>
+          <Button onClick={shuffleCards} className="mt-4 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            Play Again
+          </Button>
         </motion.div>
       )}
     </div>
