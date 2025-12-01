@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface OnboardingGuideProps {
   isOpen: boolean;
@@ -169,49 +170,81 @@ export function OnboardingGuide({ isOpen, onClose }: OnboardingGuideProps) {
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed bottom-6 right-6 z-[60] w-full max-w-md px-4 md:px-0">
-      <Card className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)] bg-card animate-in slide-in-from-bottom-10 fade-in duration-300">
-        <CardHeader className="pb-2">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center border-2 border-primary shrink-0 overflow-hidden">
-                 <img src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" alt="Jojo" className="h-full w-full object-cover" />
-              </div>
-              <div>
-                  <CardTitle className="text-xl font-black uppercase leading-tight">{steps[currentStep].title}</CardTitle>
-                  <p className="text-xs font-bold text-muted-foreground mt-1">Step {currentStep + 1} of {steps.length}</p>
-              </div>
-            </div>
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 -mt-2 -mr-2 text-muted-foreground hover:text-destructive">
-                <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="py-2">
-          <p className="text-sm font-medium leading-relaxed text-muted-foreground">
-            {steps[currentStep].description}
-          </p>
-        </CardContent>
-        <CardFooter className="flex justify-between gap-2 pt-2">
-          <Button variant="ghost" onClick={handleSkip} size="sm" className="text-muted-foreground hover:text-foreground">
-            Skip Tour
-          </Button>
-          <div className="flex gap-2">
-            {currentStep > 0 && (
-                <Button variant="outline" onClick={() => setCurrentStep(c => c - 1)} size="sm" className="border-2 border-border">
-                    Back
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 50, scale: 0.9 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          className="fixed bottom-6 right-6 z-[60] w-full max-w-md px-4 md:px-0"
+        >
+          <Card className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)] bg-card overflow-hidden">
+            <CardHeader className="pb-2">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <motion.div 
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                    className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center border-2 border-primary shrink-0 overflow-hidden"
+                  >
+                     <img src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" alt="Jojo" className="h-full w-full object-cover" />
+                  </motion.div>
+                  <div className="overflow-hidden">
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={currentStep}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <CardTitle className="text-xl font-black uppercase leading-tight">{steps[currentStep].title}</CardTitle>
+                          <p className="text-xs font-bold text-muted-foreground mt-1">Step {currentStep + 1} of {steps.length}</p>
+                        </motion.div>
+                      </AnimatePresence>
+                  </div>
+                </div>
+                <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 -mt-2 -mr-2 text-muted-foreground hover:text-destructive">
+                    <X className="h-4 w-4" />
                 </Button>
-            )}
-            <Button onClick={handleNext} size="sm" className="border-2 border-border shadow-[2px_2px_0px_0px_var(--shadow)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none">
-                {currentStep === steps.length - 1 ? "Finish" : "Next"}
-                {currentStep === steps.length - 1 ? <Check className="ml-2 h-3 w-3" /> : <ArrowRight className="ml-2 h-3 w-3" />}
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
+              </div>
+            </CardHeader>
+            <CardContent className="py-2 min-h-[80px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentStep}
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <p className="text-sm font-medium leading-relaxed text-muted-foreground">
+                    {steps[currentStep].description}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+            </CardContent>
+            <CardFooter className="flex justify-between gap-2 pt-2">
+              <Button variant="ghost" onClick={handleSkip} size="sm" className="text-muted-foreground hover:text-foreground">
+                Skip Tour
+              </Button>
+              <div className="flex gap-2">
+                {currentStep > 0 && (
+                    <Button variant="outline" onClick={() => setCurrentStep(c => c - 1)} size="sm" className="border-2 border-border">
+                        Back
+                    </Button>
+                )}
+                <Button onClick={handleNext} size="sm" className="border-2 border-border shadow-[2px_2px_0px_0px_var(--shadow)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none">
+                    {currentStep === steps.length - 1 ? "Finish" : "Next"}
+                    {currentStep === steps.length - 1 ? <Check className="ml-2 h-3 w-3" /> : <ArrowRight className="ml-2 h-3 w-3" />}
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
