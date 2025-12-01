@@ -106,7 +106,8 @@ export default function SnakeGame() {
       const result = await recordResult({
         gameId: "snake",
         score: score,
-        win: false // Snake is endless, so just participation/score
+        win: false, // Snake is endless, so just participation/score
+        difficulty: difficulty
       });
       
       if (result) {

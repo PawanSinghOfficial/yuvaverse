@@ -77,7 +77,8 @@ export default function MathChallenge() {
       const result = await recordResult({
         gameId: "math",
         score: score,
-        win: score > 0 // Consider it a "win" if they got at least some points
+        win: score > 0, // Consider it a "win" if they got at least some points
+        difficulty: difficulty
       });
       
       if (result) {

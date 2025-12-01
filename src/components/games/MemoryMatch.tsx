@@ -82,12 +82,13 @@ export default function MemoryMatch() {
       
       recordResult({
         gameId: "memory",
-        win: true
+        win: true,
+        difficulty: difficulty
       }).then((res) => {
         if (res) toast.success(`Memory Master! +${res.pointsAwarded} Points`);
       }).catch(console.error);
     }
-  }, [cards, gameRecorded, recordResult]);
+  }, [cards, gameRecorded, recordResult, difficulty]);
 
   const handleCardClick = (id: number) => {
     if (flippedCards.length === 2 || cards[id].isFlipped || cards[id].isMatched) return;

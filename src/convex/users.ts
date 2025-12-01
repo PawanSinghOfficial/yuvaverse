@@ -238,6 +238,7 @@ export const recordGameResult = mutation({
     gameId: v.string(),
     score: v.optional(v.number()),
     win: v.optional(v.boolean()),
+    difficulty: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -246,8 +247,20 @@ export const recordGameResult = mutation({
     const user = await ctx.db.get(userId);
     if (!user) return null;
 
-    // Points system: 10 for a win, 2 for playing/participation
-    const pointsAwarded = args.win ? 10 : 2;
+    // Points system based on difficulty
+    let winPoints = 10;
+    let participationPoints = 2;
+
+    if (args.difficulty === "easy") {
+      winPoints = 5;
+      participationPoints = 1;
+    } else if (args.difficulty === "hard") {
+      winPoints = 20;
+      participationPoints = 5;
+    }
+
+    // Points system: winPoints for a win, participationPoints for playing/participation
+    const pointsAwarded = args.win ? winPoints : participationPoints;
     const currentPoints = user.points || 0;
     
     let patchData: any = {
