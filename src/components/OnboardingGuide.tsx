@@ -63,7 +63,7 @@ const steps = [
     targetId: "sidebar-nav-syllabus",
   },
   {
-    title: "Focus Mode & Rewards",
+    title: "Focus Mode",
     description: "Boost your productivity with our Pomodoro timer! Choose your ambient sound (Forest, Library, etc.), set your duration, and focus. Completing a session earns you 2 points! But be careful, quitting early counts as an aborted session.",
     targetId: "sidebar-nav-focus",
   },
