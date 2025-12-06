@@ -33,7 +33,7 @@ export default function AvatarEditor() {
   const updateAvatarConfig = useMutation(api.users.updateAvatarConfig);
   
   const [config, setConfig] = useState<AvatarConfig>(user?.avatarConfig || DEFAULT_CONFIG);
-  const [activePose, setActivePose] = useState<"portrait" | "standing" | "cheering" | "thinking" | "typing" | "gaming" | "laptop" | "reading" | "waving" | "thumbs_up" | "holding_phone" | "crossed_arms" | "sleeping" | "confused" | "winning" | "listening">("portrait");
+  const [activePose, setActivePose] = useState<"portrait" | "standing" | "cheering" | "thinking" | "typing" | "gaming" | "laptop" | "reading" | "waving" | "thumbs_up" | "holding_phone" | "crossed_arms" | "sleeping" | "confused" | "winning" | "listening" | "shrugging" | "pointing" | "meditating" | "taking_photo">("portrait");
 
   const handleSave = async () => {
     try {
@@ -80,7 +80,7 @@ export default function AvatarEditor() {
               <UserAvatar config={config} size="2xl" pose={activePose} className="shadow-2xl" />
               
               <div className="flex gap-2 mt-8 flex-wrap justify-center">
-                {(["portrait", "standing", "cheering", "thinking", "gaming", "laptop", "reading", "waving", "thumbs_up", "sleeping", "confused", "winning"] as const).map((pose) => (
+                {(["portrait", "standing", "cheering", "thinking", "gaming", "laptop", "reading", "waving", "thumbs_up", "sleeping", "confused", "winning", "shrugging", "pointing", "meditating", "taking_photo"] as const).map((pose) => (
                   <Button
                     key={pose}
                     variant={activePose === pose ? "default" : "outline"}
@@ -88,7 +88,7 @@ export default function AvatarEditor() {
                     onClick={() => setActivePose(pose)}
                     className="capitalize"
                   >
-                    {pose}
+                    {pose.replace("_", " ")}
                   </Button>
                 ))}
               </div>
