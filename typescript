@@ -1,36 +1,70 @@
-const handleKeyDown = (e: React.KeyboardEvent) => {
-  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-    e.preventDefault();
-  }
-  switch (e.key) {
-    case "ArrowUp":
-      if (direction !== "down") {
-        setDirection("up");
-      }
-      break;
-    case "ArrowDown":
-      if (direction !== "up") {
-        setDirection("down");
-      }
-      break;
-    case "ArrowLeft":
-      if (direction !== "right") {
-        setDirection("left");
-      }
-      break;
-    case "ArrowRight":
-      if (direction !== "left") {
-        setDirection("right");
-      }
-      break;
-  }
-};
+import React from 'react';
+import { cn } from "@/lib/utils";
+import { AvatarConfig } from './avatar/constants';
+import { AvatarFace } from './avatar/AvatarFace';
+import { AvatarBody } from './avatar/AvatarBody';
+import { AvatarHair } from './avatar/AvatarHair';
+import { AvatarAccessories } from './avatar/AvatarAccessories';
 
-useEffect(() => {
-  if (isPlaying && !gameOver) {
-    gameLoopRef.current = setInterval(moveSnake, 150);
+export type { AvatarConfig };
+
+interface UserAvatarProps {
+  config: AvatarConfig;
+  className?: string;
+  pose?: "portrait" | "landscape";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
+}
+
+export default function UserAvatar({ config, className, pose = "portrait", size = "md" }: UserAvatarProps) {
+  if (!config) {
+    return (
+      <div className={cn("rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold", 
+        size === "sm" && "w-8 h-8 text-xs",
+        size === "md" && "w-12 h-12 text-sm",
+        size === "lg" && "w-24 h-24 text-xl",
+        size === "xl" && "w-32 h-32 text-2xl",
+        size === "2xl" && "w-48 h-48 text-4xl",
+        className
+      )}>
+        ?
+      </div>
+    );
   }
-  return () => {
-    if (gameLoopRef.current) clearInterval(gameLoopRef.current);
-  };
-}, [isPlaying, gameOver, snake, direction]);
+
+  const sizePx = size === "sm" ? 32 : size === "md" ? 48 : size === "lg" ? 96 : size === "xl" ? 128 : 192;
+  const viewBox = pose === "portrait" ? "0 0 100 100" : "0 0 100 200";
+  
+  return (
+    <div 
+      className={cn("relative overflow-hidden rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]", className)}
+      style={{ 
+        backgroundColor: config.backgroundColor,
+        width: sizePx,
+        height: sizePx,
+        borderRadius: pose === "portrait" ? "50%" : "16px"
+      }}
+    >
+      <svg viewBox={viewBox} className="w-full h-full">
+        <defs>
+          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="2" dy="2" stdDeviation="1" floodOpacity="0.3" />
+          </filter>
+        </defs>
+
+        {/* Body Group */}
+        <AvatarBody config={config} pose={pose} />
+
+        {/* Head Group */}
+        <g filter="url(#shadow)">
+          <AvatarFace config={config} />
+          
+          {/* Hair (Front) */}
+          <AvatarHair config={config} />
+
+          {/* Accessories */}
+          <AvatarAccessories config={config} />
+        </g>
+      </svg>
+    </div>
+  );
+}
