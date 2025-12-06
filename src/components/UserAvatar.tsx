@@ -51,6 +51,9 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
           </filter>
         </defs>
 
+        {/* Back Hair (Behind Body) */}
+        <AvatarHair config={config} layer="back" />
+
         {/* Body Group */}
         <AvatarBody config={config} pose={pose} />
 
@@ -59,7 +62,7 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
           <AvatarFace config={config} />
           
           {/* Hair (Front) */}
-          <AvatarHair config={config} />
+          <AvatarHair config={config} layer="front" />
 
           {/* Accessories */}
           <AvatarAccessories config={config} />

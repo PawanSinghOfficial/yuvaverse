@@ -164,6 +164,9 @@ export function AvatarBody({ config, pose }: AvatarBodyProps) {
 
   return (
     <g>
+      {/* Neck (Rendered first so it's behind everything) */}
+      <rect x="42" y="70" width="16" height="15" fill={config.skinTone} stroke="black" strokeWidth="2.5" />
+
       {/* Legs (only if not portrait) */}
       {pose !== "portrait" && (
          <path d={PATHS.bottom[config.bottomStyle as keyof typeof PATHS.bottom] || PATHS.bottom.jeans} fill={config.bottomColor} stroke="black" strokeWidth="2.5" />
@@ -179,11 +182,8 @@ export function AvatarBody({ config, pose }: AvatarBodyProps) {
       {armLeft}
       {armRight}
       
-      {/* Held Item */}
+      {/* Held Item (Rendered last so it's in front) */}
       {heldItem}
-
-      {/* Neck */}
-      <rect x="42" y="70" width="16" height="15" fill={config.skinTone} stroke="black" strokeWidth="2.5" />
     </g>
   );
 }

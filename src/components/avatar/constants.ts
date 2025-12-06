@@ -25,9 +25,22 @@ export const COLORS = {
 // Simplified SVG paths
 export const PATHS = {
   hair: {
+    // Legacy support if needed, but we will use hairFront and hairBack
     short: "M30,30 Q50,10 70,30 L70,40 Q50,20 30,40 Z",
     long: "M30,30 Q50,10 70,30 L75,80 Q50,90 25,80 Z",
     messy: "M25,35 Q50,5 75,35 L75,45 Q80,30 70,25 Q50,15 30,25 Q20,30 25,45 Z",
+    bald: "",
+  },
+  hairFront: {
+    short: "M30,30 Q50,10 70,30 L70,40 Q50,20 30,40 Z",
+    long: "M30,30 Q50,10 70,30 Q60,40 50,40 Q40,40 30,30 Z", // Bangs only
+    messy: "M25,35 Q50,5 75,35 L75,45 Q80,30 70,25 Q50,15 30,25 Q20,30 25,45 Z",
+    bald: "",
+  },
+  hairBack: {
+    short: "",
+    long: "M20,40 Q50,20 80,40 L85,90 Q50,100 15,90 Z", // Wider and behind
+    messy: "",
     bald: "",
   },
   top: {

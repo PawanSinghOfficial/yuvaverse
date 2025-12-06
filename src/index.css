@@ -54,7 +54,7 @@
   --card-foreground: #000000;
   --popover: #ffffff;
   --popover-foreground: #000000;
-  --primary: oklch(0.887 0.149 199.0);
+  --primary: oklch(0.557 0.210 264.8);
   --primary-foreground: #ffffff;
   --secondary: #00FF80;
   --secondary-foreground: #000000;
@@ -73,7 +73,7 @@
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: #f8f9fa;
   --sidebar-foreground: #000000;
-  --sidebar-primary: oklch(0.887 0.149 199.0);
+  --sidebar-primary: oklch(0.557 0.210 264.8);
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #00FF80;
   --sidebar-accent-foreground: #000000;
