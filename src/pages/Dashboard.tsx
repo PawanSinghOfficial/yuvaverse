@@ -195,13 +195,6 @@ export default function Dashboard() {
               <h1 className="text-4xl font-black tracking-tighter uppercase">
                 Hello, {user?.username || user?.name?.split(" ")[0] || "Student"}
               </h1>
-              <Button 
-                variant="link" 
-                className="p-0 h-auto text-muted-foreground hover:text-primary"
-                onClick={() => navigate("/avatar-editor")}
-              >
-                Enter Avatar Studio
-              </Button>
               <p className="text-foreground font-medium mt-1 bg-card inline-block px-2 border border-border">
                 Welcome to your digital campus.
               </p>
@@ -495,45 +488,14 @@ export default function Dashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {/* Top 3 Podium */}
-              {leaderboard.length >= 3 && (
-                <div className="flex justify-center items-end gap-4 mb-8 h-48">
-                  {/* 2nd Place */}
-                  <div className="flex flex-col items-center">
-                    <UserAvatar config={leaderboard[1].avatarConfig} size="lg" pose="standing" className="mb-2" />
-                    <div className="bg-gray-300 h-24 w-20 flex flex-col items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
-                      <span className="text-2xl font-black text-gray-600">2</span>
-                      <span className="text-xs font-bold truncate w-full text-center px-1">{leaderboard[1].name}</span>
-                    </div>
-                  </div>
-                  {/* 1st Place */}
-                  <div className="flex flex-col items-center z-10">
-                    <Crown className="h-8 w-8 text-yellow-500 mb-1 animate-bounce" />
-                    <UserAvatar config={leaderboard[0].avatarConfig} size="xl" pose="cheering" className="mb-2" />
-                    <div className="bg-yellow-400 h-32 w-24 flex flex-col items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
-                      <span className="text-4xl font-black text-yellow-800">1</span>
-                      <span className="text-xs font-bold truncate w-full text-center px-1">{leaderboard[0].name}</span>
-                    </div>
-                  </div>
-                  {/* 3rd Place */}
-                  <div className="flex flex-col items-center">
-                    <UserAvatar config={leaderboard[2].avatarConfig} size="lg" pose="standing" className="mb-2" />
-                    <div className="bg-orange-300 h-20 w-20 flex flex-col items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
-                      <span className="text-2xl font-black text-orange-700">3</span>
-                      <span className="text-xs font-bold truncate w-full text-center px-1">{leaderboard[2].name}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               <div className="space-y-3">
-                {leaderboard.slice(3, 6).map((u, i) => {
+                {leaderboard.slice(0, 5).map((u, i) => {
                   const entryBadge = getBadgeFromPoints(u.points);
                   return (
                     <div key={i} className="flex items-center justify-between bg-card border border-border p-2 shadow-[2px_2px_0px_0px_var(--shadow)]">
                       <div className="flex items-center gap-3">
-                        <span className="font-black text-lg w-8 text-center text-gray-500">
-                          #{i + 4}
+                        <span className={`font-black text-lg w-8 text-center ${i < 3 ? "text-yellow-600" : "text-gray-500"}`}>
+                          #{i + 1}
                         </span>
                         <div className="flex items-center gap-2">
                           <UserAvatar config={u.avatarConfig} size="sm" />
@@ -547,7 +509,7 @@ export default function Dashboard() {
                   );
                 })}
                 
-                {leaderboard.length > 6 && (
+                {leaderboard.length > 5 && (
                   <Dialog open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen}>
                     <DialogTrigger asChild>
                       <motion.button
