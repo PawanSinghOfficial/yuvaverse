@@ -19,7 +19,7 @@ export type AvatarConfig = {
 interface UserAvatarProps {
   config?: AvatarConfig | null;
   className?: string;
-  pose?: "portrait" | "standing" | "cheering" | "thinking" | "typing" | "gaming" | "laptop" | "reading";
+  pose?: "portrait" | "standing" | "cheering" | "thinking" | "typing" | "gaming" | "laptop" | "reading" | "waving" | "thumbs_up" | "holding_phone" | "crossed_arms" | "sleeping";
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
 }
 
@@ -129,6 +129,27 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
         <path d="M40,80 L60,80" stroke="#9CA3AF" strokeWidth="1" />
       </g>
     );
+  } else if (pose === "waving") {
+    armRight = <path d="M75,85 L95,40" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+  } else if (pose === "thumbs_up") {
+    armRight = <path d="M75,85 L95,80" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    heldItem = <circle cx="95" cy="80" r="4" fill={config.skinTone} />;
+  } else if (pose === "holding_phone") {
+    armRight = <path d="M75,85 L85,70" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    heldItem = (
+      <rect x="80" y="55" width="12" height="20" rx="2" fill="#1F2937" transform="rotate(-10 86 65)" />
+    );
+  } else if (pose === "crossed_arms") {
+    armLeft = <path d="M25,85 L75,95" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    armRight = <path d="M75,85 L25,95" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+  } else if (pose === "sleeping") {
+    headTransform = "rotate(10 50 50)";
+    heldItem = (
+      <g>
+        <text x="70" y="40" fontSize="12" fontFamily="sans-serif" fill="#6B7280">Z</text>
+        <text x="80" y="30" fontSize="10" fontFamily="sans-serif" fill="#6B7280">z</text>
+      </g>
+    );
   }
 
   return (
@@ -171,8 +192,20 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
             {/* Simplified: Hair is usually on top, but long hair might be behind. For now, simple layer. */}
 
             {/* Facial Features */}
-            {PATHS.eyes[config.eyes as keyof typeof PATHS.eyes] || PATHS.eyes.normal}
-            {PATHS.mouth[config.mouth as keyof typeof PATHS.mouth] || PATHS.mouth.smile}
+            {pose === "sleeping" ? (
+               <g>
+                 <path d="M35,50 Q40,52 45,50" fill="none" stroke="black" strokeWidth="2" />
+                 <path d="M55,50 Q60,52 65,50" fill="none" stroke="black" strokeWidth="2" />
+               </g>
+            ) : (
+               PATHS.eyes[config.eyes as keyof typeof PATHS.eyes] || PATHS.eyes.normal
+            )}
+            
+            {pose === "sleeping" ? (
+               <circle cx="50" cy="68" r="2" fill="none" stroke="black" strokeWidth="2" />
+            ) : (
+               PATHS.mouth[config.mouth as keyof typeof PATHS.mouth] || PATHS.mouth.smile
+            )}
             
             {/* Facial Hair */}
             {config.facialHair === "beard" && (
