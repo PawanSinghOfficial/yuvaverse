@@ -219,6 +219,26 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
             {config.accessories === "cap" && (
                <path d="M25,30 Q50,10 75,30 L85,35 L25,35 Z" fill={config.topColor} />
             )}
+            {config.accessories === "beanie" && (
+               <path d="M25,35 Q50,5 75,35 L75,40 Q50,30 25,40 Z" fill={config.topColor} />
+            )}
+            {config.accessories === "sunglasses" && (
+               <g>
+                 <rect x="32" y="46" width="16" height="8" rx="2" fill="#111827" />
+                 <rect x="52" y="46" width="16" height="8" rx="2" fill="#111827" />
+                 <line x1="48" y1="50" x2="52" y2="50" stroke="#111827" strokeWidth="1" />
+               </g>
+            )}
+            {config.accessories === "headphones" && (
+               <g>
+                 <path d="M22,50 Q22,15 50,15 Q78,15 78,50" fill="none" stroke="#374151" strokeWidth="3" />
+                 <rect x="18" y="45" width="8" height="16" rx="2" fill="#1F2937" />
+                 <rect x="74" y="45" width="8" height="16" rx="2" fill="#1F2937" />
+               </g>
+            )}
+            {config.accessories === "bandana" && (
+               <path d="M25,30 Q50,25 75,30 L75,40 Q50,35 25,40 Z" fill="#EF4444" />
+            )}
           </g>
         </g>
       </svg>
