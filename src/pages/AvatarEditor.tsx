@@ -238,13 +238,13 @@ export default function AvatarEditor() {
                 <div className="space-y-4">
                   <Label className="text-base">Eyes</Label>
                   <div className="grid grid-cols-4 gap-4">
-                    {["normal", "happy", "glasses", "wink"].map((style) => (
+                    {["normal", "happy", "glasses", "wink", "closed", "angry", "tired", "star_struck"].map((style) => (
                       <div 
                         key={style}
                         className={`cursor-pointer border-2 rounded-lg p-2 text-center capitalize ${config.eyes === style ? 'border-primary bg-primary/5' : 'border-border'}`}
                         onClick={() => updateConfig("eyes", style)}
                       >
-                        {style}
+                        {style.replace("_", " ")}
                       </div>
                     ))}
                   </div>
@@ -253,13 +253,13 @@ export default function AvatarEditor() {
                 <div className="space-y-4">
                   <Label className="text-base">Mouth</Label>
                   <div className="grid grid-cols-4 gap-4">
-                    {["smile", "laugh", "neutral", "surprised"].map((style) => (
+                    {["smile", "laugh", "neutral", "surprised", "sad", "smirk", "tongue", "wavy"].map((style) => (
                       <div 
                         key={style}
                         className={`cursor-pointer border-2 rounded-lg p-2 text-center capitalize ${config.mouth === style ? 'border-primary bg-primary/5' : 'border-border'}`}
                         onClick={() => updateConfig("mouth", style)}
                       >
-                        {style}
+                        {style.replace("_", " ")}
                       </div>
                     ))}
                   </div>

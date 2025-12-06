@@ -39,6 +39,8 @@ const PATHS = {
     wink: <g><circle cx="40" cy="50" r="3" fill="black"/><path d="M57,50 Q60,53 63,50" fill="none" stroke="black" strokeWidth="2"/></g>,
     closed: <g><path d="M37,50 Q40,53 43,50" fill="none" stroke="black" strokeWidth="2"/><path d="M57,50 Q60,53 63,50" fill="none" stroke="black" strokeWidth="2"/></g>,
     angry: <g><path d="M35,45 L45,50" stroke="black" strokeWidth="2"/><path d="M65,45 L55,50" stroke="black" strokeWidth="2"/><circle cx="40" cy="52" r="2" fill="black"/><circle cx="60" cy="52" r="2" fill="black"/></g>,
+    tired: <g><circle cx="40" cy="50" r="3" fill="black"/><circle cx="60" cy="50" r="3" fill="black"/><path d="M35,55 Q40,58 45,55" fill="none" stroke="black" strokeWidth="1" opacity="0.5"/><path d="M55,55 Q60,58 65,55" fill="none" stroke="black" strokeWidth="1" opacity="0.5"/></g>,
+    star_struck: <g><path d="M40,46 L42,50 L46,50 L43,53 L44,57 L40,55 L36,57 L37,53 L34,50 L38,50 Z" fill="#F59E0B"/><path d="M60,46 L62,50 L66,50 L63,53 L64,57 L60,55 L56,57 L57,53 L54,50 L58,50 Z" fill="#F59E0B"/></g>,
   },
   mouth: {
     smile: <path d="M40,65 Q50,75 60,65" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>,
@@ -47,6 +49,8 @@ const PATHS = {
     surprised: <circle cx="50" cy="68" r="4" fill="none" stroke="black" strokeWidth="2"/>,
     sad: <path d="M40,75 Q50,65 60,75" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>,
     smirk: <path d="M40,68 Q50,72 60,65" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>,
+    tongue: <g><path d="M40,65 Q50,65 60,65" fill="none" stroke="black" strokeWidth="2"/><path d="M45,65 Q50,80 55,65" fill="#EF4444" stroke="black" strokeWidth="1"/></g>,
+    wavy: <path d="M40,70 Q45,65 50,70 Q55,75 60,70" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>,
   },
   top: {
     tshirt: "M25,80 L75,80 L80,120 L20,120 Z",
