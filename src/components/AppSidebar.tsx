@@ -14,7 +14,8 @@ import {
   BrainCircuit,
   BookCheck,
   Timer,
-  Gamepad2
+  Gamepad2,
+  Palette
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
@@ -86,6 +87,12 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
       icon: Gamepad2,
       href: "/games",
       color: "text-rose-500",
+    },
+    {
+      label: "Avatar Studio",
+      icon: Palette,
+      href: "/avatar-editor",
+      color: "text-pink-600",
     },
     {
       label: "Feedback",

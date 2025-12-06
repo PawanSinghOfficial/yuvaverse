@@ -200,7 +200,7 @@ export default function Dashboard() {
                 className="p-0 h-auto text-muted-foreground hover:text-primary"
                 onClick={() => navigate("/avatar-editor")}
               >
-                Customize Avatar
+                Enter Avatar Studio
               </Button>
               <p className="text-foreground font-medium mt-1 bg-card inline-block px-2 border border-border">
                 Welcome to your digital campus.
