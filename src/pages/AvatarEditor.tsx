@@ -268,7 +268,7 @@ export default function AvatarEditor() {
                 <div className="space-y-4">
                   <Label className="text-base">Accessories</Label>
                   <div className="grid grid-cols-3 gap-4">
-                    {["none", "cap", "beanie", "sunglasses", "headphones", "bandana", "scarf", "necklace", "earrings", "mask"].map((style) => (
+                    {["none", "cap", "beanie", "sunglasses", "headphones", "bandana", "scarf", "necklace", "earrings", "mask", "bowtie", "flower", "eyepatch"].map((style) => (
                       <div 
                         key={style}
                         className={`cursor-pointer border-2 rounded-lg p-2 text-center capitalize ${config.accessories === style ? 'border-primary bg-primary/5' : 'border-border'}`}

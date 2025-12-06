@@ -301,6 +301,29 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
             {config.accessories === "mask" && (
                <path d="M30,55 Q50,75 70,55 L70,65 Q50,85 30,65 Z" fill={accColor} stroke="#D1D5DB" strokeWidth="1" />
             )}
+            {config.accessories === "bowtie" && (
+               <g>
+                 <path d="M42,75 L35,70 L35,80 Z" fill={accColor} />
+                 <path d="M58,75 L65,70 L65,80 Z" fill={accColor} />
+                 <circle cx="50" cy="75" r="3" fill={accColor} stroke="rgba(0,0,0,0.1)" strokeWidth="1" />
+               </g>
+            )}
+            {config.accessories === "flower" && (
+               <g transform="translate(70, 25)">
+                 <circle cx="0" cy="0" r="3" fill="#F59E0B" />
+                 <circle cx="0" cy="-5" r="3" fill={accColor} />
+                 <circle cx="5" cy="-2" r="3" fill={accColor} />
+                 <circle cx="3" cy="4" r="3" fill={accColor} />
+                 <circle cx="-3" cy="4" r="3" fill={accColor} />
+                 <circle cx="-5" cy="-2" r="3" fill={accColor} />
+               </g>
+            )}
+            {config.accessories === "eyepatch" && (
+               <g>
+                 <path d="M35,45 L65,35" stroke="#1F2937" strokeWidth="1" />
+                 <path d="M32,48 L48,48 L48,58 Q40,62 32,58 Z" fill="#1F2937" />
+               </g>
+            )}
           </g>
         </g>
       </svg>
