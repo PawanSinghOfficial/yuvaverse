@@ -32,7 +32,7 @@ export default function AvatarEditor() {
   const updateAvatarConfig = useMutation(api.users.updateAvatarConfig);
   
   const [config, setConfig] = useState<AvatarConfig>(user?.avatarConfig || DEFAULT_CONFIG);
-  const [activePose, setActivePose] = useState<"portrait" | "standing" | "cheering" | "thinking">("portrait");
+  const [activePose, setActivePose] = useState<"portrait" | "standing" | "cheering" | "thinking" | "typing" | "gaming" | "laptop" | "reading" | "waving" | "thumbs_up" | "holding_phone" | "crossed_arms" | "sleeping" | "confused" | "winning" | "listening">("portrait");
 
   const handleSave = async () => {
     try {
@@ -77,8 +77,8 @@ export default function AvatarEditor() {
             <CardContent className="p-8 flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-black min-h-[400px]">
               <UserAvatar config={config} size="2xl" pose={activePose} className="shadow-2xl" />
               
-              <div className="flex gap-2 mt-8">
-                {(["portrait", "standing", "cheering", "thinking"] as const).map((pose) => (
+              <div className="flex gap-2 mt-8 flex-wrap justify-center">
+                {(["portrait", "standing", "cheering", "thinking", "gaming", "laptop", "reading", "waving", "thumbs_up", "sleeping", "confused", "winning"] as const).map((pose) => (
                   <Button
                     key={pose}
                     variant={activePose === pose ? "default" : "outline"}
@@ -152,6 +152,20 @@ export default function AvatarEditor() {
                         className={`w-12 h-12 rounded-full border-2 ${config.hairColor === color ? 'border-primary scale-110' : 'border-transparent'}`}
                         style={{ backgroundColor: color }}
                         onClick={() => updateConfig("hairColor", color)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Label className="text-base">Background Color</Label>
+                  <div className="flex gap-3 flex-wrap">
+                    {["#F3F4F6", "#E5E7EB", "#D1D5DB", "#FECACA", "#BFDBFE", "#BBF7D0", "#FDE68A", "#E9D5FF"].map((color) => (
+                      <button
+                        key={color}
+                        className={`w-12 h-12 rounded-full border-2 ${config.backgroundColor === color ? 'border-primary scale-110' : 'border-transparent'}`}
+                        style={{ backgroundColor: color }}
+                        onClick={() => updateConfig("backgroundColor", color)}
                       />
                     ))}
                   </div>
@@ -238,11 +252,26 @@ export default function AvatarEditor() {
                 <div className="space-y-4">
                   <Label className="text-base">Accessories</Label>
                   <div className="grid grid-cols-3 gap-4">
-                    {["none", "cap"].map((style) => (
+                    {["none", "cap", "beanie", "sunglasses", "headphones", "bandana"].map((style) => (
                       <div 
                         key={style}
                         className={`cursor-pointer border-2 rounded-lg p-2 text-center capitalize ${config.accessories === style ? 'border-primary bg-primary/5' : 'border-border'}`}
                         onClick={() => updateConfig("accessories", style)}
+                      >
+                        {style}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Label className="text-base">Facial Hair</Label>
+                  <div className="grid grid-cols-3 gap-4">
+                    {["none", "beard"].map((style) => (
+                      <div 
+                        key={style}
+                        className={`cursor-pointer border-2 rounded-lg p-2 text-center capitalize ${config.facialHair === style ? 'border-primary bg-primary/5' : 'border-border'}`}
+                        onClick={() => updateConfig("facialHair", style)}
                       >
                         {style}
                       </div>
