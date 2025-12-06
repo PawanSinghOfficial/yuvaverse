@@ -19,7 +19,7 @@ export type AvatarConfig = {
 interface UserAvatarProps {
   config?: AvatarConfig | null;
   className?: string;
-  pose?: "portrait" | "standing" | "cheering" | "thinking" | "typing";
+  pose?: "portrait" | "standing" | "cheering" | "thinking" | "typing" | "gaming" | "laptop" | "reading";
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
 }
 
@@ -85,6 +85,7 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
   let headTransform = "";
   let armLeft = <path d="M25,85 L10,100" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
   let armRight = <path d="M75,85 L90,100" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+  let heldItem = null;
 
   if (pose === "cheering") {
     armLeft = <path d="M25,85 L10,50" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
@@ -94,6 +95,40 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
   } else if (pose === "typing") {
     armLeft = <path d="M25,85 L40,100" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
     armRight = <path d="M75,85 L60,100" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+  } else if (pose === "gaming") {
+    armLeft = <path d="M25,85 L40,75" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    armRight = <path d="M75,85 L60,75" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    heldItem = (
+      <g>
+        <rect x="35" y="70" width="30" height="16" rx="4" fill="#374151" />
+        <circle cx="40" cy="78" r="2" fill="#EF4444" />
+        <circle cx="45" cy="82" r="2" fill="#3B82F6" />
+        <circle cx="55" cy="78" r="2" fill="#10B981" />
+        <circle cx="60" cy="82" r="2" fill="#F59E0B" />
+      </g>
+    );
+  } else if (pose === "laptop") {
+    armLeft = <path d="M25,85 L40,95" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    armRight = <path d="M75,85 L60,95" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    heldItem = (
+      <g>
+        <path d="M20,100 L80,100 L75,90 L25,90 Z" fill="#9CA3AF" />
+        <path d="M25,90 L75,90 L75,60 L25,60 Z" fill="#D1D5DB" />
+        <path d="M28,63 L72,63 L72,87 L28,87 Z" fill="#3B82F6" />
+      </g>
+    );
+  } else if (pose === "reading") {
+    armLeft = <path d="M25,85 L40,75" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    armRight = <path d="M75,85 L60,75" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    heldItem = (
+      <g>
+        <rect x="35" y="65" width="30" height="25" fill="#F3F4F6" stroke="#1F2937" strokeWidth="1" />
+        <path d="M35,65 L65,65" stroke="#1F2937" strokeWidth="1" />
+        <path d="M40,70 L60,70" stroke="#9CA3AF" strokeWidth="1" />
+        <path d="M40,75 L60,75" stroke="#9CA3AF" strokeWidth="1" />
+        <path d="M40,80 L60,80" stroke="#9CA3AF" strokeWidth="1" />
+      </g>
+    );
   }
 
   return (
@@ -120,6 +155,9 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
           {/* Arms */}
           {armLeft}
           {armRight}
+          
+          {/* Held Item */}
+          {heldItem}
 
           {/* Neck */}
           <rect x="42" y="70" width="16" height="15" fill={config.skinTone} />
