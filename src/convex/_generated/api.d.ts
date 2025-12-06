@@ -15,6 +15,7 @@ import type * as events from "../events.js";
 import type * as feedback from "../feedback.js";
 import type * as groups from "../groups.js";
 import type * as http from "../http.js";
+import type * as presence from "../presence.js";
 import type * as resources from "../resources.js";
 import type * as seed_syllabus from "../seed_syllabus.js";
 import type * as syllabus from "../syllabus.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   feedback: typeof feedback;
   groups: typeof groups;
   http: typeof http;
+  presence: typeof presence;
   resources: typeof resources;
   seed_syllabus: typeof seed_syllabus;
   syllabus: typeof syllabus;

@@ -51,6 +51,22 @@ const schema = defineSchema(
       pomodoroSessionsCompleted: v.optional(v.number()),
       pomodoroSessionsAborted: v.optional(v.number()),
       
+      // Avatar Configuration
+      avatarConfig: v.optional(v.object({
+        skinTone: v.string(),
+        hairStyle: v.string(),
+        hairColor: v.string(),
+        topStyle: v.string(),
+        topColor: v.string(),
+        bottomStyle: v.optional(v.string()), // For full body
+        bottomColor: v.optional(v.string()),
+        accessories: v.string(),
+        facialHair: v.string(),
+        eyes: v.string(),
+        mouth: v.string(),
+        backgroundColor: v.string(),
+      })),
+
       // Game Stats
       snakeHighScore: v.optional(v.number()),
       mathHighScore: v.optional(v.number()),
@@ -234,6 +250,15 @@ const schema = defineSchema(
         children: v.optional(v.array(v.any())), // Recursive structure is hard to validate strictly in v.object, using v.any for children for flexibility or stringified JSON
       }), 
     }).index("by_notebook", ["notebookId"]),
+
+    presence: defineTable({
+      userId: v.id("users"),
+      groupId: v.id("groups"),
+      updatedAt: v.number(),
+      isTyping: v.boolean(),
+    })
+    .index("by_group_updated", ["groupId", "updatedAt"])
+    .index("by_user_group", ["userId", "groupId"]),
   },
   {
     schemaValidation: false,

@@ -23,6 +23,7 @@ import NotebookLM from "./pages/NotebookLM.tsx";
 import Syllabus from "./pages/Syllabus.tsx";
 import Pomodoro from "./pages/Pomodoro";
 import Games from "./pages/Games";
+import AvatarEditor from "./pages/AvatarEditor";
 import "./types/global.d.ts";
 
 // Force light mode
@@ -77,6 +78,8 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/notebook" element={<NotebookLM />} />
                 <Route path="/focus" element={<Pomodoro />} />
                 <Route path="/games" element={<Games />} />
+                <Route path="/avatar-editor" element={<AvatarEditor />} />
+                <Route path="/pomodoro" element={<Pomodoro />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/admin" element={<Admin />} />
             </Route>

@@ -30,9 +30,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function GroupChat() {
-  const { groupId } = useParams<{ groupId: string }>();
+  const params = useParams();
+  const groupId = params.groupId;
   const navigate = useNavigate();
   const { user } = useAuth();
   const [newMessage, setNewMessage] = useState("");
@@ -51,17 +53,24 @@ export default function GroupChat() {
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewVideo, setPreviewVideo] = useState<string | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  // Presence
+  const heartbeat = useMutation(api.presence.heartbeat);
+  const presenceArgs = groupId ? { groupId: groupId as Id<"groups"> } : "skip";
+  const onlineUsers = useQuery(api.presence.getGroupPresence, presenceArgs);
 
   const getExpiresInMinutes = () => {
     const minutes = parseInt(disappearingDuration, 10);
     return Number.isFinite(minutes) && minutes > 0 ? minutes : undefined;
   };
 
-  const group = useQuery(api.groups.get, { id: groupId as Id<"groups"> });
-  const messages = useQuery(api.groups.getMessages, { groupId: groupId as Id<"groups"> });
+  const group = useQuery(api.groups.get, groupId ? { id: groupId as Id<"groups"> } : "skip");
+  const messages = useQuery(api.groups.getMessages, groupId ? { groupId: groupId as Id<"groups"> } : "skip");
   const sendMessage = useMutation(api.groups.sendMessage);
   const joinGroup = useMutation(api.groups.join);
-  const members = useQuery(api.groups.getMembers, { groupId: groupId as Id<"groups"> });
+  const members = useQuery(api.groups.getMembers, groupId ? { groupId: groupId as Id<"groups"> } : "skip");
   const markAsRead = useMutation(api.groups.markAsRead);
   const generateUploadUrl = useMutation(api.groups.generateUploadUrl);
   const updateGroup = useMutation(api.groups.updateGroup);
@@ -88,6 +97,38 @@ export default function GroupChat() {
     // 3. Alphabetical by name
     return (a.user?.name || "").localeCompare(b.user?.name || "");
   });
+
+  // Heartbeat effect
+  useEffect(() => {
+    if (!groupId) return;
+    
+    const interval = setInterval(() => {
+      heartbeat({ groupId: groupId as Id<"groups">, isTyping });
+    }, 5000);
+
+    // Initial heartbeat
+    heartbeat({ groupId: groupId as Id<"groups">, isTyping });
+
+    return () => clearInterval(interval);
+  }, [groupId, isTyping, heartbeat]);
+
+  const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMessage(e.target.value);
+    
+    if (!groupId) return;
+
+    if (!isTyping) {
+      setIsTyping(true);
+      heartbeat({ groupId: groupId as Id<"groups">, isTyping: true });
+    }
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      heartbeat({ groupId: groupId as Id<"groups">, isTyping: false });
+    }, 2000);
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -286,7 +327,7 @@ export default function GroupChat() {
   if (!group) return <div className="p-8">Loading...</div>;
 
   return (
-    <div className="flex flex-col h-full w-full bg-white rounded-xl border shadow-sm overflow-hidden">
+    <div className="flex flex-col h-full w-full bg-white rounded-xl border shadow-sm overflow-hidden relative">
       {/* Header */}
       <div className="border-b p-4 flex items-center justify-between bg-white/95 backdrop-blur shadow-sm z-10">
         <div className="flex items-center gap-3">
@@ -432,7 +473,7 @@ export default function GroupChat() {
       </div>
 
       {/* Messages Area */}
-      <ScrollArea className="flex-1 p-4 bg-white">
+      <ScrollArea className="flex-1 p-4 bg-white mb-16">
         <div className="space-y-4 max-w-3xl mx-auto pb-4">
           {messages?.slice().reverse().map((msg) => {
             const isMe = msg.userId === user?._id;
@@ -445,10 +486,14 @@ export default function GroupChat() {
                 key={msg._id}
                 className={`flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}
               >
-                <Avatar className="h-8 w-8 border border-gray-100 shadow-sm">
-                  <AvatarImage src={sender?.image} />
-                  <AvatarFallback>{sender?.name?.[0] || "?"}</AvatarFallback>
-                </Avatar>
+                {sender?.avatarConfig ? (
+                  <UserAvatar config={sender.avatarConfig} size="sm" />
+                ) : (
+                  <Avatar className="h-8 w-8 border border-gray-100 shadow-sm">
+                    <AvatarImage src={sender?.image} />
+                    <AvatarFallback>{sender?.name?.[0] || "?"}</AvatarFallback>
+                  </Avatar>
+                )}
                 <div
                   className={`flex flex-col max-w-[70%] ${
                     isMe ? "items-end" : "items-start"
@@ -525,6 +570,27 @@ export default function GroupChat() {
         </div>
       </ScrollArea>
 
+      {/* Online Avatars & Typing Indicator */}
+      <div className="absolute bottom-20 left-4 flex items-end gap-2 pointer-events-none z-10">
+        {onlineUsers?.filter(u => u.userId !== user?._id).map((u) => (
+          <div key={u.userId} className="relative transition-all duration-300 ease-in-out">
+            {u.isTyping && (
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white border shadow-sm px-2 py-1 rounded-full text-[10px] whitespace-nowrap animate-pulse">
+                Typing...
+              </div>
+            )}
+            <div className={`transition-transform ${u.isTyping ? 'translate-y-[-5px]' : ''}`}>
+              <UserAvatar 
+                config={u.user?.avatarConfig} 
+                size="sm" 
+                pose={u.isTyping ? "typing" : "portrait"}
+                className="border-2 border-white shadow-md"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
       <Dialog open={!!previewImage} onOpenChange={(open) => !open && setPreviewImage(null)}>
         <DialogContent className="max-w-screen-lg w-auto h-auto p-0 bg-transparent border-none shadow-none flex items-center justify-center overflow-hidden">
            <DialogTitle className="sr-only">Image Preview</DialogTitle>
@@ -549,7 +615,7 @@ export default function GroupChat() {
       </Dialog>
 
       {/* Input Area */}
-      <div className="p-4 border-t bg-white">
+      <div className="p-4 border-t bg-white z-20">
         <div className="max-w-3xl mx-auto space-y-3">
           {isStudyGroup && (
             <div className="flex flex-col gap-2 text-xs text-gray-500 sm:flex-row sm:items-center">
@@ -599,7 +665,7 @@ export default function GroupChat() {
             <form onSubmit={handleSendMessage} className="flex-1 flex gap-2">
               <Input
                 value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
+                onChange={handleTyping}
                 placeholder={
                   isRecording ? "Recording..." : isUploading ? "Uploading..." : isMember ? "Type a message..." : "Join the group to chat"
                 }

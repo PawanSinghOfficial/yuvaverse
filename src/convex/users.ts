@@ -128,9 +128,11 @@ export const getLeaderboard = query({
       .sort((a, b) => (b.points || 0) - (a.points || 0))
       .slice(0, 10)
       .map(u => ({
+        _id: u._id,
         name: u.username || u.name || "Anonymous",
         points: u.points || 0,
-        image: u.image
+        image: u.image,
+        avatarConfig: u.avatarConfig,
       }));
   },
 });
@@ -293,4 +295,31 @@ export const recordGameResult = mutation({
                     args.gameId === "math" ? patchData.mathHighScore : undefined
     };
   },
+});
+
+export const updateAvatarConfig = mutation({
+  args: {
+    config: v.object({
+      skinTone: v.string(),
+      hairStyle: v.string(),
+      hairColor: v.string(),
+      topStyle: v.string(),
+      topColor: v.string(),
+      bottomStyle: v.optional(v.string()),
+      bottomColor: v.optional(v.string()),
+      accessories: v.string(),
+      facialHair: v.string(),
+      eyes: v.string(),
+      mouth: v.string(),
+      backgroundColor: v.string(),
+    })
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    
+    await ctx.db.patch(userId, {
+      avatarConfig: args.config
+    });
+  }
 });

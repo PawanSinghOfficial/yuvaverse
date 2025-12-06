@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { BookOpen, Calendar, Users, MessageSquare, Trophy, Crown, Star, Flame, Medal, BookCheck } from "lucide-react";
+import { BookOpen, Calendar, Users, MessageSquare, Trophy, Crown, Star, Flame, Medal, BookCheck, Edit } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
@@ -15,6 +15,7 @@ import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -161,17 +162,31 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-6" id="dashboard-profile">
            <div className="relative group">
-              {user?.image ? (
+              {user?.avatarConfig ? (
+                <div className="relative">
+                  <UserAvatar config={user.avatarConfig} size="xl" className="border-4 border-white shadow-xl" />
+                  <Button 
+                    size="icon" 
+                    variant="secondary" 
+                    className="absolute -bottom-2 -right-2 rounded-full h-8 w-8 shadow-md"
+                    onClick={() => navigate("/avatar-editor")}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : user?.image ? (
                 <img src={user.image} alt="Avatar" className="h-20 w-20 object-cover border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)]" />
               ) : (
                 <div className="h-20 w-20 bg-secondary flex items-center justify-center text-black font-bold text-3xl border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)]">
                   {user?.name?.[0] || "U"}
                 </div>
               )}
-              <label className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-2 border-transparent">
-                <span className="text-white text-xs font-bold uppercase">Change</span>
-                <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
-              </label>
+              {!user?.avatarConfig && (
+                <label className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-2 border-transparent">
+                  <span className="text-white text-xs font-bold uppercase">Change</span>
+                  <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
+                </label>
+              )}
               <div className={`absolute -bottom-3 -right-3 h-12 w-12 flex items-center justify-center rounded-full border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-gradient-to-br ${badge.gradient} text-2xl z-10 transition-transform hover:scale-110 hover:rotate-12`} title={`${badge.label} Badge`}>
                 {badge.icon}
               </div>
@@ -180,6 +195,13 @@ export default function Dashboard() {
               <h1 className="text-4xl font-black tracking-tighter uppercase">
                 Hello, {user?.username || user?.name?.split(" ")[0] || "Student"}
               </h1>
+              <Button 
+                variant="link" 
+                className="p-0 h-auto text-muted-foreground hover:text-primary"
+                onClick={() => navigate("/avatar-editor")}
+              >
+                Customize Avatar
+              </Button>
               <p className="text-foreground font-medium mt-1 bg-card inline-block px-2 border border-border">
                 Welcome to your digital campus.
               </p>
@@ -473,29 +495,59 @@ export default function Dashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              {/* Top 3 Podium */}
+              {leaderboard.length >= 3 && (
+                <div className="flex justify-center items-end gap-4 mb-8 h-48">
+                  {/* 2nd Place */}
+                  <div className="flex flex-col items-center">
+                    <UserAvatar config={leaderboard[1].avatarConfig} size="lg" pose="standing" className="mb-2" />
+                    <div className="bg-gray-300 h-24 w-20 flex flex-col items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+                      <span className="text-2xl font-black text-gray-600">2</span>
+                      <span className="text-xs font-bold truncate w-full text-center px-1">{leaderboard[1].name}</span>
+                    </div>
+                  </div>
+                  {/* 1st Place */}
+                  <div className="flex flex-col items-center z-10">
+                    <Crown className="h-8 w-8 text-yellow-500 mb-1 animate-bounce" />
+                    <UserAvatar config={leaderboard[0].avatarConfig} size="xl" pose="cheering" className="mb-2" />
+                    <div className="bg-yellow-400 h-32 w-24 flex flex-col items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+                      <span className="text-4xl font-black text-yellow-800">1</span>
+                      <span className="text-xs font-bold truncate w-full text-center px-1">{leaderboard[0].name}</span>
+                    </div>
+                  </div>
+                  {/* 3rd Place */}
+                  <div className="flex flex-col items-center">
+                    <UserAvatar config={leaderboard[2].avatarConfig} size="lg" pose="standing" className="mb-2" />
+                    <div className="bg-orange-300 h-20 w-20 flex flex-col items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+                      <span className="text-2xl font-black text-orange-700">3</span>
+                      <span className="text-xs font-bold truncate w-full text-center px-1">{leaderboard[2].name}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-3">
-                {leaderboard.slice(0, 3).map((u, i) => {
+                {leaderboard.slice(3, 6).map((u, i) => {
                   const entryBadge = getBadgeFromPoints(u.points);
                   return (
                     <div key={i} className="flex items-center justify-between bg-card border border-border p-2 shadow-[2px_2px_0px_0px_var(--shadow)]">
                       <div className="flex items-center gap-3">
-                        <span className={`font-black text-lg w-8 text-center ${i < 3 ? "text-yellow-600" : "text-gray-500"}`}>
-                          #{i + 1}
+                        <span className="font-black text-lg w-8 text-center text-gray-500">
+                          #{i + 4}
                         </span>
-                        <span className="text-sm font-bold truncate max-w-[100px]">{u.name}</span>
+                        <div className="flex items-center gap-2">
+                          <UserAvatar config={u.avatarConfig} size="sm" />
+                          <span className="text-sm font-bold truncate max-w-[100px]">{u.name}</span>
+                        </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-black text-foreground">{u.points} pts</span>
-                        <div className={`h-8 w-8 rounded-full border-2 border-black flex items-center justify-center text-sm bg-gradient-to-br ${entryBadge.gradient} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`} title={entryBadge.label}>
-                          {entryBadge.icon}
-                        </div>
                       </div>
                     </div>
                   );
                 })}
-                {leaderboard.length === 0 && <p className="text-sm font-medium">No contributions yet.</p>}
                 
-                {leaderboard.length > 3 && (
+                {leaderboard.length > 6 && (
                   <Dialog open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen}>
                     <DialogTrigger asChild>
                       <motion.button
