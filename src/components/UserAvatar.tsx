@@ -10,6 +10,7 @@ export type AvatarConfig = {
   bottomStyle?: string;
   bottomColor?: string;
   accessories: string;
+  accessoryColor?: string;
   facialHair: string;
   eyes: string;
   mouth: string;
@@ -51,11 +52,14 @@ const PATHS = {
     tshirt: "M25,80 L75,80 L80,120 L20,120 Z",
     hoodie: "M20,80 Q50,70 80,80 L85,120 L15,120 Z",
     formal: "M25,80 L50,90 L75,80 L75,120 L25,120 Z",
+    blazer: "M25,80 L50,100 L75,80 L80,120 L20,120 Z",
+    sweater: "M22,80 Q50,75 78,80 L82,120 L18,120 Z",
   },
   bottom: {
     jeans: "M25,120 L25,180 L48,180 L48,130 L52,130 L52,180 L75,180 L75,120 Z",
     shorts: "M25,120 L25,150 L48,150 L48,130 L52,130 L52,150 L75,150 L75,120 Z",
     skirt: "M25,120 L20,160 L80,160 L75,120 Z",
+    sweatpants: "M25,120 L22,180 L48,180 L48,135 L52,135 L52,180 L78,180 L75,120 Z",
   }
 };
 
@@ -83,6 +87,7 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
 
   const sizePx = size === "sm" ? 32 : size === "md" ? 48 : size === "lg" ? 96 : size === "xl" ? 128 : 192;
   const viewBox = pose === "portrait" ? "0 0 100 100" : "0 0 100 200";
+  const accColor = config.accessoryColor || config.topColor; // Fallback to top color if not set
   
   // Pose transformations
   let bodyTransform = "";
@@ -243,7 +248,13 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
             
             {/* Facial Hair */}
             {config.facialHair === "beard" && (
-               <path d="M30,60 Q50,90 70,60" fill="none" stroke="#2C2C2C" strokeWidth="2" />
+               <path d="M30,60 Q50,90 70,60" fill="none" stroke={config.hairColor} strokeWidth="2" />
+            )}
+            {config.facialHair === "mustache" && (
+               <path d="M35,65 Q50,60 65,65" fill="none" stroke={config.hairColor} strokeWidth="3" strokeLinecap="round" />
+            )}
+            {config.facialHair === "goatee" && (
+               <path d="M45,75 Q50,85 55,75" fill="none" stroke={config.hairColor} strokeWidth="2" />
             )}
 
             {/* Hair (Front) */}
@@ -251,44 +262,44 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
 
             {/* Accessories */}
             {config.accessories === "cap" && (
-               <path d="M25,30 Q50,10 75,30 L85,35 L25,35 Z" fill={config.topColor} />
+               <path d="M25,30 Q50,10 75,30 L85,35 L25,35 Z" fill={accColor} />
             )}
             {config.accessories === "beanie" && (
-               <path d="M28,35 Q50,5 72,35 L72,40 Q50,30 28,40 Z" fill={config.topColor} />
+               <path d="M28,35 Q50,5 72,35 L72,40 Q50,30 28,40 Z" fill={accColor} />
             )}
             {config.accessories === "sunglasses" && (
                <g>
-                 <path d="M32,48 L48,48 L48,55 Q40,60 32,55 Z" fill="#1F2937" />
-                 <path d="M52,48 L68,48 L68,55 Q60,60 52,55 Z" fill="#1F2937" />
-                 <line x1="48" y1="50" x2="52" y2="50" stroke="#1F2937" strokeWidth="2" />
-                 <line x1="28" y1="50" x2="32" y2="50" stroke="#1F2937" strokeWidth="2" />
-                 <line x1="68" y1="50" x2="72" y2="50" stroke="#1F2937" strokeWidth="2" />
+                 <path d="M32,48 L48,48 L48,55 Q40,60 32,55 Z" fill={accColor} />
+                 <path d="M52,48 L68,48 L68,55 Q60,60 52,55 Z" fill={accColor} />
+                 <line x1="48" y1="50" x2="52" y2="50" stroke={accColor} strokeWidth="2" />
+                 <line x1="28" y1="50" x2="32" y2="50" stroke={accColor} strokeWidth="2" />
+                 <line x1="68" y1="50" x2="72" y2="50" stroke={accColor} strokeWidth="2" />
                </g>
             )}
             {config.accessories === "headphones" && (
                <g>
-                 <path d="M20,50 Q20,10 80,50" fill="none" stroke="#374151" strokeWidth="4" />
-                 <rect x="15" y="45" width="10" height="20" rx="4" fill="#1F2937" />
-                 <rect x="75" y="45" width="10" height="20" rx="4" fill="#1F2937" />
+                 <path d="M20,50 Q20,10 80,50" fill="none" stroke={accColor} strokeWidth="4" />
+                 <rect x="15" y="45" width="10" height="20" rx="4" fill={accColor} />
+                 <rect x="75" y="45" width="10" height="20" rx="4" fill={accColor} />
                </g>
             )}
             {config.accessories === "bandana" && (
-               <path d="M25,35 Q50,25 75,35 L75,25 Q50,15 25,25 Z" fill="#EF4444" />
+               <path d="M25,35 Q50,25 75,35 L75,25 Q50,15 25,25 Z" fill={accColor} />
             )}
             {config.accessories === "scarf" && (
-               <path d="M35,75 Q50,85 65,75 L65,90 Q50,100 35,90 Z" fill="#D97706" />
+               <path d="M35,75 Q50,85 65,75 L65,90 Q50,100 35,90 Z" fill={accColor} />
             )}
             {config.accessories === "necklace" && (
-               <path d="M35,75 Q50,95 65,75" fill="none" stroke="#F59E0B" strokeWidth="2" />
+               <path d="M35,75 Q50,95 65,75" fill="none" stroke={accColor} strokeWidth="2" />
             )}
             {config.accessories === "earrings" && (
                <g>
-                 <circle cx="28" cy="55" r="2" fill="#F59E0B" />
-                 <circle cx="72" cy="55" r="2" fill="#F59E0B" />
+                 <circle cx="28" cy="55" r="2" fill={accColor} />
+                 <circle cx="72" cy="55" r="2" fill={accColor} />
                </g>
             )}
             {config.accessories === "mask" && (
-               <path d="M30,55 Q50,75 70,55 L70,65 Q50,85 30,65 Z" fill="#F3F4F6" stroke="#D1D5DB" strokeWidth="1" />
+               <path d="M30,55 Q50,75 70,55 L70,65 Q50,85 30,65 Z" fill={accColor} stroke="#D1D5DB" strokeWidth="1" />
             )}
           </g>
         </g>

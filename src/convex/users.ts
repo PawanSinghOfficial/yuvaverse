@@ -308,6 +308,7 @@ export const updateAvatarConfig = mutation({
       bottomStyle: v.optional(v.string()),
       bottomColor: v.optional(v.string()),
       accessories: v.string(),
+      accessoryColor: v.optional(v.string()),
       facialHair: v.string(),
       eyes: v.string(),
       mouth: v.string(),

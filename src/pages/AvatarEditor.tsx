@@ -20,6 +20,7 @@ const DEFAULT_CONFIG: AvatarConfig = {
   bottomStyle: "jeans",
   bottomColor: "#1F2937",
   accessories: "none",
+  accessoryColor: "#F59E0B",
   facialHair: "none",
   eyes: "normal",
   mouth: "smile",
@@ -54,6 +55,7 @@ export default function AvatarEditor() {
       topColor: ["#EF4444", "#3B82F6", "#10B981", "#F59E0B"][Math.floor(Math.random() * 4)],
       eyes: ["normal", "happy", "glasses", "wink"][Math.floor(Math.random() * 4)],
       mouth: ["smile", "laugh", "neutral", "surprised"][Math.floor(Math.random() * 4)],
+      accessoryColor: ["#EF4444", "#3B82F6", "#10B981", "#F59E0B"][Math.floor(Math.random() * 4)],
     });
   };
 
@@ -176,7 +178,7 @@ export default function AvatarEditor() {
                 <div className="space-y-4">
                   <Label className="text-base">Top Style</Label>
                   <div className="grid grid-cols-3 gap-4">
-                    {["tshirt", "hoodie", "formal"].map((style) => (
+                    {["tshirt", "hoodie", "formal", "blazer", "sweater"].map((style) => (
                       <div 
                         key={style}
                         className={`cursor-pointer border-2 rounded-lg p-2 text-center capitalize ${config.topStyle === style ? 'border-primary bg-primary/5' : 'border-border'}`}
@@ -191,7 +193,7 @@ export default function AvatarEditor() {
                 <div className="space-y-4">
                   <Label className="text-base">Top Color</Label>
                   <div className="flex gap-3 flex-wrap">
-                    {["#EF4444", "#3B82F6", "#10B981", "#1F2937", "#F3F4F6", "#F59E0B"].map((color) => (
+                    {["#EF4444", "#3B82F6", "#10B981", "#1F2937", "#F3F4F6", "#F59E0B", "#8B5CF6", "#EC4899"].map((color) => (
                       <button
                         key={color}
                         className={`w-12 h-12 rounded-full border-2 ${config.topColor === color ? 'border-primary scale-110' : 'border-gray-200'}`}
@@ -205,7 +207,7 @@ export default function AvatarEditor() {
                 <div className="space-y-4">
                   <Label className="text-base">Bottom Style</Label>
                   <div className="grid grid-cols-3 gap-4">
-                    {["jeans", "shorts", "skirt"].map((style) => (
+                    {["jeans", "shorts", "skirt", "sweatpants"].map((style) => (
                       <div 
                         key={style}
                         className={`cursor-pointer border-2 rounded-lg p-2 text-center capitalize ${config.bottomStyle === style ? 'border-primary bg-primary/5' : 'border-border'}`}
@@ -213,6 +215,20 @@ export default function AvatarEditor() {
                       >
                         {style}
                       </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Label className="text-base">Bottom Color</Label>
+                  <div className="flex gap-3 flex-wrap">
+                    {["#1F2937", "#374151", "#4B5563", "#6B7280", "#2563EB", "#7C3AED"].map((color) => (
+                      <button
+                        key={color}
+                        className={`w-12 h-12 rounded-full border-2 ${config.bottomColor === color ? 'border-primary scale-110' : 'border-gray-200'}`}
+                        style={{ backgroundColor: color }}
+                        onClick={() => updateConfig("bottomColor", color)}
+                      />
                     ))}
                   </div>
                 </div>
@@ -265,9 +281,23 @@ export default function AvatarEditor() {
                 </div>
 
                 <div className="space-y-4">
+                  <Label className="text-base">Accessory Color</Label>
+                  <div className="flex gap-3 flex-wrap">
+                    {["#EF4444", "#3B82F6", "#10B981", "#F59E0B", "#1F2937", "#F3F4F6", "#8B5CF6", "#EC4899"].map((color) => (
+                      <button
+                        key={color}
+                        className={`w-12 h-12 rounded-full border-2 ${config.accessoryColor === color ? 'border-primary scale-110' : 'border-gray-200'}`}
+                        style={{ backgroundColor: color }}
+                        onClick={() => updateConfig("accessoryColor", color)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
                   <Label className="text-base">Facial Hair</Label>
                   <div className="grid grid-cols-3 gap-4">
-                    {["none", "beard"].map((style) => (
+                    {["none", "beard", "mustache", "goatee"].map((style) => (
                       <div 
                         key={style}
                         className={`cursor-pointer border-2 rounded-lg p-2 text-center capitalize ${config.facialHair === style ? 'border-primary bg-primary/5' : 'border-border'}`}
