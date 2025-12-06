@@ -19,7 +19,7 @@ export type AvatarConfig = {
 interface UserAvatarProps {
   config?: AvatarConfig | null;
   className?: string;
-  pose?: "portrait" | "standing" | "cheering" | "thinking" | "typing" | "gaming" | "laptop" | "reading" | "waving" | "thumbs_up" | "holding_phone" | "crossed_arms" | "sleeping";
+  pose?: "portrait" | "standing" | "cheering" | "thinking" | "typing" | "gaming" | "laptop" | "reading" | "sleeping" | "confused" | "winning" | "listening";
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
 }
 
@@ -36,12 +36,16 @@ const PATHS = {
     happy: <g><path d="M37,50 Q40,47 43,50" fill="none" stroke="black" strokeWidth="2"/><path d="M57,50 Q60,47 63,50" fill="none" stroke="black" strokeWidth="2"/></g>,
     glasses: <g><circle cx="40" cy="50" r="6" fill="none" stroke="black" strokeWidth="1"/><circle cx="60" cy="50" r="6" fill="none" stroke="black" strokeWidth="1"/><line x1="46" y1="50" x2="54" y2="50" stroke="black" strokeWidth="1"/></g>,
     wink: <g><circle cx="40" cy="50" r="3" fill="black"/><path d="M57,50 Q60,53 63,50" fill="none" stroke="black" strokeWidth="2"/></g>,
+    closed: <g><path d="M37,50 Q40,53 43,50" fill="none" stroke="black" strokeWidth="2"/><path d="M57,50 Q60,53 63,50" fill="none" stroke="black" strokeWidth="2"/></g>,
+    angry: <g><path d="M35,45 L45,50" stroke="black" strokeWidth="2"/><path d="M65,45 L55,50" stroke="black" strokeWidth="2"/><circle cx="40" cy="52" r="2" fill="black"/><circle cx="60" cy="52" r="2" fill="black"/></g>,
   },
   mouth: {
     smile: <path d="M40,65 Q50,75 60,65" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>,
     laugh: <path d="M40,65 Q50,80 60,65 Z" fill="white" stroke="black" strokeWidth="1"/>,
     neutral: <line x1="42" y1="68" x2="58" y2="68" stroke="black" strokeWidth="2" strokeLinecap="round"/>,
     surprised: <circle cx="50" cy="68" r="4" fill="none" stroke="black" strokeWidth="2"/>,
+    sad: <path d="M40,75 Q50,65 60,75" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>,
+    smirk: <path d="M40,68 Q50,72 60,65" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>,
   },
   top: {
     tshirt: "M25,80 L75,80 L80,120 L20,120 Z",
@@ -129,25 +133,40 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
         <path d="M40,80 L60,80" stroke="#9CA3AF" strokeWidth="1" />
       </g>
     );
-  } else if (pose === "waving") {
-    armRight = <path d="M75,85 L95,40" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
-  } else if (pose === "thumbs_up") {
-    armRight = <path d="M75,85 L95,80" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
-    heldItem = <circle cx="95" cy="80" r="4" fill={config.skinTone} />;
-  } else if (pose === "holding_phone") {
-    armRight = <path d="M75,85 L85,70" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
-    heldItem = (
-      <rect x="80" y="55" width="12" height="20" rx="2" fill="#1F2937" transform="rotate(-10 86 65)" />
-    );
-  } else if (pose === "crossed_arms") {
-    armLeft = <path d="M25,85 L75,95" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
-    armRight = <path d="M75,85 L25,95" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
   } else if (pose === "sleeping") {
-    headTransform = "rotate(10 50 50)";
+    armLeft = <path d="M25,85 L40,95" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    armRight = <path d="M75,85 L60,95" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
     heldItem = (
       <g>
-        <text x="70" y="40" fontSize="12" fontFamily="sans-serif" fill="#6B7280">Z</text>
-        <text x="80" y="30" fontSize="10" fontFamily="sans-serif" fill="#6B7280">z</text>
+        <text x="70" y="40" fontSize="20" fill="#3B82F6" style={{ opacity: 0.7 }}>Z</text>
+        <text x="80" y="30" fontSize="14" fill="#3B82F6" style={{ opacity: 0.5 }}>z</text>
+      </g>
+    );
+  } else if (pose === "confused") {
+    armLeft = <path d="M25,85 L15,100" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    armRight = <path d="M75,85 L85,50" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>; // Scratching head
+    heldItem = (
+      <text x="85" y="40" fontSize="24" fill="#F59E0B" fontWeight="bold">?</text>
+    );
+  } else if (pose === "winning") {
+    armLeft = <path d="M25,85 L15,50" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    armRight = <path d="M75,85 L90,50" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    heldItem = (
+      <g>
+        <path d="M35,40 L65,40 L55,70 L45,70 Z" fill="#F59E0B" stroke="#B45309" strokeWidth="1"/>
+        <path d="M35,40 Q25,45 35,55" fill="none" stroke="#F59E0B" strokeWidth="2"/>
+        <path d="M65,40 Q75,45 65,55" fill="none" stroke="#F59E0B" strokeWidth="2"/>
+        <rect x="42" y="70" width="16" height="5" fill="#78350F" />
+      </g>
+    );
+  } else if (pose === "listening") {
+    armLeft = <path d="M25,85 L15,100" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    armRight = <path d="M75,85 L90,100" stroke={config.skinTone} strokeWidth="8" strokeLinecap="round"/>;
+    heldItem = (
+      <g>
+        <path d="M30,50 Q50,20 70,50" fill="none" stroke="#374151" strokeWidth="4" />
+        <rect x="25" y="45" width="10" height="15" rx="2" fill="#1F2937" />
+        <rect x="65" y="45" width="10" height="15" rx="2" fill="#1F2937" />
       </g>
     );
   }
@@ -192,20 +211,8 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
             {/* Simplified: Hair is usually on top, but long hair might be behind. For now, simple layer. */}
 
             {/* Facial Features */}
-            {pose === "sleeping" ? (
-               <g>
-                 <path d="M35,50 Q40,52 45,50" fill="none" stroke="black" strokeWidth="2" />
-                 <path d="M55,50 Q60,52 65,50" fill="none" stroke="black" strokeWidth="2" />
-               </g>
-            ) : (
-               PATHS.eyes[config.eyes as keyof typeof PATHS.eyes] || PATHS.eyes.normal
-            )}
-            
-            {pose === "sleeping" ? (
-               <circle cx="50" cy="68" r="2" fill="none" stroke="black" strokeWidth="2" />
-            ) : (
-               PATHS.mouth[config.mouth as keyof typeof PATHS.mouth] || PATHS.mouth.smile
-            )}
+            {PATHS.eyes[config.eyes as keyof typeof PATHS.eyes] || PATHS.eyes.normal}
+            {PATHS.mouth[config.mouth as keyof typeof PATHS.mouth] || PATHS.mouth.smile}
             
             {/* Facial Hair */}
             {config.facialHair === "beard" && (
@@ -218,26 +225,6 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
             {/* Accessories */}
             {config.accessories === "cap" && (
                <path d="M25,30 Q50,10 75,30 L85,35 L25,35 Z" fill={config.topColor} />
-            )}
-            {config.accessories === "beanie" && (
-               <path d="M25,35 Q50,5 75,35 L75,40 Q50,30 25,40 Z" fill={config.topColor} />
-            )}
-            {config.accessories === "sunglasses" && (
-               <g>
-                 <rect x="32" y="46" width="16" height="8" rx="2" fill="#111827" />
-                 <rect x="52" y="46" width="16" height="8" rx="2" fill="#111827" />
-                 <line x1="48" y1="50" x2="52" y2="50" stroke="#111827" strokeWidth="1" />
-               </g>
-            )}
-            {config.accessories === "headphones" && (
-               <g>
-                 <path d="M22,50 Q22,15 50,15 Q78,15 78,50" fill="none" stroke="#374151" strokeWidth="3" />
-                 <rect x="18" y="45" width="8" height="16" rx="2" fill="#1F2937" />
-                 <rect x="74" y="45" width="8" height="16" rx="2" fill="#1F2937" />
-               </g>
-            )}
-            {config.accessories === "bandana" && (
-               <path d="M25,30 Q50,25 75,30 L75,40 Q50,35 25,40 Z" fill="#EF4444" />
             )}
           </g>
         </g>
