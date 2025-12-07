@@ -78,7 +78,6 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/notebook" element={<NotebookLM />} />
                 <Route path="/focus" element={<Pomodoro />} />
                 <Route path="/games" element={<Games />} />
-                <Route path="/avatar-editor" element={<AvatarEditor />} />
                 <Route path="/pomodoro" element={<Pomodoro />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/admin" element={<Admin />} />

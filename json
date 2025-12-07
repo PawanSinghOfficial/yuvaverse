@@ -1,6 +1,3 @@
-[
-  {"type": "tool_call", "tool_number": 1, "tool_name": "readFilesToContextTool", "input_args": {"file_paths": ["src/pages/Dashboard.tsx", "src/pages/Resources.tsx", "src/pages/Syllabus.tsx"], "replace_files_in_context": false}},
-  {"type": "tool_call", "tool_number": 2, "tool_name": "updateFileTool", "input_args": {"file_path": "src/pages/Dashboard.tsx", "content": "..."}},
-  {"type": "tool_call", "tool_number": 3, "tool_name": "updateFileTool", "input_args": {"file_path": "src/pages/Resources.tsx", "content": "..."}},
-  {"type": "tool_call", "tool_number": 4, "tool_name": "updateFileTool", "input_args": {"file_path": "src/pages/Syllabus.tsx", "content": "..."}}
-]
+{
+  "command": "npx convex dev --once && npx tsc -b --noEmit"
+}

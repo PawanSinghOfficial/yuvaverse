@@ -165,14 +165,6 @@ export default function Dashboard() {
               {user?.avatarConfig ? (
                 <div className="relative">
                   <UserAvatar config={user.avatarConfig} size="xl" className="border-4 border-white shadow-xl" />
-                  <Button 
-                    size="icon" 
-                    variant="secondary" 
-                    className="absolute -bottom-2 -right-2 rounded-full h-8 w-8 shadow-md"
-                    onClick={() => navigate("/avatar-editor")}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
                 </div>
               ) : user?.image ? (
                 <img src={user.image} alt="Avatar" className="h-20 w-20 object-cover border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)]" />
