@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, Bell, Calendar as CalendarIcon } from "lucide-react";
+import { Plus, Trash2, Bell, Calendar as CalendarIcon, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -54,6 +54,16 @@ export default function CalendarPage() {
            todoDate.getFullYear() === date.getFullYear();
   });
 
+  // Helper to check if a date has todos
+  const hasTodos = (day: Date) => {
+    return todos.some(todo => {
+      const todoDate = new Date(todo.date);
+      return todoDate.getDate() === day.getDate() &&
+             todoDate.getMonth() === day.getMonth() &&
+             todoDate.getFullYear() === day.getFullYear();
+    });
+  };
+
   return (
     <div className="p-8 space-y-8 bg-pink-50 dark:bg-background min-h-screen">
       <div className="flex flex-col gap-2">
@@ -71,13 +81,23 @@ export default function CalendarPage() {
               selected={date}
               onSelect={setDate}
               className="rounded-none border-0"
+              modifiers={{
+                hasTask: (date) => hasTodos(date),
+              }}
+              modifiersClassNames={{
+                hasTask: "after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:bg-primary after:rounded-full font-bold",
+              }}
               classNames={{
                 day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-none border border-border shadow-[2px_2px_0px_0px_var(--shadow)]",
                 day_today: "bg-accent text-accent-foreground rounded-none border border-border font-bold",
-                day: "h-9 w-9 p-0 font-medium aria-selected:opacity-100 hover:bg-secondary hover:text-secondary-foreground rounded-none transition-all border border-transparent hover:border-border hover:shadow-[2px_2px_0px_0px_var(--shadow)]",
+                day: "h-9 w-9 p-0 font-medium aria-selected:opacity-100 hover:bg-secondary hover:text-secondary-foreground rounded-none transition-all border border-transparent hover:border-border hover:shadow-[2px_2px_0px_0px_var(--shadow)] relative",
                 head_cell: "text-muted-foreground rounded-none w-9 font-bold text-[0.8rem] uppercase",
               }}
             />
+            <div className="mt-4 flex items-center justify-center gap-2 text-xs font-bold text-muted-foreground">
+                <div className="w-2 h-2 bg-primary rounded-full" />
+                <span>Has Tasks</span>
+            </div>
           </CardContent>
         </Card>
 
@@ -89,7 +109,7 @@ export default function CalendarPage() {
             </CardTitle>
             <Dialog open={isAddingTodo} onOpenChange={setIsAddingTodo}>
               <DialogTrigger asChild>
-                <Button size="sm" className="shadow-[4px_4px_0px_0px_var(--shadow)]">
+                <Button size="sm" className="shadow-[4px_4px_0px_0px_var(--shadow)] font-bold border-2 border-black">
                   <Plus className="h-4 w-4 mr-2" />
                   Add Task
                 </Button>
@@ -122,13 +142,13 @@ export default function CalendarPage() {
                       id="reminder" 
                       checked={newTodo.reminder}
                       onCheckedChange={(c) => setNewTodo({...newTodo, reminder: c as boolean})}
-                      className="border border-border h-5 w-5 rounded-none data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                      className="border-2 border-border h-5 w-5 rounded-none data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                     />
                     <Label htmlFor="reminder" className="font-bold cursor-pointer">Set Reminder (30 mins before)</Label>
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleAddTodo} className="w-full">Add Task</Button>
+                  <Button onClick={handleAddTodo} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_var(--shadow)]">Add Task</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -136,22 +156,26 @@ export default function CalendarPage() {
           <CardContent className="flex-1 p-6 bg-white dark:bg-black/20">
             <div className="space-y-4">
               {selectedDateTodos.length === 0 ? (
-                <div className="text-center py-12 flex flex-col items-center justify-center text-muted-foreground border border-dashed border-border/50 bg-secondary/5">
+                <div className="text-center py-12 flex flex-col items-center justify-center text-muted-foreground border-4 border-dashed border-border/50 bg-secondary/5 rounded-xl">
                   <CalendarIcon className="h-12 w-12 mb-4 opacity-20" />
                   <p className="font-bold text-lg">No tasks for this day.</p>
                   <p className="text-sm">Enjoy your free time or add a new task!</p>
                 </div>
               ) : (
                 selectedDateTodos.map((todo) => (
-                  <div key={todo._id} className="group flex items-center justify-between p-4 border-2 border-border bg-white dark:bg-card shadow-[4px_4px_0px_0px_var(--shadow)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_var(--shadow)] transition-all">
+                  <div 
+                    key={todo._id} 
+                    className={`group flex items-center justify-between p-4 border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_var(--shadow)] transition-all ${todo.isCompleted ? 'bg-green-50 border-green-200' : 'bg-white dark:bg-card'}`}
+                  >
                     <div className="flex items-center gap-4">
-                      <Checkbox 
-                        checked={todo.isCompleted}
-                        onCheckedChange={() => toggleTodo({ id: todo._id })}
-                        className="h-6 w-6 border border-border rounded-none data-[state=checked]:bg-secondary data-[state=checked]:text-black"
-                      />
-                      <div className={todo.isCompleted ? "line-through opacity-50 transition-opacity" : ""}>
-                        <p className="font-black text-lg uppercase">{todo.title}</p>
+                      <div 
+                        onClick={() => toggleTodo({ id: todo._id })}
+                        className={`cursor-pointer h-8 w-8 border-2 border-black flex items-center justify-center transition-colors ${todo.isCompleted ? 'bg-green-500' : 'bg-white hover:bg-gray-100'}`}
+                      >
+                        {todo.isCompleted && <CheckCircle2 className="h-5 w-5 text-white" />}
+                      </div>
+                      <div className={todo.isCompleted ? "opacity-50 transition-opacity" : ""}>
+                        <p className={`font-black text-lg uppercase ${todo.isCompleted ? 'line-through decoration-2 decoration-black/50' : ''}`}>{todo.title}</p>
                         <p className="text-xs font-bold text-muted-foreground flex items-center gap-2">
                           {format(new Date(todo.date), "h:mm a")}
                           {todo.reminderTime && (

@@ -10,6 +10,10 @@ import SnakeGame from "@/components/games/SnakeGame";
 import MathChallenge from "@/components/games/MathChallenge";
 import { GameGuide } from "@/components/GameGuide";
 import { useGameSounds } from "@/hooks/use-game-sounds";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Trophy, Medal, Crown } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const GAMES = [
   {
@@ -209,6 +213,7 @@ const ArcadeBackground = () => {
 export default function Games() {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const { playSound } = useGameSounds();
+  const leaderboard = useQuery(api.users.getLeaderboard);
 
   const ActiveGame = GAMES.find(g => g.id === selectedGame)?.component;
 
@@ -262,50 +267,108 @@ export default function Games() {
         </motion.div>
       </div>
 
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        {GAMES.map((game, index) => (
-          <motion.div
-            key={game.id}
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
-            whileHover={{ y: -10 }}
-            onMouseEnter={() => playSound('hover')}
-          >
-            <Card 
-              className="h-full cursor-pointer border-2 border-white/10 bg-slate-900/80 backdrop-blur-sm hover:border-primary/50 hover:shadow-[0_0_30px_-5px_rgba(124,58,237,0.3)] transition-all duration-300 group overflow-hidden"
-              onClick={() => {
-                playSound('click');
-                setSelectedGame(game.id);
-              }}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-7xl mx-auto relative z-10">
+        {/* Games Grid */}
+        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {GAMES.map((game, index) => (
+            <motion.div
+              key={game.id}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
+              whileHover={{ y: -10 }}
+              onMouseEnter={() => playSound('hover')}
             >
-              <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ${game.color.split(" ")[0]}`} />
-              
-              <CardHeader className="flex flex-row items-center gap-4 pb-2 relative z-10">
-                <motion.div 
-                  className={`p-4 rounded-xl border border-white/10 ${game.color} bg-opacity-20`}
-                  whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <game.icon className="h-8 w-8" />
-                </motion.div>
-                <CardTitle className="text-2xl font-black uppercase tracking-tight text-white">{game.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="relative z-10">
-                <p className="text-slate-400 font-medium text-base">{game.description}</p>
-                <div className="mt-6 flex justify-end">
-                  <motion.span 
-                    className="text-xs font-black uppercase bg-white text-black px-4 py-2 rounded-full border-2 border-transparent group-hover:bg-primary group-hover:text-white transition-colors"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+              <Card 
+                className="h-full cursor-pointer border-2 border-white/10 bg-slate-900/80 backdrop-blur-sm hover:border-primary/50 hover:shadow-[0_0_30px_-5px_rgba(124,58,237,0.3)] transition-all duration-300 group overflow-hidden"
+                onClick={() => {
+                  playSound('click');
+                  setSelectedGame(game.id);
+                }}
+              >
+                <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ${game.color.split(" ")[0]}`} />
+                
+                <CardHeader className="flex flex-row items-center gap-4 pb-2 relative z-10">
+                  <motion.div 
+                    className={`p-4 rounded-xl border border-white/10 ${game.color} bg-opacity-20`}
+                    whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    Play Now
-                  </motion.span>
+                    <game.icon className="h-8 w-8" />
+                  </motion.div>
+                  <CardTitle className="text-2xl font-black uppercase tracking-tight text-white">{game.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  <p className="text-slate-400 font-medium text-base">{game.description}</p>
+                  <div className="mt-6 flex justify-end">
+                    <motion.span 
+                      className="text-xs font-black uppercase bg-white text-black px-4 py-2 rounded-full border-2 border-transparent group-hover:bg-primary group-hover:text-white transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Play Now
+                    </motion.span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Leaderboard Section */}
+        <div className="lg:col-span-1">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6 }}
+            className="bg-slate-900/80 backdrop-blur-sm border-2 border-yellow-500/50 rounded-xl p-6 sticky top-8"
+          >
+            <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
+              <Trophy className="h-8 w-8 text-yellow-500" />
+              <h2 className="text-2xl font-black uppercase text-white tracking-tight">Leaderboard</h2>
+            </div>
+            
+            <div className="space-y-4">
+              {leaderboard?.map((player, index) => (
+                <motion.div
+                  key={player._id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.7 + index * 0.1 }}
+                  className={`flex items-center gap-3 p-3 rounded-lg border ${
+                    index === 0 ? 'bg-yellow-500/20 border-yellow-500/50' :
+                    index === 1 ? 'bg-slate-400/20 border-slate-400/50' :
+                    index === 2 ? 'bg-orange-700/20 border-orange-700/50' :
+                    'bg-white/5 border-white/10'
+                  }`}
+                >
+                  <div className="font-black text-lg w-6 text-center text-white/50">
+                    {index + 1}
+                  </div>
+                  <Avatar className="h-10 w-10 border-2 border-white/20">
+                    <AvatarImage src={player.image} />
+                    <AvatarFallback className="bg-primary text-white font-bold">
+                      {player.name[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-white truncate">{player.name}</p>
+                    <p className="text-xs text-white/50 font-medium">{player.points} pts</p>
+                  </div>
+                  {index === 0 && <Crown className="h-5 w-5 text-yellow-500" />}
+                  {index === 1 && <Medal className="h-5 w-5 text-slate-400" />}
+                  {index === 2 && <Medal className="h-5 w-5 text-orange-700" />}
+                </motion.div>
+              ))}
+              
+              {(!leaderboard || leaderboard.length === 0) && (
+                <div className="text-center py-8 text-white/30 font-medium">
+                  No champions yet. Be the first!
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
           </motion.div>
-        ))}
+        </div>
       </div>
 
       <Dialog open={!!selectedGame} onOpenChange={() => setSelectedGame(null)}>

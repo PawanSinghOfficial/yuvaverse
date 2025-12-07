@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { VayuuTease } from "@/components/VayuuTease";
+import { GrowingPlant } from "@/components/pomodoro/GrowingPlant";
 
 const AMBIENT_SOUNDS = [
   {
@@ -105,25 +106,64 @@ export default function Pomodoro() {
   const successAudioRef = useRef<HTMLAudioElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleComplete = async () => {
-    if (successAudioRef.current) {
-      successAudioRef.current.play().catch(e => console.error("Audio play failed:", e));
-    }
-    
-    try {
-      const points = await completeSession({ durationMinutes: totalTime / 60 });
-      setPointsEarned(points);
-      setShowCompletion(true);
+  // Persistence Logic
+  useEffect(() => {
+    // Load state from localStorage on mount
+    const savedEndTime = localStorage.getItem("pomodoroEndTime");
+    const savedTotalTime = localStorage.getItem("pomodoroTotalTime");
+    const savedIsActive = localStorage.getItem("pomodoroIsActive");
+
+    if (savedEndTime && savedTotalTime && savedIsActive === "true") {
+      const endTime = parseInt(savedEndTime, 10);
+      const now = Date.now();
+      const remaining = Math.max(0, Math.ceil((endTime - now) / 1000));
       
-      if (Notification.permission === "granted") {
-        new Notification("Session Complete!", {
-          body: `Great job! You focused for ${totalTime / 60} minutes.`,
-          icon: "/logo.png"
-        });
-      }
-    } catch (error) {
-      console.error("Failed to complete session:", error);
+      setTotalTime(parseInt(savedTotalTime, 10));
+      setTimeLeft(remaining);
+      setIsActive(true);
     }
+  }, []);
+
+  useEffect(() => {
+    // Save state to localStorage
+    if (isActive) {
+      const endTime = Date.now() + timeLeft * 1000;
+      localStorage.setItem("pomodoroEndTime", endTime.toString());
+      localStorage.setItem("pomodoroTotalTime", totalTime.toString());
+      localStorage.setItem("pomodoroIsActive", "true");
+    } else {
+      localStorage.removeItem("pomodoroEndTime");
+      localStorage.removeItem("pomodoroTotalTime");
+      localStorage.removeItem("pomodoroIsActive");
+    }
+  }, [isActive, totalTime]); // Note: timeLeft changes too often, so we calculate endTime based on current timeLeft when active state changes or periodically if needed, but here we rely on the interval to update timeLeft and we only need to save the "target" end time once or when paused/resumed. 
+  // Actually, better to save the target end time once when starting.
+  
+  // Refined Persistence:
+  const startTimer = () => {
+    const endTime = Date.now() + timeLeft * 1000;
+    localStorage.setItem("pomodoroEndTime", endTime.toString());
+    localStorage.setItem("pomodoroTotalTime", totalTime.toString());
+    localStorage.setItem("pomodoroIsActive", "true");
+    setIsActive(true);
+  };
+
+  const pauseTimer = () => {
+    localStorage.removeItem("pomodoroEndTime"); // Remove end time as it's no longer valid relative to real time
+    localStorage.setItem("pomodoroIsActive", "false");
+    setIsActive(false);
+  };
+
+  const stopTimer = () => {
+    localStorage.removeItem("pomodoroEndTime");
+    localStorage.removeItem("pomodoroTotalTime");
+    localStorage.removeItem("pomodoroIsActive");
+    setIsActive(false);
+  };
+
+  const handleCompleteWrapped = async () => {
+    stopTimer();
+    await handleComplete();
   };
 
   // Request Notification permission
@@ -154,11 +194,21 @@ export default function Pomodoro() {
 
     if (isActive && timeLeft > 0) {
       interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
+        setTimeLeft((prev) => {
+            const newVal = prev - 1;
+            // Sync with real time if needed, but simple decrement is okay for short durations.
+            // For better accuracy across tabs:
+            const savedEndTime = localStorage.getItem("pomodoroEndTime");
+            if (savedEndTime) {
+                const remaining = Math.max(0, Math.ceil((parseInt(savedEndTime) - Date.now()) / 1000));
+                return remaining;
+            }
+            return newVal;
+        });
       }, 1000);
     } else if (timeLeft === 0 && isActive) {
       setIsActive(false);
-      handleComplete();
+      handleCompleteWrapped();
     }
 
     return () => clearInterval(interval);
@@ -204,16 +254,37 @@ export default function Pomodoro() {
     return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
   }, []);
 
+  const handleComplete = async () => {
+    if (successAudioRef.current) {
+      successAudioRef.current.play().catch(e => console.error("Audio play failed:", e));
+    }
+    
+    try {
+      const points = await completeSession({ durationMinutes: totalTime / 60 });
+      setPointsEarned(points);
+      setShowCompletion(true);
+      
+      if (Notification.permission === "granted") {
+        new Notification("Session Complete!", {
+          body: `Great job! You focused for ${totalTime / 60} minutes.`,
+          icon: "/logo.png"
+        });
+      }
+    } catch (error) {
+      console.error("Failed to complete session:", error);
+    }
+  };
+
   const handlePauseClick = () => {
     if (isActive) {
       setShowQuitConfirm(true);
     } else {
-      setIsActive(true);
+      startTimer();
     }
   };
 
   const handleQuitConfirm = async () => {
-    setIsActive(false);
+    stopTimer();
     setShowQuitConfirm(false);
     setTimeLeft(totalTime);
     if (audioRef.current) audioRef.current.pause();
@@ -237,50 +308,28 @@ export default function Pomodoro() {
     }
   };
 
-  const toggleTimer = () => setIsActive(!isActive);
-
   const resetTimer = () => {
     if (isActive) {
       setShowQuitConfirm(true);
     } else {
-      setIsActive(false);
+      stopTimer();
       setTimeLeft(totalTime);
     }
   };
 
   const setDuration = (minutes: number) => {
-    setIsActive(false);
+    stopTimer();
     setTotalTime(minutes * 60);
     setTimeLeft(minutes * 60);
   };
 
-  // Circular Progress Calculation
-  const radius = 120;
-  const circumference = 2 * Math.PI * radius;
-  // Timer depletes: Start full (offset 0), End empty (offset circumference)
-  const dashoffset = circumference * (1 - (timeLeft / totalTime));
-
-  const getTimerColor = () => {
-    if (!isActive && timeLeft === totalTime) return "text-primary";
-    const ratio = timeLeft / totalTime;
-    if (ratio > 0.6) return "text-emerald-500";
-    if (ratio > 0.25) return "text-amber-500";
-    return "text-rose-500";
-  };
-
   const progressPercentage = totalTime > 0 ? ((totalTime - timeLeft) / totalTime) * 100 : 0;
-
-  const getProgressFillColor = (percent: number) => {
-    if (percent >= 75) return "bg-green-500";
-    if (percent >= 40) return "bg-yellow-500";
-    return "bg-red-500";
-  };
 
   const renderTimeDisplay = () => {
     const mins = Math.floor(timeLeft / 60);
     const secs = timeLeft % 60;
     return (
-      <div className="flex items-center justify-center font-mono font-bold tracking-tight tabular-nums text-6xl z-10 relative text-foreground">
+      <div className="flex items-center justify-center font-mono font-bold tracking-tight tabular-nums text-6xl z-10 relative text-foreground mt-8">
         <span className="w-[1.1em] text-center">{mins.toString().padStart(2, '0')}</span>
         <motion.span 
           animate={isActive ? { opacity: [1, 0.2, 1] } : { opacity: 1 }}
@@ -391,112 +440,30 @@ export default function Pomodoro() {
                ))}
             </div>
 
-            <motion.div 
-                className="relative mt-8 mb-8"
-                animate={isActive ? { scale: [1, 1.02, 1] } : { scale: 1 }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            >
-              {/* SVG Circle */}
-              <svg width="320" height="320" className="transform -rotate-90 overflow-visible">
-                <defs>
-                  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                    <feMerge>
-                      <feMergeNode in="coloredBlur"/>
-                      <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
-                  </filter>
-                </defs>
-                
-                {/* Track */}
-                <circle
-                  cx="160"
-                  cy="160"
-                  r={radius}
-                  stroke="currentColor"
-                  strokeWidth="16"
-                  fill="transparent"
-                  className="text-muted/10"
-                />
-
-                {/* Pulsing Ghost Ring (when active) */}
-                {isActive && (
-                  <motion.circle
-                    cx="160"
-                    cy="160"
-                    r={radius}
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    fill="transparent"
-                    className={cn("origin-center", getTimerColor())}
-                    initial={{ scale: 1, opacity: 0.3 }}
-                    animate={{ scale: 1.15, opacity: 0, strokeWidth: 0 }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-                    style={{ transformOrigin: "160px 160px" }}
-                  />
-                )}
-
-                {/* Progress Circle */}
-                <motion.circle
-                  cx="160"
-                  cy="160"
-                  r={radius}
-                  stroke="currentColor"
-                  strokeWidth="16"
-                  fill="transparent"
-                  className={cn(
-                      "transition-colors duration-1000",
-                      getTimerColor()
-                  )}
-                  style={{ 
-                    filter: isActive ? "url(#glow)" : "none",
-                  }}
-                  strokeDasharray={circumference}
-                  strokeDashoffset={dashoffset}
-                  strokeLinecap="round"
-                  initial={{ strokeDashoffset: 0 }}
-                  animate={{ strokeDashoffset: dashoffset }}
-                  transition={{ duration: 1, ease: "linear" }}
-                />
-              </svg>
-              
-              {/* Time Display */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <motion.div 
-                    key={timeLeft} // Keep key for subtle re-render animations if needed, or remove for smoothness
-                    initial={{ opacity: 0.5, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                  {renderTimeDisplay()}
-                </motion.div>
-                <motion.span 
-                    animate={isActive ? { opacity: [0.5, 1, 0.5] } : { opacity: 1 }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className={cn(
-                      "text-xs font-bold uppercase tracking-widest mt-4 px-3 py-1 rounded-full transition-colors",
-                      isActive ? "bg-black text-white" : "bg-secondary/50 text-muted-foreground"
-                    )}
-                >
-                  {isActive ? "Focusing..." : "Ready to Start"}
-                </motion.span>
-              </div>
-            </motion.div>
-
-            {/* Linear Progress Bar */}
-            <div className="w-full max-w-xs mb-8 space-y-2">
-              <div className="flex justify-between text-xs font-bold uppercase text-muted-foreground">
-                <span>Session Progress</span>
-                <span>{Math.round(progressPercentage)}%</span>
-              </div>
-              <div className="h-4 w-full bg-secondary/20 rounded-full overflow-hidden border-2 border-black/10 shadow-inner">
-                <motion.div 
-                  className={cn("h-full transition-colors duration-1000", getProgressFillColor(progressPercentage))}
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${progressPercentage}%` }}
-                  transition={{ duration: 1, ease: "linear" }}
-                />
-              </div>
+            {/* Visual Plant Timer */}
+            <div className="relative mt-8 mb-4">
+                <GrowingPlant progress={progressPercentage} isActive={isActive} />
             </div>
+            
+            {/* Time Display */}
+            <motion.div 
+                key={timeLeft}
+                initial={{ opacity: 0.5, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
+                {renderTimeDisplay()}
+            </motion.div>
+            
+            <motion.span 
+                animate={isActive ? { opacity: [0.5, 1, 0.5] } : { opacity: 1 }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className={cn(
+                    "text-xs font-bold uppercase tracking-widest mt-2 mb-8 px-3 py-1 rounded-full transition-colors",
+                    isActive ? "bg-black text-white" : "bg-secondary/50 text-muted-foreground"
+                )}
+            >
+                {isActive ? "Focusing..." : "Ready to Start"}
+            </motion.span>
 
             <div className="flex items-center gap-6 z-10">
               <motion.button

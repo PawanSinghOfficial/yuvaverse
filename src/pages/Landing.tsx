@@ -13,6 +13,18 @@ export default function Landing() {
     document.documentElement.classList.remove("dark");
   }, []);
 
+  // Generate random shapes for background
+  const shapes = Array.from({ length: 15 }).map((_, i) => ({
+    id: i,
+    type: i % 4, // 0: square, 1: circle, 2: triangle (rotated square), 3: rectangle
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: 20 + Math.random() * 60,
+    color: ['bg-yellow-300', 'bg-pink-300', 'bg-blue-300', 'bg-green-300', 'bg-purple-300'][Math.floor(Math.random() * 5)],
+    duration: 10 + Math.random() * 20,
+    delay: Math.random() * 5
+  }));
+
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden isolate">
       <ExitIntentPopup />
@@ -22,40 +34,25 @@ export default function Landing() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         
         {/* Floating Shapes */}
-        <motion.div 
+        {shapes.map((shape) => (
+          <motion.div 
+            key={shape.id}
             animate={{ 
-                y: [0, -20, 0], 
-                rotate: [0, 5, 0],
-                x: [0, 10, 0]
+                y: [0, -30, 0], 
+                rotate: [0, 10, -10, 0],
+                x: [0, 20, 0]
             }} 
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-20 left-10 h-16 w-16 border-4 border-black bg-yellow-300 opacity-40 rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
-        />
-        <motion.div 
-            animate={{ 
-                y: [0, 30, 0], 
-                rotate: [0, -10, 0],
-                x: [0, -15, 0]
-            }} 
-            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-40 right-20 h-24 w-24 border-4 border-black bg-pink-300 opacity-40 -rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
-        />
-        <motion.div 
-            animate={{ 
-                y: [0, -40, 0], 
-                rotate: [0, 15, 0],
-            }} 
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/3 right-1/4 h-12 w-12 border-4 border-black bg-blue-300 opacity-40 rotate-45 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
-        />
-        <motion.div 
-            animate={{ 
-                x: [0, 20, 0], 
-                rotate: [0, -5, 0],
-            }} 
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-20 left-1/3 h-14 w-14 border-4 border-black bg-green-300 opacity-40 rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
-        />
+            transition={{ duration: shape.duration, repeat: Infinity, ease: "easeInOut", delay: shape.delay }}
+            className={`absolute border-4 border-black opacity-30 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] ${shape.color} ${shape.type === 1 ? 'rounded-full' : 'rounded-none'}`}
+            style={{
+              top: `${shape.y}%`,
+              left: `${shape.x}%`,
+              width: shape.size,
+              height: shape.type === 3 ? shape.size * 1.5 : shape.size,
+              transform: shape.type === 2 ? 'rotate(45deg)' : 'none'
+            }}
+          />
+        ))}
       </div>
       
       {/* Navbar */}
