@@ -8,7 +8,7 @@ export function GameGuide() {
   const leaderboard = useQuery(api.users.getLeaderboard);
 
   return (
-    <div className="h-full flex flex-col gap-6">
+    <div className="flex flex-col lg:flex-row gap-6 w-full">
       {/* Leaderboard Section */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
@@ -73,7 +73,7 @@ export function GameGuide() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl p-6"
+        className="bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl p-6 lg:w-1/3"
       >
         <h3 className="text-xl font-black uppercase text-white mb-4 flex items-center gap-2">
             <Star className="h-5 w-5 text-yellow-400" />
