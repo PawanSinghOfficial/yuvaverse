@@ -259,7 +259,7 @@ export default function Games() {
 
       <div className="max-w-7xl mx-auto relative z-10 space-y-12">
         {/* Games Grid - Horizontal Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-5 gap-6">
           {GAMES.map((game, index) => (
             <motion.div
               key={game.id}
@@ -268,9 +268,10 @@ export default function Games() {
               transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
               whileHover={{ y: -10 }}
               onMouseEnter={() => playSound('hover')}
+              className="h-full"
             >
               <Card 
-                className="h-full cursor-pointer border-2 border-white/10 bg-slate-900/80 backdrop-blur-sm hover:border-primary/50 hover:shadow-[0_0_30px_-5px_rgba(124,58,237,0.3)] transition-all duration-300 group overflow-hidden flex flex-col"
+                className="h-full min-h-[240px] cursor-pointer border-2 border-white/10 bg-slate-900/80 backdrop-blur-sm hover:border-primary/50 hover:shadow-[0_0_30px_-5px_rgba(124,58,237,0.3)] transition-all duration-300 group overflow-hidden flex flex-col"
                 onClick={() => {
                   playSound('click');
                   setSelectedGame(game.id);
@@ -278,7 +279,7 @@ export default function Games() {
               >
                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ${game.color.split(" ")[0]}`} />
                 
-                <CardHeader className="flex flex-row items-center gap-4 pb-2 relative z-10">
+                <CardHeader className="flex flex-row items-start gap-4 pb-2 relative z-10">
                   <motion.div 
                     className={`p-3 rounded-xl border border-white/10 ${game.color} bg-opacity-20 shrink-0`}
                     whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
@@ -286,11 +287,11 @@ export default function Games() {
                   >
                     <game.icon className="h-6 w-6" />
                   </motion.div>
-                  <CardTitle className="text-lg font-black uppercase tracking-tight text-white leading-tight">{game.title}</CardTitle>
+                  <CardTitle className="text-lg font-black uppercase tracking-tight text-white leading-tight pt-1">{game.title}</CardTitle>
                 </CardHeader>
-                <CardContent className="relative z-10 flex-1 flex flex-col justify-between">
-                  <p className="text-slate-400 font-medium text-sm line-clamp-2">{game.description}</p>
-                  <div className="mt-4 flex justify-end">
+                <CardContent className="relative z-10 flex-1 flex flex-col justify-between p-6 pt-2">
+                  <p className="text-slate-400 font-medium text-sm leading-relaxed">{game.description}</p>
+                  <div className="mt-6 flex justify-end">
                     <motion.span 
                       className="text-[10px] font-black uppercase bg-white text-black px-3 py-1.5 rounded-full border-2 border-transparent group-hover:bg-primary group-hover:text-white transition-colors"
                       whileHover={{ scale: 1.05 }}
