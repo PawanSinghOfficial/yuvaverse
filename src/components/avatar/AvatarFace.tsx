@@ -120,24 +120,19 @@ export function AvatarFace({ config }: AvatarFaceProps) {
 
   return (
     <g>
-      {/* Face Shape - More defined jawline for Bitmoji look */}
-      <path 
-        d="M28,40 Q28,15 50,15 Q72,15 72,40 L72,55 Q72,85 50,95 Q28,85 28,55 Z" 
-        fill={config.skinTone} 
-        stroke="black" 
-        strokeWidth="2" 
-      />
+      {/* Face Shape - Simple Round */}
+      <rect x="22" y="15" width="56" height="70" rx="28" fill={config.skinTone} stroke="black" strokeWidth="2.5" />
       
       {/* Ears */}
-      <path d="M28,45 Q22,40 22,50 Q22,60 28,55" fill={config.skinTone} stroke="black" strokeWidth="2" />
-      <path d="M72,45 Q78,40 78,50 Q78,60 72,55" fill={config.skinTone} stroke="black" strokeWidth="2" />
+      <path d="M22,45 Q16,40 16,50 Q16,60 22,55" fill={config.skinTone} stroke="black" strokeWidth="2.5" />
+      <path d="M78,45 Q84,40 84,50 Q84,60 78,55" fill={config.skinTone} stroke="black" strokeWidth="2.5" />
 
       {/* Blush */}
-      <ellipse cx="34" cy="60" rx="4" ry="2" fill="#FF0000" opacity="0.2" />
-      <ellipse cx="66" cy="60" rx="4" ry="2" fill="#FF0000" opacity="0.2" />
+      <ellipse cx="32" cy="58" rx="5" ry="3" fill="#FF0000" opacity="0.2" />
+      <ellipse cx="68" cy="58" rx="5" ry="3" fill="#FF0000" opacity="0.2" />
 
       {/* Nose */}
-      <path d={PATHS.nose.default} fill="none" stroke="#000000" strokeWidth="1.5" opacity="0.6" />
+      <path d="M45,55 Q50,60 55,55" fill="none" stroke="black" strokeWidth="2" opacity="0.6" />
 
       {/* Facial Features */}
       {renderEyes()}

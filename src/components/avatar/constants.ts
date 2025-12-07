@@ -32,14 +32,14 @@ export const PATHS = {
     bald: "",
   },
   hairFront: {
-    short: "M25,35 Q50,5 75,35 L75,45 Q78,40 72,30 Q50,15 28,30 Q22,40 25,45 Z", // More textured short hair
-    long: "M30,30 Q50,5 70,30 Q65,45 50,45 Q35,45 30,30 Z", // Bangs with volume
-    messy: "M25,35 Q50,0 75,35 L78,40 Q82,25 70,20 Q50,10 30,20 Q18,25 22,40 Z", // Spikier messy hair
+    short: "M25,35 Q50,10 75,35 L75,45 Q50,25 25,45 Z", // Simple short hair
+    long: "M30,30 Q50,10 70,30 Q65,45 50,45 Q35,45 30,30 Z", // Simple bangs
+    messy: "M25,35 Q50,5 75,35 L75,45 Q80,30 70,25 Q50,15 30,25 Q20,30 25,45 Z", // Simple messy
     bald: "",
   },
   hairBack: {
     short: "",
-    long: "M15,40 Q50,10 85,40 L90,95 Q50,110 10,95 Z", // Fuller long hair behind
+    long: "M15,40 Q50,10 85,40 L90,95 Q50,110 10,95 Z", // Simple long hair back
     messy: "",
     bald: "",
   },
