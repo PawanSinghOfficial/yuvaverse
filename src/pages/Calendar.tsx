@@ -64,6 +64,26 @@ export default function CalendarPage() {
     });
   };
 
+  const hasEvent = (day: Date) => {
+    return todos.some(todo => {
+      const todoDate = new Date(todo.date);
+      return todoDate.getDate() === day.getDate() &&
+             todoDate.getMonth() === day.getMonth() &&
+             todoDate.getFullYear() === day.getFullYear() &&
+             !!todo.eventId;
+    });
+  };
+
+  const hasTaskOnly = (day: Date) => {
+    return todos.some(todo => {
+      const todoDate = new Date(todo.date);
+      return todoDate.getDate() === day.getDate() &&
+             todoDate.getMonth() === day.getMonth() &&
+             todoDate.getFullYear() === day.getFullYear() &&
+             !todo.eventId;
+    });
+  };
+
   return (
     <div className="p-8 space-y-8 bg-pink-50 dark:bg-background min-h-screen">
       <div className="flex flex-col gap-2">
@@ -82,21 +102,29 @@ export default function CalendarPage() {
               onSelect={setDate}
               className="rounded-none border-0"
               modifiers={{
-                hasTask: (date) => hasTodos(date),
+                hasEvent: (date) => hasEvent(date),
+                hasTask: (date) => hasTaskOnly(date),
               }}
               modifiersClassNames={{
-                hasTask: "after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:bg-primary after:rounded-full font-bold",
+                hasEvent: "after:content-[''] after:absolute after:top-1 after:right-1 after:w-2 after:h-2 after:bg-blue-500 after:rounded-full after:border after:border-white",
+                hasTask: "before:content-[''] before:absolute before:bottom-1 before:left-1/2 before:-translate-x-1/2 before:w-1.5 before:h-1.5 before:bg-orange-500 before:rounded-full font-bold",
               }}
               classNames={{
                 day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-none border border-border shadow-[2px_2px_0px_0px_var(--shadow)]",
                 day_today: "bg-accent text-accent-foreground rounded-none border border-border font-bold",
-                day: "h-9 w-9 p-0 font-medium aria-selected:opacity-100 hover:bg-secondary hover:text-secondary-foreground rounded-none transition-all border border-transparent hover:border-border hover:shadow-[2px_2px_0px_0px_var(--shadow)] relative",
-                head_cell: "text-muted-foreground rounded-none w-9 font-bold text-[0.8rem] uppercase",
+                day: "h-10 w-10 p-0 font-medium aria-selected:opacity-100 hover:bg-secondary hover:text-secondary-foreground rounded-none transition-all border border-transparent hover:border-border hover:shadow-[2px_2px_0px_0px_var(--shadow)] relative",
+                head_cell: "text-muted-foreground rounded-none w-10 font-bold text-[0.8rem] uppercase",
               }}
             />
-            <div className="mt-4 flex items-center justify-center gap-2 text-xs font-bold text-muted-foreground">
-                <div className="w-2 h-2 bg-primary rounded-full" />
-                <span>Has Tasks</span>
+            <div className="mt-4 flex items-center justify-center gap-4 text-xs font-bold text-muted-foreground">
+                <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full" />
+                    <span>Task</span>
+                </div>
+                <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                    <span>Event</span>
+                </div>
             </div>
           </CardContent>
         </Card>

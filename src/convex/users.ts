@@ -273,16 +273,20 @@ export const recordGameResult = mutation({
       patchData.totalGamesWon = (user.totalGamesWon || 0) + 1;
     }
 
-    // Update High Scores
+    // Update High Scores and award bonus
+    const HIGH_SCORE_BONUS = 50;
+
     if (args.gameId === "snake" && args.score !== undefined) {
       if (args.score > (user.snakeHighScore || 0)) {
         patchData.snakeHighScore = args.score;
+        patchData.points += HIGH_SCORE_BONUS;
       }
     }
     
     if (args.gameId === "math" && args.score !== undefined) {
       if (args.score > (user.mathHighScore || 0)) {
         patchData.mathHighScore = args.score;
+        patchData.points += HIGH_SCORE_BONUS;
       }
     }
 
