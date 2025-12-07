@@ -8,10 +8,20 @@ export const list = query({
     const userId = await getAuthUserId(ctx);
     if (!userId) return [];
 
-    return await ctx.db
+    const todos = await ctx.db
       .query("todos")
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .collect();
+
+    return await Promise.all(
+      todos.map(async (todo) => {
+        let eventDetails = null;
+        if (todo.eventId) {
+          eventDetails = await ctx.db.get(todo.eventId);
+        }
+        return { ...todo, eventDetails };
+      })
+    );
   },
 });
 

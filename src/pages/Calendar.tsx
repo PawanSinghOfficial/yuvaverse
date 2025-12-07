@@ -204,6 +204,24 @@ export default function CalendarPage() {
                       </div>
                       <div className={todo.isCompleted ? "opacity-50 transition-opacity" : ""}>
                         <p className={`font-black text-lg uppercase ${todo.isCompleted ? 'line-through decoration-2 decoration-black/50' : ''}`}>{todo.title}</p>
+                        
+                        {/* Event Details Section */}
+                        {todo.eventDetails && (
+                          <div className="mt-2 mb-2 p-3 bg-blue-50/50 dark:bg-blue-900/10 rounded-lg border border-blue-100 dark:border-blue-800/50">
+                            <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-2 font-medium leading-relaxed">
+                              {todo.eventDetails.description}
+                            </p>
+                            <div className="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                                <span className="flex items-center gap-1 bg-white dark:bg-black/20 px-2 py-1 rounded border border-blue-200 dark:border-blue-800/50 shadow-sm">
+                                  📍 {todo.eventDetails.location}
+                                </span>
+                                <span className="flex items-center gap-1 bg-white dark:bg-black/20 px-2 py-1 rounded border border-blue-200 dark:border-blue-800/50 shadow-sm">
+                                  🏷️ {todo.eventDetails.type}
+                                </span>
+                            </div>
+                          </div>
+                        )}
+
                         <p className="text-xs font-bold text-muted-foreground flex items-center gap-2">
                           {format(new Date(todo.date), "h:mm a")}
                           {todo.reminderTime && (
