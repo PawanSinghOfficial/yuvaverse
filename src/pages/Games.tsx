@@ -213,7 +213,6 @@ const ArcadeBackground = () => {
 export default function Games() {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const { playSound } = useGameSounds();
-  const leaderboard = useQuery(api.users.getLeaderboard);
 
   const ActiveGame = GAMES.find(g => g.id === selectedGame)?.component;
 
@@ -256,15 +255,6 @@ export default function Games() {
           Take a break from studying and challenge yourself with these mini-games.
           Earn bragging rights (and maybe some fun)!
         </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="pt-4"
-        >
-          <GameGuide />
-        </motion.div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-7xl mx-auto relative z-10">
@@ -315,59 +305,9 @@ export default function Games() {
           ))}
         </div>
 
-        {/* Leaderboard Section */}
-        <div className="lg:col-span-1">
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6 }}
-            className="bg-slate-900/80 backdrop-blur-sm border-2 border-yellow-500/50 rounded-xl p-6 sticky top-8"
-          >
-            <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
-              <Trophy className="h-8 w-8 text-yellow-500" />
-              <h2 className="text-2xl font-black uppercase text-white tracking-tight">Leaderboard</h2>
-            </div>
-            
-            <div className="space-y-4">
-              {leaderboard?.map((player, index) => (
-                <motion.div
-                  key={player._id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.7 + index * 0.1 }}
-                  className={`flex items-center gap-3 p-3 rounded-lg border ${
-                    index === 0 ? 'bg-yellow-500/20 border-yellow-500/50' :
-                    index === 1 ? 'bg-slate-400/20 border-slate-400/50' :
-                    index === 2 ? 'bg-orange-700/20 border-orange-700/50' :
-                    'bg-white/5 border-white/10'
-                  }`}
-                >
-                  <div className="font-black text-lg w-6 text-center text-white/50">
-                    {index + 1}
-                  </div>
-                  <Avatar className="h-10 w-10 border-2 border-white/20">
-                    <AvatarImage src={player.image} />
-                    <AvatarFallback className="bg-primary text-white font-bold">
-                      {player.name[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-white truncate">{player.name}</p>
-                    <p className="text-xs text-white/50 font-medium">{player.points} pts</p>
-                  </div>
-                  {index === 0 && <Crown className="h-5 w-5 text-yellow-500" />}
-                  {index === 1 && <Medal className="h-5 w-5 text-slate-400" />}
-                  {index === 2 && <Medal className="h-5 w-5 text-orange-700" />}
-                </motion.div>
-              ))}
-              
-              {(!leaderboard || leaderboard.length === 0) && (
-                <div className="text-center py-8 text-white/30 font-medium">
-                  No champions yet. Be the first!
-                </div>
-              )}
-            </div>
-          </motion.div>
+        {/* Leaderboard Section - Now using GameGuide component */}
+        <div className="lg:col-span-1 h-full">
+            <GameGuide />
         </div>
       </div>
 

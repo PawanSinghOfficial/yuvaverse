@@ -1,23 +1,22 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
-    Sparkles, Plus, FileText, MessageSquare, Headphones, 
-    Trash2, Upload, Link as LinkIcon, MoreVertical, 
-    ChevronRight, BookOpen, Send, Play, Pause, StickyNote,
-    BrainCircuit, Network
+    Sparkles, Plus, MessageSquare, Headphones, 
+    Trash2, ChevronRight, StickyNote,
+    BrainCircuit, Network, Pause
 } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
 import { QuizInterface } from "@/components/notebook/QuizInterface";
 import { MindmapInterface } from "@/components/notebook/MindmapInterface";
+import { ChatInterface } from "@/components/notebook/ChatInterface";
+import { NotesInterface } from "@/components/notebook/NotesInterface";
+import { SourcesPanel } from "@/components/notebook/SourcesPanel";
 
 export default function NotebookLM() {
   const [selectedNotebookId, setSelectedNotebookId] = useState<Id<"ai_notebooks"> | null>(null);
@@ -45,16 +44,16 @@ export default function NotebookLM() {
   return (
     <div className="h-[calc(100vh-4rem)] flex bg-background overflow-hidden">
       {/* Sidebar - Notebooks List */}
-      <div className="w-64 border-r bg-muted/20 flex flex-col hidden md:flex">
-        <div className="p-4 border-b flex items-center justify-between">
-            <h2 className="font-black text-lg flex items-center gap-2">
+      <div className="w-72 border-r bg-slate-50/50 flex flex-col hidden md:flex">
+        <div className="p-6 border-b flex items-center justify-between bg-white">
+            <h2 className="font-black text-xl flex items-center gap-2 tracking-tight">
                 <Sparkles className="h-5 w-5 text-purple-600" />
                 AI Notebooks
             </h2>
             <Dialog open={isCreating} onOpenChange={setIsCreating}>
                 <DialogTrigger asChild>
-                    <Button size="icon" variant="ghost" className="h-8 w-8">
-                        <Plus className="h-4 w-4" />
+                    <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600">
+                        <Plus className="h-5 w-5" />
                     </Button>
                 </DialogTrigger>
                 <DialogContent>
@@ -68,32 +67,37 @@ export default function NotebookLM() {
                             onChange={(e) => setNewNotebookTitle(e.target.value)}
                             autoFocus
                         />
-                        <Button type="submit" className="w-full">Create Notebook</Button>
+                        <Button type="submit" className="w-full font-bold">Create Notebook</Button>
                     </form>
                 </DialogContent>
             </Dialog>
         </div>
-        <ScrollArea className="flex-1">
-            <div className="p-2 space-y-1">
+        <ScrollArea className="flex-1 p-4">
+            <div className="space-y-2">
                 {notebooks?.map((notebook) => (
                     <div 
                         key={notebook._id}
                         onClick={() => setSelectedNotebookId(notebook._id)}
-                        className={`group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all ${
+                        className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all border ${
                             selectedNotebookId === notebook._id 
-                                ? "bg-purple-100 text-purple-900 font-medium border-l-4 border-purple-600" 
-                                : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                                ? "bg-white border-purple-200 shadow-md ring-1 ring-purple-100" 
+                                : "bg-transparent border-transparent hover:bg-white hover:border-slate-200 hover:shadow-sm"
                         }`}
                     >
                         <div className="flex items-center gap-3 truncate">
-                            <span className="text-xl">{notebook.icon || "📓"}</span>
-                            <span className="truncate">{notebook.title}</span>
+                            <span className="text-2xl bg-slate-100 p-1.5 rounded-lg">{notebook.icon || "📓"}</span>
+                            <div className="flex flex-col truncate">
+                                <span className={`font-bold truncate ${selectedNotebookId === notebook._id ? "text-purple-900" : "text-slate-700"}`}>
+                                    {notebook.title}
+                                </span>
+                                <span className="text-xs text-muted-foreground">Last edited recently</span>
+                            </div>
                         </div>
                         {selectedNotebookId === notebook._id && (
                             <Button 
                                 size="icon" 
                                 variant="ghost" 
-                                className="h-6 w-6 opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 hover:bg-red-100"
+                                className="h-7 w-7 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     if(confirm("Delete this notebook?")) {
@@ -102,14 +106,15 @@ export default function NotebookLM() {
                                     }
                                 }}
                             >
-                                <Trash2 className="h-3 w-3" />
+                                <Trash2 className="h-3.5 w-3.5" />
                             </Button>
                         )}
                     </div>
                 ))}
                 {notebooks?.length === 0 && (
-                    <div className="text-center p-4 text-muted-foreground text-sm">
-                        No notebooks yet. Create one to get started!
+                    <div className="text-center p-8 border-2 border-dashed rounded-xl bg-slate-50/50">
+                        <p className="text-sm text-muted-foreground font-medium">No notebooks yet.</p>
+                        <Button variant="link" onClick={() => setIsCreating(true)} className="text-purple-600">Create one</Button>
                     </div>
                 )}
             </div>
@@ -117,19 +122,19 @@ export default function NotebookLM() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+      <div className="flex-1 flex flex-col h-full overflow-hidden relative bg-white">
         {selectedNotebookId ? (
             <NotebookView notebookId={selectedNotebookId} />
         ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-muted/5">
-                <div className="h-20 w-20 bg-purple-100 rounded-full flex items-center justify-center mb-6 animate-bounce">
-                    <Sparkles className="h-10 w-10 text-purple-600" />
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-50/30">
+                <div className="h-24 w-24 bg-purple-100 rounded-full flex items-center justify-center mb-8 animate-bounce shadow-xl border-4 border-white">
+                    <Sparkles className="h-12 w-12 text-purple-600" />
                 </div>
-                <h1 className="text-3xl font-black mb-2">Welcome to AI Notebook</h1>
-                <p className="text-muted-foreground max-w-md mb-8">
-                    Select a notebook from the sidebar or create a new one to start analyzing your documents with AI.
+                <h1 className="text-4xl font-black mb-4 tracking-tight text-slate-900">Welcome to AI Notebook</h1>
+                <p className="text-slate-500 max-w-md mb-8 text-lg leading-relaxed">
+                    Select a notebook from the sidebar or create a new one to start analyzing your documents with AI power.
                 </p>
-                <Button onClick={() => setIsCreating(true)} size="lg" className="font-bold shadow-lg">
+                <Button onClick={() => setIsCreating(true)} size="lg" className="font-bold shadow-lg h-12 px-8 text-base bg-purple-600 hover:bg-purple-700">
                     <Plus className="mr-2 h-5 w-5" /> Create First Notebook
                 </Button>
             </div>
@@ -144,7 +149,6 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
     const [isSourcePanelOpen, setIsSourcePanelOpen] = useState(true);
     
     const notebook = useQuery(api.ai_notebook.getNotebook, { notebookId });
-    const sources = useQuery(api.ai_notebook.getSources, { notebookId });
     const chats = useQuery(api.ai_notebook.getChats, { notebookId });
     
     // Default to first chat if available
@@ -152,76 +156,32 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
 
     return (
         <div className="flex h-full">
-            {/* Sources Panel (Collapsible) */}
-            <AnimatePresence initial={false}>
-                {isSourcePanelOpen && (
-                    <motion.div 
-                        initial={{ width: 0, opacity: 0 }}
-                        animate={{ width: 300, opacity: 1 }}
-                        exit={{ width: 0, opacity: 0 }}
-                        className="border-r bg-white flex flex-col h-full shadow-xl z-10"
-                    >
-                        <div className="p-4 border-b flex items-center justify-between bg-muted/10">
-                            <h3 className="font-bold flex items-center gap-2">
-                                <BookOpen className="h-4 w-4" /> Sources
-                            </h3>
-                            <div className="text-xs text-muted-foreground">{sources?.length || 0} files</div>
-                        </div>
-                        <ScrollArea className="flex-1 p-4">
-                            <div className="space-y-3">
-                                <AddSourceButton notebookId={notebookId} />
-                                {sources?.map((source) => (
-                                    <Card key={source._id} className="p-3 hover:bg-muted/50 transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-primary group">
-                                        <div className="flex items-start gap-3">
-                                            <div className="mt-1">
-                                                {source.type === "pdf" ? <FileText className="h-4 w-4 text-red-500" /> : <LinkIcon className="h-4 w-4 text-blue-500" />}
-                                            </div>
-                                            <div className="flex-1 overflow-hidden">
-                                                <h4 className="text-sm font-medium truncate" title={source.title}>{source.title}</h4>
-                                                <p className="text-xs text-muted-foreground truncate">{source.type}</p>
-                                            </div>
-                                            <Button 
-                                                variant="ghost" 
-                                                size="icon" 
-                                                className="h-6 w-6 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    // Add delete logic here if needed
-                                                }}
-                                            >
-                                                <MoreVertical className="h-3 w-3" />
-                                            </Button>
-                                        </div>
-                                    </Card>
-                                ))}
-                            </div>
-                        </ScrollArea>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Sources Panel */}
+            <SourcesPanel notebookId={notebookId} isOpen={isSourcePanelOpen} />
 
             {/* Toggle Source Panel Button */}
-            <div className="relative">
+            <div className="relative z-20">
                 <Button 
                     variant="secondary" 
                     size="icon" 
-                    className="absolute top-1/2 -translate-y-1/2 -left-3 h-8 w-6 rounded-r-md z-20 shadow-md border border-l-0"
+                    className="absolute top-4 -left-3 h-8 w-6 rounded-r-md shadow-md border border-l-0 bg-white hover:bg-slate-50"
                     onClick={() => setIsSourcePanelOpen(!isSourcePanelOpen)}
+                    title="Toggle Sources"
                 >
-                    <ChevronRight className={`h-4 w-4 transition-transform ${isSourcePanelOpen ? "rotate-180" : ""}`} />
+                    <ChevronRight className={`h-4 w-4 transition-transform duration-300 ${isSourcePanelOpen ? "rotate-180" : ""}`} />
                 </Button>
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col bg-slate-50/50">
+            <div className="flex-1 flex flex-col bg-slate-50/30">
                 {/* Header */}
-                <header className="h-16 border-b bg-white px-6 flex items-center justify-between shadow-sm">
-                    <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-black tracking-tight flex items-center gap-2">
-                            {notebook?.icon} {notebook?.title}
+                <header className="h-16 border-b bg-white px-6 flex items-center justify-between shadow-sm z-10">
+                    <div className="flex items-center gap-6">
+                        <h2 className="text-xl font-black tracking-tight flex items-center gap-2 text-slate-800">
+                            <span className="text-2xl">{notebook?.icon}</span> {notebook?.title}
                         </h2>
-                        <div className="h-6 w-px bg-border mx-2"></div>
-                        <div className="flex bg-muted/50 p-1 rounded-lg gap-1">
+                        <div className="h-8 w-px bg-slate-200"></div>
+                        <div className="flex bg-slate-100 p-1 rounded-lg gap-1">
                             {[
                                 { id: "chat", label: "Chat", icon: MessageSquare },
                                 { id: "notes", label: "Notes", icon: StickyNote },
@@ -231,13 +191,13 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                                 <button 
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id as any)}
-                                    className={`px-3 py-1.5 text-sm font-bold rounded-md transition-all flex items-center gap-2 ${
+                                    className={`px-4 py-1.5 text-sm font-bold rounded-md transition-all flex items-center gap-2 ${
                                         activeTab === tab.id 
-                                            ? "bg-white shadow-sm text-primary ring-1 ring-black/5" 
-                                            : "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                                            ? "bg-white shadow-sm text-purple-700 ring-1 ring-black/5" 
+                                            : "text-slate-500 hover:text-slate-900 hover:bg-white/50"
                                     }`}
                                 >
-                                    <tab.icon className="h-3.5 w-3.5" />
+                                    <tab.icon className="h-4 w-4" />
                                     {tab.label}
                                 </button>
                             ))}
@@ -257,224 +217,6 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                     {activeTab === "quiz" && <QuizInterface notebookId={notebookId} />}
                     {activeTab === "mindmap" && <MindmapInterface notebookId={notebookId} />}
                 </div>
-            </div>
-        </div>
-    );
-}
-
-function AddSourceButton({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
-    const [isOpen, setIsOpen] = useState(false);
-    const [type, setType] = useState<"text" | "url">("text");
-    const [content, setContent] = useState("");
-    const [title, setTitle] = useState("");
-    
-    const addSource = useMutation(api.ai_notebook.addSource);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!content || !title) return;
-        
-        await addSource({
-            notebookId,
-            title,
-            type,
-            content,
-        });
-        setIsOpen(false);
-        setContent("");
-        setTitle("");
-        toast.success("Source added successfully");
-    };
-
-    return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-                <Button variant="outline" className="w-full border-dashed border-2 hover:border-primary hover:bg-primary/5">
-                    <Plus className="mr-2 h-4 w-4" /> Add Source
-                </Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Add Knowledge Source</DialogTitle>
-                </DialogHeader>
-                <div className="flex gap-2 mb-4">
-                    <Button 
-                        variant={type === "text" ? "default" : "outline"} 
-                        onClick={() => setType("text")}
-                        className="flex-1"
-                    >
-                        <FileText className="mr-2 h-4 w-4" /> Text
-                    </Button>
-                    <Button 
-                        variant={type === "url" ? "default" : "outline"} 
-                        onClick={() => setType("url")}
-                        className="flex-1"
-                    >
-                        <LinkIcon className="mr-2 h-4 w-4" /> Website / Text
-                    </Button>
-                </div>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <Input 
-                        placeholder="Source Title" 
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
-                    {type === "text" ? (
-                        <textarea 
-                            className="w-full min-h-[150px] p-3 rounded-md border bg-transparent text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                            placeholder="Paste text content here..."
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            required
-                        />
-                    ) : (
-                        <Input 
-                            placeholder="Paste URL or Text content" 
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            required
-                        />
-                    )}
-                    <Button type="submit" className="w-full">Add to Notebook</Button>
-                </form>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
-function ChatInterface({ notebookId, chatId }: { notebookId: Id<"ai_notebooks">, chatId: Id<"ai_chats"> }) {
-    const [input, setInput] = useState("");
-    const messages = useQuery(api.ai_notebook.getMessages, { chatId });
-    const sendMessage = useMutation(api.ai_notebook.sendMessage);
-    const scrollRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
-    }, [messages]);
-
-    const handleSend = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!input.trim()) return;
-        
-        const tempInput = input;
-        setInput("");
-        
-        try {
-            await sendMessage({
-                notebookId,
-                chatId,
-                content: tempInput
-            });
-        } catch (error) {
-            toast.error("Failed to send message");
-            setInput(tempInput);
-        }
-    };
-
-    return (
-        <div className="flex flex-col h-full">
-            <ScrollArea className="flex-1 p-6" ref={scrollRef}>
-                <div className="space-y-6 max-w-3xl mx-auto">
-                    {messages?.length === 0 && (
-                        <div className="text-center py-12 text-muted-foreground">
-                            <div className="h-16 w-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <MessageSquare className="h-8 w-8 text-purple-600" />
-                            </div>
-                            <h3 className="text-lg font-bold mb-2">Ask anything about your sources</h3>
-                            <p>Try asking for a summary, specific details, or connections between documents.</p>
-                        </div>
-                    )}
-                    {messages?.map((msg) => (
-                        <div key={msg._id} className={`flex gap-4 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                            {msg.role === "assistant" && (
-                                <div className="h-8 w-8 rounded-full bg-purple-600 flex items-center justify-center shrink-0">
-                                    <Sparkles className="h-4 w-4 text-white" />
-                                </div>
-                            )}
-                            <div className={`max-w-[80%] p-4 rounded-2xl ${
-                                msg.role === "user" 
-                                    ? "bg-primary text-primary-foreground rounded-tr-none" 
-                                    : "bg-white border shadow-sm rounded-tl-none"
-                            }`}>
-                                <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </ScrollArea>
-            <div className="p-4 bg-white border-t">
-                <form onSubmit={handleSend} className="max-w-3xl mx-auto relative">
-                    <Input 
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Ask a question about your sources..."
-                        className="pr-12 h-14 text-base rounded-full shadow-sm border-2 focus-visible:ring-purple-500"
-                    />
-                    <Button 
-                        type="submit" 
-                        size="icon" 
-                        className="absolute right-2 top-2 h-10 w-10 rounded-full"
-                        disabled={!input.trim()}
-                    >
-                        <Send className="h-4 w-4" />
-                    </Button>
-                </form>
-            </div>
-        </div>
-    );
-}
-
-function NotesInterface({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
-    const notes = useQuery(api.ai_notebook.getNotes, { notebookId });
-    const saveNote = useMutation(api.ai_notebook.saveNote);
-    const deleteNote = useMutation(api.ai_notebook.deleteNote);
-    const [newNote, setNewNote] = useState("");
-
-    const handleAddNote = async () => {
-        if (!newNote.trim()) return;
-        await saveNote({ notebookId, content: newNote });
-        setNewNote("");
-        toast.success("Note saved");
-    };
-
-    return (
-        <div className="p-6 h-full flex flex-col max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                <Card className="bg-yellow-50 border-yellow-200 shadow-sm hover:shadow-md transition-all">
-                    <CardContent className="p-4">
-                        <textarea 
-                            className="w-full h-32 bg-transparent border-none resize-none focus:outline-none placeholder:text-yellow-700/50 text-yellow-900"
-                            placeholder="Type a new note here..."
-                            value={newNote}
-                            onChange={(e) => setNewNote(e.target.value)}
-                        />
-                        <div className="flex justify-end mt-2">
-                            <Button size="sm" onClick={handleAddNote} className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                                <Plus className="h-4 w-4 mr-1" /> Save Note
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
-                {notes?.map((note) => (
-                    <Card key={note._id} className="group relative hover:shadow-md transition-all bg-white">
-                        <CardContent className="p-4">
-                            <p className="whitespace-pre-wrap text-sm">{note.content}</p>
-                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Button 
-                                    size="icon" 
-                                    variant="ghost" 
-                                    className="h-6 w-6 text-red-500 hover:bg-red-50"
-                                    onClick={() => deleteNote({ noteId: note._id })}
-                                >
-                                    <Trash2 className="h-3 w-3" />
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
             </div>
         </div>
     );
@@ -509,7 +251,7 @@ function AudioOverviewButton({ notebookId }: { notebookId: Id<"ai_notebooks"> })
         <Button 
             variant="outline" 
             size="sm" 
-            className={`gap-2 ${isPlaying ? "bg-purple-100 text-purple-700 border-purple-200" : ""}`}
+            className={`gap-2 font-bold border-2 ${isPlaying ? "bg-purple-50 text-purple-700 border-purple-200" : "hover:bg-slate-50"}`}
             onClick={handlePlay}
         >
             {isPlaying ? <Pause className="h-4 w-4" /> : <Headphones className="h-4 w-4" />}

@@ -17,7 +17,10 @@ import {
   Maximize,
   Minimize,
   CloudRain,
-  AlertTriangle
+  AlertTriangle,
+  PictureInPicture,
+  Piano,
+  Headphones
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -41,24 +44,24 @@ import { GrowingPlant } from "@/components/pomodoro/GrowingPlant";
 
 const AMBIENT_SOUNDS = [
   {
-    id: "forest",
-    label: "Forest",
-    icon: Trees,
-    url: "https://actions.google.com/sounds/v1/nature/birds_in_forest.ogg",
-    color: "text-green-600",
-    bg: "bg-green-100 dark:bg-green-900/20",
-    pageBg: "bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950",
-    vibeIcon: Trees
+    id: "lofi",
+    label: "Lofi Beats",
+    icon: Headphones,
+    url: "https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3",
+    color: "text-purple-600",
+    bg: "bg-purple-100 dark:bg-purple-900/20",
+    pageBg: "bg-gradient-to-br from-purple-50 via-fuchsia-50 to-pink-50 dark:from-purple-950 dark:via-fuchsia-950 dark:to-pink-950",
+    vibeIcon: Headphones
   },
   {
-    id: "library",
-    label: "Library",
-    icon: BookOpen,
-    url: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Library_sounds.ogg",
+    id: "piano",
+    label: "Ambient Piano",
+    icon: Piano,
+    url: "https://cdn.pixabay.com/audio/2022/03/24/audio_079699035c.mp3",
     color: "text-blue-600",
     bg: "bg-blue-100 dark:bg-blue-900/20",
     pageBg: "bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-slate-950 dark:via-gray-950 dark:to-zinc-950",
-    vibeIcon: BookOpen
+    vibeIcon: Piano
   },
   {
     id: "cafe",
@@ -95,6 +98,7 @@ export default function Pomodoro() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showQuitConfirm, setShowQuitConfirm] = useState(false);
   const [teaseMessage, setTeaseMessage] = useState<string | null>(null);
+  const [isPiPActive, setIsPiPActive] = useState(false);
   
   const activeSound = AMBIENT_SOUNDS.find(s => s.id === selectedSound);
   const pageBackground = activeSound?.pageBg || "bg-yellow-50/50 dark:bg-background";
@@ -105,6 +109,10 @@ export default function Pomodoro() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const successAudioRef = useRef<HTMLAudioElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // PiP Refs
+  const pipVideoRef = useRef<HTMLVideoElement>(null);
+  const pipCanvasRef = useRef<HTMLCanvasElement>(null);
 
   // Persistence Logic
   useEffect(() => {
@@ -136,9 +144,8 @@ export default function Pomodoro() {
       localStorage.removeItem("pomodoroTotalTime");
       localStorage.removeItem("pomodoroIsActive");
     }
-  }, [isActive, totalTime]); // Note: timeLeft changes too often, so we calculate endTime based on current timeLeft when active state changes or periodically if needed, but here we rely on the interval to update timeLeft and we only need to save the "target" end time once or when paused/resumed. 
-  // Actually, better to save the target end time once when starting.
-  
+  }, [isActive, totalTime]);
+
   // Refined Persistence:
   const startTimer = () => {
     const endTime = Date.now() + timeLeft * 1000;
@@ -149,7 +156,7 @@ export default function Pomodoro() {
   };
 
   const pauseTimer = () => {
-    localStorage.removeItem("pomodoroEndTime"); // Remove end time as it's no longer valid relative to real time
+    localStorage.removeItem("pomodoroEndTime");
     localStorage.setItem("pomodoroIsActive", "false");
     setIsActive(false);
   };
@@ -254,6 +261,103 @@ export default function Pomodoro() {
     return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
   }, []);
 
+  // PiP Logic
+  const togglePiP = async () => {
+    if (!pipVideoRef.current) return;
+
+    try {
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+        setIsPiPActive(false);
+      } else {
+        await pipVideoRef.current.requestPictureInPicture();
+        setIsPiPActive(true);
+      }
+    } catch (error) {
+      console.error("Failed to toggle PiP:", error);
+      toast.error("Picture-in-Picture failed to start");
+    }
+  };
+
+  // Draw to PiP Canvas
+  useEffect(() => {
+    const canvas = pipCanvasRef.current;
+    const video = pipVideoRef.current;
+    
+    if (!canvas || !video) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Initialize video stream from canvas once
+    if (video.srcObject === null) {
+        const stream = canvas.captureStream(30); // 30 FPS
+        video.srcObject = stream;
+        video.play().catch(() => {}); // Auto-play hidden video
+    }
+
+    const draw = () => {
+        // Clear canvas
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Background Gradient
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, '#1a1a1a');
+        gradient.addColorStop(1, '#2d2d2d');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Progress Circle
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 80;
+        const progress = totalTime > 0 ? (totalTime - timeLeft) / totalTime : 0;
+
+        // Background Circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.lineWidth = 15;
+        ctx.strokeStyle = '#333333';
+        ctx.stroke();
+
+        // Progress Arc
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, -Math.PI / 2, (-Math.PI / 2) + (progress * 2 * Math.PI));
+        ctx.lineWidth = 15;
+        ctx.strokeStyle = '#22c55e'; // Green-500
+        ctx.stroke();
+
+        // Draw Time Text
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        const timeString = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 48px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(timeString, centerX, centerY);
+
+        // Draw Status Text
+        ctx.font = '16px sans-serif';
+        ctx.fillStyle = isActive ? '#4ade80' : '#9ca3af';
+        ctx.fillText(isActive ? "FOCUSING" : "PAUSED", centerX, centerY + 50);
+    };
+
+    // Animation Loop
+    let animationId: number;
+    const animate = () => {
+        draw();
+        animationId = requestAnimationFrame(animate);
+    };
+    
+    animate();
+
+    return () => cancelAnimationFrame(animationId);
+  }, [timeLeft, totalTime, isActive]);
+
+
   const handleComplete = async () => {
     if (successAudioRef.current) {
       successAudioRef.current.play().catch(e => console.error("Audio play failed:", e));
@@ -347,6 +451,10 @@ export default function Pomodoro() {
     <div ref={containerRef} className={cn("p-8 min-h-screen flex flex-col items-center justify-center space-y-8 relative overflow-y-auto transition-colors duration-1000", pageBackground)}>
       <VayuuTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
       
+      {/* Hidden Canvas and Video for PiP */}
+      <canvas ref={pipCanvasRef} width={300} height={300} className="hidden" />
+      <video ref={pipVideoRef} className="hidden" muted playsInline />
+
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
       
@@ -366,8 +474,17 @@ export default function Pomodoro() {
         )}
       </AnimatePresence>
       
-      {/* Full Screen Toggle */}
-      <div className="absolute top-6 right-6 z-50">
+      {/* Top Controls */}
+      <div className="absolute top-6 right-6 z-50 flex gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={togglePiP}
+          className="rounded-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-white"
+          title="Picture-in-Picture Mode"
+        >
+          <PictureInPicture className="h-5 w-5" />
+        </Button>
         <Button
           variant="outline"
           size="icon"
