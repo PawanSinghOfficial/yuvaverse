@@ -32,19 +32,22 @@ export const PATHS = {
     bald: "",
   },
   hairFront: {
-    short: "M30,30 Q50,10 70,30 L70,40 Q50,20 30,40 Z",
-    long: "M30,30 Q50,10 70,30 Q60,40 50,40 Q40,40 30,30 Z", // Bangs only
-    messy: "M25,35 Q50,5 75,35 L75,45 Q80,30 70,25 Q50,15 30,25 Q20,30 25,45 Z",
+    short: "M25,35 Q50,5 75,35 L75,45 Q78,40 72,30 Q50,15 28,30 Q22,40 25,45 Z", // More textured short hair
+    long: "M30,30 Q50,5 70,30 Q65,45 50,45 Q35,45 30,30 Z", // Bangs with volume
+    messy: "M25,35 Q50,0 75,35 L78,40 Q82,25 70,20 Q50,10 30,20 Q18,25 22,40 Z", // Spikier messy hair
     bald: "",
   },
   hairBack: {
     short: "",
-    long: "M20,40 Q50,20 80,40 L85,90 Q50,100 15,90 Z", // Wider and behind
+    long: "M15,40 Q50,10 85,40 L90,95 Q50,110 10,95 Z", // Fuller long hair behind
     messy: "",
     bald: "",
   },
+  nose: {
+    default: "M46,56 Q50,60 54,56", // Simple button nose
+  },
   top: {
-    tshirt: "M25,80 L75,80 L80,120 L20,120 Z",
+    tshirt: "M25,80 Q50,75 75,80 L80,120 L20,120 Z", // Slightly curved neckline
     hoodie: "M20,80 Q50,70 80,80 L85,120 L15,120 Z",
     formal: "M25,80 L50,90 L75,80 L75,120 L25,120 Z",
     blazer: "M25,80 L50,100 L75,80 L80,120 L20,120 Z",

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AvatarConfig } from './constants';
+import { AvatarConfig, PATHS } from './constants';
 
 interface AvatarFaceProps {
   config: AvatarConfig;
@@ -7,57 +7,112 @@ interface AvatarFaceProps {
 
 export function AvatarFace({ config }: AvatarFaceProps) {
   const renderEyes = () => {
+    // Common eye style: White sclera + colored iris + black pupil + highlight
+    const Eye = ({ cx, cy, type }: { cx: number, cy: number, type: string }) => (
+      <g>
+        {/* Sclera (White part) */}
+        <ellipse cx={cx} cy={cy} rx="6" ry="4" fill="white" stroke="none" />
+        
+        {/* Iris (Colored part - defaulting to dark brown/black for now, could be configurable) */}
+        <circle cx={cx} cy={cy} r="2.5" fill="#3E2723" />
+        
+        {/* Pupil */}
+        <circle cx={cx} cy={cy} r="1.2" fill="black" />
+        
+        {/* Highlight */}
+        <circle cx={cx - 1.5} cy={cy - 1.5} r="0.8" fill="white" opacity="0.8" />
+        
+        {/* Eyelashes/Lids based on type */}
+        {type === 'happy' && <path d={`M${cx-6},${cy} Q${cx},${cy-5} ${cx+6},${cy}`} fill="none" stroke="black" strokeWidth="1.5" />}
+        {type === 'tired' && <path d={`M${cx-6},${cy+2} Q${cx},${cy+5} ${cx+6},${cy+2}`} fill="none" stroke="black" strokeWidth="1" opacity="0.5" />}
+      </g>
+    );
+
     switch (config.eyes) {
       case 'happy':
-        return <g><path d="M36,50 Q40,45 44,50" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"/><path d="M56,50 Q60,45 64,50" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"/></g>;
+        return <g>
+          <path d="M34,48 Q40,42 46,48" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round"/>
+          <path d="M54,48 Q60,42 66,48" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round"/>
+        </g>;
       case 'glasses':
-        return <g><circle cx="40" cy="50" r="7" fill="rgba(255,255,255,0.3)" stroke="black" strokeWidth="2.5"/><circle cx="60" cy="50" r="7" fill="rgba(255,255,255,0.3)" stroke="black" strokeWidth="2.5"/><line x1="47" y1="50" x2="53" y2="50" stroke="black" strokeWidth="2.5"/><circle cx="40" cy="50" r="2" fill="black"/><circle cx="60" cy="50" r="2" fill="black"/></g>;
+        return <g>
+          <Eye cx={40} cy={48} type="normal" />
+          <Eye cx={60} cy={48} type="normal" />
+          <circle cx="40" cy="48" r="8" fill="rgba(255,255,255,0.2)" stroke="black" strokeWidth="2"/>
+          <circle cx="60" cy="48" r="8" fill="rgba(255,255,255,0.2)" stroke="black" strokeWidth="2"/>
+          <line x1="48" y1="48" x2="52" y2="48" stroke="black" strokeWidth="2"/>
+        </g>;
       case 'wink':
-        return <g><ellipse cx="40" cy="50" rx="4" ry="6" fill="black"/><circle cx="42" cy="48" r="1.5" fill="white"/><path d="M56,50 Q60,54 64,50" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"/></g>;
+        return <g>
+          <Eye cx={40} cy={48} type="normal" />
+          <path d="M54,48 Q60,52 66,48" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round"/>
+        </g>;
       case 'closed':
-        return <g><path d="M36,50 Q40,54 44,50" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"/><path d="M56,50 Q60,54 64,50" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"/></g>;
+        return <g>
+          <path d="M34,50 Q40,54 46,50" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round"/>
+          <path d="M54,50 Q60,54 66,50" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round"/>
+        </g>;
       case 'angry':
-        return <g><path d="M34,44 L46,49" stroke="black" strokeWidth="2.5"/><path d="M66,44 L54,49" stroke="black" strokeWidth="2.5"/><circle cx="40" cy="52" r="3" fill="black"/><circle cx="60" cy="52" r="3" fill="black"/></g>;
-      case 'tired':
-        return <g><circle cx="40" cy="50" r="3" fill="black"/><circle cx="60" cy="50" r="3" fill="black"/><path d="M35,56 Q40,60 45,56" fill="none" stroke="black" strokeWidth="2" opacity="0.6"/><path d="M55,56 Q60,60 65,56" fill="none" stroke="black" strokeWidth="2" opacity="0.6"/></g>;
+        return <g>
+          <path d="M34,44 L46,49" stroke="black" strokeWidth="2"/>
+          <path d="M66,44 L54,49" stroke="black" strokeWidth="2"/>
+          <Eye cx={40} cy={50} type="normal" />
+          <Eye cx={60} cy={50} type="normal" />
+        </g>;
       case 'star_struck':
-        return <g><path d="M40,46 L42,50 L46,50 L43,53 L44,57 L40,55 L36,57 L37,53 L34,50 L38,50 Z" fill="#F59E0B" stroke="black" strokeWidth="1.5"/><path d="M60,46 L62,50 L66,50 L63,53 L64,57 L60,55 L56,57 L57,53 L54,50 L58,50 Z" fill="#F59E0B" stroke="black" strokeWidth="1.5"/></g>;
+        return <g>
+          <path d="M40,46 L42,50 L46,50 L43,53 L44,57 L40,55 L36,57 L37,53 L34,50 L38,50 Z" fill="#F59E0B" stroke="black" strokeWidth="1"/>
+          <path d="M60,46 L62,50 L66,50 L63,53 L64,57 L60,55 L56,57 L57,53 L54,50 L58,50 Z" fill="#F59E0B" stroke="black" strokeWidth="1"/>
+        </g>;
       case 'normal':
       default:
-        return <g><ellipse cx="40" cy="50" rx="4" ry="6" fill="black"/><ellipse cx="60" cy="50" rx="4" ry="6" fill="black"/><circle cx="42" cy="48" r="1.5" fill="white"/><circle cx="62" cy="48" r="1.5" fill="white"/></g>;
+        return <g>
+          <Eye cx={40} cy={48} type="normal" />
+          <Eye cx={60} cy={48} type="normal" />
+          {/* Eyebrows */}
+          <path d="M35,42 Q40,40 45,42" fill="none" stroke="black" strokeWidth="1.5" opacity="0.6" />
+          <path d="M55,42 Q60,40 65,42" fill="none" stroke="black" strokeWidth="1.5" opacity="0.6" />
+        </g>;
     }
   };
 
   const renderMouth = () => {
     switch (config.mouth) {
       case 'laugh':
-        return <path d="M38,65 Q50,85 62,65 Z" fill="#7f1d1d" stroke="black" strokeWidth="2.5"/>;
+        return <g>
+          <path d="M35,68 Q50,85 65,68 Z" fill="#7f1d1d" stroke="black" strokeWidth="1.5"/>
+          <path d="M38,68 Q50,75 62,68" fill="white" /> {/* Teeth */}
+          <path d="M45,78 Q50,82 55,78" fill="#EF4444" opacity="0.7" /> {/* Tongue */}
+        </g>;
       case 'neutral':
-        return <line x1="40" y1="68" x2="60" y2="68" stroke="black" strokeWidth="3" strokeLinecap="round"/>;
+        return <path d="M40,72 Q50,72 60,72" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>;
       case 'surprised':
-        return <ellipse cx="50" cy="68" rx="6" ry="8" fill="#7f1d1d" stroke="black" strokeWidth="2.5"/>;
+        return <ellipse cx="50" cy="72" rx="5" ry="7" fill="#7f1d1d" stroke="black" strokeWidth="1.5"/>;
       case 'sad':
-        return <path d="M38,75 Q50,62 62,75" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"/>;
+        return <path d="M38,78 Q50,68 62,78" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>;
       case 'smirk':
-        return <path d="M38,68 Q50,74 62,64" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"/>;
+        return <path d="M38,72 Q50,76 62,68" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>;
       case 'tongue':
-        return <g><path d="M38,65 Q50,65 62,65" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"/><path d="M44,65 Q50,82 56,65" fill="#EF4444" stroke="black" strokeWidth="2"/></g>;
+        return <g>
+          <path d="M38,70 Q50,70 62,70" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M46,70 Q50,82 54,70" fill="#EF4444" stroke="black" strokeWidth="1.5"/>
+        </g>;
       case 'wavy':
-        return <path d="M38,70 Q44,64 50,70 Q56,76 62,70" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"/>;
+        return <path d="M38,72 Q44,68 50,72 Q56,76 62,72" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>;
       case 'smile':
       default:
-        return <path d="M38,65 Q50,78 62,65" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"/>;
+        return <path d="M38,68 Q50,80 62,68" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round"/>;
     }
   };
 
   const renderFacialHair = () => {
     switch (config.facialHair) {
       case 'beard':
-        return <path d="M30,60 Q50,90 70,60" fill="none" stroke={config.hairColor} strokeWidth="3" />;
+        return <path d="M30,60 Q30,85 50,95 Q70,85 70,60" fill="none" stroke={config.hairColor} strokeWidth="3" strokeLinecap="round" />;
       case 'mustache':
-        return <path d="M35,65 Q50,60 65,65" fill="none" stroke={config.hairColor} strokeWidth="4" strokeLinecap="round" />;
+        return <path d="M38,64 Q50,60 62,64" fill="none" stroke={config.hairColor} strokeWidth="3" strokeLinecap="round" />;
       case 'goatee':
-        return <path d="M45,75 Q50,85 55,75" fill="none" stroke={config.hairColor} strokeWidth="3" />;
+        return <path d="M46,80 Q50,88 54,80" fill="none" stroke={config.hairColor} strokeWidth="3" strokeLinecap="round" />;
       default:
         return null;
     }
@@ -65,12 +120,24 @@ export function AvatarFace({ config }: AvatarFaceProps) {
 
   return (
     <g>
-      {/* Face Shape */}
-      <ellipse cx="50" cy="50" rx="22" ry="25" fill={config.skinTone} stroke="black" strokeWidth="2.5" />
+      {/* Face Shape - More defined jawline for Bitmoji look */}
+      <path 
+        d="M28,40 Q28,15 50,15 Q72,15 72,40 L72,55 Q72,85 50,95 Q28,85 28,55 Z" 
+        fill={config.skinTone} 
+        stroke="black" 
+        strokeWidth="2" 
+      />
       
+      {/* Ears */}
+      <path d="M28,45 Q22,40 22,50 Q22,60 28,55" fill={config.skinTone} stroke="black" strokeWidth="2" />
+      <path d="M72,45 Q78,40 78,50 Q78,60 72,55" fill={config.skinTone} stroke="black" strokeWidth="2" />
+
       {/* Blush */}
-      <ellipse cx="35" cy="58" rx="3" ry="1.5" fill="#FF0000" opacity="0.3" />
-      <ellipse cx="65" cy="58" rx="3" ry="1.5" fill="#FF0000" opacity="0.3" />
+      <ellipse cx="34" cy="60" rx="4" ry="2" fill="#FF0000" opacity="0.2" />
+      <ellipse cx="66" cy="60" rx="4" ry="2" fill="#FF0000" opacity="0.2" />
+
+      {/* Nose */}
+      <path d={PATHS.nose.default} fill="none" stroke="#000000" strokeWidth="1.5" opacity="0.6" />
 
       {/* Facial Features */}
       {renderEyes()}
