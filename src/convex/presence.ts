@@ -57,7 +57,6 @@ export const getGroupPresence = query({
             _id: user._id,
             name: user.name,
             username: user.username,
-            avatarConfig: user.avatarConfig,
             image: user.image,
           } : null,
         };

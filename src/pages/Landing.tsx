@@ -4,22 +4,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Users, Calendar, Shield, Linkedin, Mail, BookCheck, BrainCircuit, Trophy, ChevronDown, Gamepad2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
-import UserAvatar, { AvatarConfig } from "@/components/UserAvatar";
-
-const VAYUU_CONFIG: AvatarConfig = {
-  skinTone: "#E0AC69",
-  hairStyle: "messy",
-  hairColor: "#2C2C2C",
-  topStyle: "hoodie",
-  topColor: "#F59E0B",
-  bottomStyle: "jeans",
-  bottomColor: "#1F2937",
-  accessories: "none",
-  facialHair: "none",
-  eyes: "happy",
-  mouth: "smile",
-  backgroundColor: "transparent",
-};
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -138,13 +122,8 @@ export default function Landing() {
               whileHover={{ y: -5 }}
               className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#4f46e5]"
             >
-              <div className="h-24 w-24 mx-auto mb-4 flex items-center justify-center">
-                <UserAvatar 
-                  config={{...VAYUU_CONFIG, eyes: "normal", mouth: "smile"}} 
-                  pose="cheering" 
-                  size="lg" 
-                  className="bg-indigo-100 border-2 border-black"
-                />
+              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-indigo-100 border-2 border-black">
+                <BookCheck className="h-10 w-10 text-indigo-600" />
               </div>
               <h3 className="text-xl font-black mb-2 uppercase">Syllabus Tracker</h3>
               <p className="text-muted-foreground font-medium">Track your B.Tech, BCA, or BBA progress topic-by-topic. Never lose track of what to study next.</p>
@@ -154,13 +133,8 @@ export default function Landing() {
               whileHover={{ y: -5 }}
               className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#9333ea]"
             >
-              <div className="h-24 w-24 mx-auto mb-4 flex items-center justify-center">
-                <UserAvatar 
-                  config={{...VAYUU_CONFIG, eyes: "glasses", mouth: "neutral"}} 
-                  pose="thinking" 
-                  size="lg" 
-                  className="bg-purple-100 border-2 border-black"
-                />
+              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-purple-100 border-2 border-black">
+                <BrainCircuit className="h-10 w-10 text-purple-600" />
               </div>
               <h3 className="text-xl font-black mb-2 uppercase">AI Notebook</h3>
               <p className="text-muted-foreground font-medium">Your personal AI tutor powered by NotebookLM. Upload documents and get instant summaries and quizzes.</p>
@@ -170,13 +144,8 @@ export default function Landing() {
               whileHover={{ y: -5 }}
               className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#eab308]"
             >
-              <div className="h-24 w-24 mx-auto mb-4 flex items-center justify-center">
-                <UserAvatar 
-                  config={{...VAYUU_CONFIG, eyes: "happy", mouth: "laugh"}} 
-                  pose="gaming" 
-                  size="lg" 
-                  className="bg-yellow-100 border-2 border-black"
-                />
+              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-yellow-100 border-2 border-black">
+                <Gamepad2 className="h-10 w-10 text-yellow-600" />
               </div>
               <h3 className="text-xl font-black mb-2 uppercase">Arcade & Gamification</h3>
               <p className="text-muted-foreground font-medium">Challenge Vayuu in retro mini-games, earn points, unlock badges, and climb the campus leaderboard.</p>
@@ -186,13 +155,8 @@ export default function Landing() {
               whileHover={{ y: -5 }}
               className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#0ea5e9]"
             >
-              <div className="h-24 w-24 mx-auto mb-4 flex items-center justify-center">
-                <UserAvatar 
-                  config={{...VAYUU_CONFIG, eyes: "normal", mouth: "smile"}} 
-                  pose="laptop" 
-                  size="lg" 
-                  className="bg-sky-100 border-2 border-black"
-                />
+              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-sky-100 border-2 border-black">
+                <BookOpen className="h-10 w-10 text-sky-600" />
               </div>
               <h3 className="text-xl font-black mb-2 uppercase">Resource Library</h3>
               <p className="text-muted-foreground font-medium">Access and share notes, practical files, and question papers with your peers.</p>
@@ -202,13 +166,8 @@ export default function Landing() {
               whileHover={{ y: -5 }}
               className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#ec4899]"
             >
-              <div className="h-24 w-24 mx-auto mb-4 flex items-center justify-center">
-                <UserAvatar 
-                  config={{...VAYUU_CONFIG, eyes: "wink", mouth: "smile"}} 
-                  pose="reading" 
-                  size="lg" 
-                  className="bg-pink-100 border-2 border-black"
-                />
+              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-pink-100 border-2 border-black">
+                <Users className="h-10 w-10 text-pink-600" />
               </div>
               <h3 className="text-xl font-black mb-2 uppercase">Study Groups</h3>
               <p className="text-muted-foreground font-medium">Collaborate in real-time with voice, video, and chat channels dedicated to your subjects.</p>
@@ -218,13 +177,8 @@ export default function Landing() {
               whileHover={{ y: -5 }}
               className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#f97316]"
             >
-              <div className="h-24 w-24 mx-auto mb-4 flex items-center justify-center">
-                <UserAvatar 
-                  config={{...VAYUU_CONFIG, eyes: "happy", mouth: "smile"}} 
-                  pose="standing" 
-                  size="lg" 
-                  className="bg-orange-100 border-2 border-black"
-                />
+              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-orange-100 border-2 border-black">
+                <Calendar className="h-10 w-10 text-orange-600" />
               </div>
               <h3 className="text-xl font-black mb-2 uppercase">Event Calendar</h3>
               <p className="text-muted-foreground font-medium">Never miss a society meeting, fest, or workshop again. Register and participate easily.</p>

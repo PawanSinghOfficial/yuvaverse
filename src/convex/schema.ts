@@ -50,23 +50,6 @@ const schema = defineSchema(
       hasSeenOnboarding: v.optional(v.boolean()),
       pomodoroSessionsCompleted: v.optional(v.number()),
       pomodoroSessionsAborted: v.optional(v.number()),
-      
-      // Avatar Configuration
-      avatarConfig: v.optional(v.object({
-        skinTone: v.string(),
-        hairStyle: v.string(),
-        hairColor: v.string(),
-        topStyle: v.string(),
-        topColor: v.string(),
-        bottomStyle: v.optional(v.string()), // For full body
-        bottomColor: v.optional(v.string()),
-        accessories: v.string(),
-        accessoryColor: v.optional(v.string()),
-        facialHair: v.string(),
-        eyes: v.string(),
-        mouth: v.string(),
-        backgroundColor: v.string(),
-      })),
 
       // Game Stats
       snakeHighScore: v.optional(v.number()),

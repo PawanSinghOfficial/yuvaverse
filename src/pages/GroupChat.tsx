@@ -486,14 +486,10 @@ export default function GroupChat() {
                 key={msg._id}
                 className={`flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}
               >
-                {sender?.avatarConfig ? (
-                  <UserAvatar config={sender.avatarConfig} size="sm" />
-                ) : (
-                  <Avatar className="h-8 w-8 border border-gray-100 shadow-sm">
-                    <AvatarImage src={sender?.image} />
-                    <AvatarFallback>{sender?.name?.[0] || "?"}</AvatarFallback>
-                  </Avatar>
-                )}
+                <Avatar className="h-8 w-8 border border-gray-100 shadow-sm">
+                  <AvatarImage src={sender?.image} />
+                  <AvatarFallback>{sender?.name?.[0] || "?"}</AvatarFallback>
+                </Avatar>
                 <div
                   className={`flex flex-col max-w-[70%] ${
                     isMe ? "items-end" : "items-start"
@@ -580,12 +576,10 @@ export default function GroupChat() {
               </div>
             )}
             <div className={`transition-transform ${u.isTyping ? 'translate-y-[-5px]' : ''}`}>
-              <UserAvatar 
-                config={u.user?.avatarConfig} 
-                size="sm" 
-                pose={u.isTyping ? "typing" : "portrait"}
-                className="border-2 border-white shadow-md"
-              />
+              <Avatar className="h-8 w-8 border-2 border-white shadow-md">
+                <AvatarImage src={u.user?.image} />
+                <AvatarFallback>{u.user?.name?.[0] || "?"}</AvatarFallback>
+              </Avatar>
             </div>
           </div>
         ))}

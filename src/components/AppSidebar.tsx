@@ -89,12 +89,6 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
       color: "text-rose-500",
     },
     {
-      label: "Avatar Studio",
-      icon: Palette,
-      href: "/avatar-editor",
-      color: "text-pink-600",
-    },
-    {
       label: "Feedback",
       icon: MessageSquare,
       href: "/feedback",

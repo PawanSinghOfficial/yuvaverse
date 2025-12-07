@@ -15,7 +15,6 @@ import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import UserAvatar from "@/components/UserAvatar";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -162,23 +161,17 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-6" id="dashboard-profile">
            <div className="relative group">
-              {user?.avatarConfig ? (
-                <div className="relative">
-                  <UserAvatar config={user.avatarConfig} size="xl" className="border-4 border-white shadow-xl" />
-                </div>
-              ) : user?.image ? (
+              {user?.image ? (
                 <img src={user.image} alt="Avatar" className="h-20 w-20 object-cover border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)]" />
               ) : (
                 <div className="h-20 w-20 bg-secondary flex items-center justify-center text-black font-bold text-3xl border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)]">
                   {user?.name?.[0] || "U"}
                 </div>
               )}
-              {!user?.avatarConfig && (
-                <label className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-2 border-transparent">
-                  <span className="text-white text-xs font-bold uppercase">Change</span>
-                  <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
-                </label>
-              )}
+              <label className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-2 border-transparent">
+                <span className="text-white text-xs font-bold uppercase">Change</span>
+                <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
+              </label>
               <div className={`absolute -bottom-3 -right-3 h-12 w-12 flex items-center justify-center rounded-full border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-gradient-to-br ${badge.gradient} text-2xl z-10 transition-transform hover:scale-110 hover:rotate-12`} title={`${badge.label} Badge`}>
                 {badge.icon}
               </div>
@@ -490,7 +483,13 @@ export default function Dashboard() {
                           #{i + 1}
                         </span>
                         <div className="flex items-center gap-2">
-                          <UserAvatar config={u.avatarConfig} size="sm" />
+                          {u.image ? (
+                            <img src={u.image} alt={u.name} className="h-8 w-8 rounded-full border border-black object-cover" />
+                          ) : (
+                            <div className="h-8 w-8 bg-gray-200 rounded-full border border-black flex items-center justify-center font-bold text-xs">
+                              {u.name[0]}
+                            </div>
+                          )}
                           <span className="text-sm font-bold truncate max-w-[100px]">{u.name}</span>
                         </div>
                       </div>
