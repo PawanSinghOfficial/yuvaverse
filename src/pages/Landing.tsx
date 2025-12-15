@@ -60,7 +60,7 @@ export default function Landing() {
           </div>
           <div className="flex items-center gap-4">
             <Link to="/auth">
-              <Button variant="ghost" className="text-slate-600 hover:text-red-600 hover:bg-black/5">Log in</Button>
+              <Button variant="ghost" className="text-slate-700 hover:text-red-600 hover:bg-black/5">Log in</Button>
             </Link>
             <Link to="/auth">
               <Button className="bg-red-600 hover:bg-red-700 text-white border-0 shadow-lg shadow-red-600/20">Get Started</Button>
@@ -81,7 +81,7 @@ export default function Landing() {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 backdrop-blur-sm border border-black/5 text-sm font-medium text-red-600 shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-black/5 text-sm font-medium text-red-600 shadow-sm"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -92,7 +92,7 @@ export default function Landing() {
 
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">
             <motion.span 
-              className="block text-transparent bg-clip-text bg-gradient-to-b from-slate-900 to-slate-600"
+              className="block text-transparent bg-clip-text bg-gradient-to-b from-slate-900 to-slate-700"
               initial={{ x: -50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
@@ -111,7 +111,7 @@ export default function Landing() {
           </h1>
 
           <motion.p 
-            className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed"
+            className="text-xl text-slate-700 max-w-2xl mx-auto leading-relaxed font-medium"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
@@ -135,7 +135,7 @@ export default function Landing() {
         </motion.div>
 
         <motion.div 
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-400"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-500"
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
@@ -212,7 +212,7 @@ export default function Landing() {
             <div className="h-6 w-6 bg-red-600 rounded flex items-center justify-center font-bold text-xs text-white">Y</div>
             <span className="font-bold text-slate-900">YuvaVerse</span>
           </div>
-          <div className="text-slate-500 text-sm">
+          <div className="text-slate-600 text-sm font-medium">
             © 2024 YuvaVerse. Built by Pawan Singh.
           </div>
           <div className="flex gap-4">
