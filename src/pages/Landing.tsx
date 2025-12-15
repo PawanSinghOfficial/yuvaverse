@@ -16,20 +16,20 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-transparent text-white overflow-x-hidden selection:bg-red-500/30 relative">
+    <div className="min-h-screen bg-transparent text-slate-900 overflow-x-hidden selection:bg-red-500/30 relative">
       <NinjaCursor />
       <ExitIntentPopup />
       
       {/* Animated Background */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#1a1a1a_0%,#000000_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000,transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#ffffff_0%,#e2e8f0_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000,transparent)]" />
         
         {/* Floating Shapes */}
         {Array.from({ length: 20 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute bg-red-900/10 backdrop-blur-3xl rounded-full"
+            className="absolute bg-red-500/5 backdrop-blur-3xl rounded-full"
             style={{
               width: Math.random() * 300 + 50,
               height: Math.random() * 300 + 50,
@@ -52,18 +52,18 @@ export default function Landing() {
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/10 bg-black/50 backdrop-blur-md">
+      <nav className="fixed top-0 w-full z-50 border-b border-black/5 bg-white/70 backdrop-blur-md">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 bg-red-600 rounded-lg flex items-center justify-center font-black text-white">Y</div>
-            <span className="font-bold text-xl tracking-tight text-white">YuvaVerse</span>
+            <span className="font-bold text-xl tracking-tight text-slate-900">YuvaVerse</span>
           </div>
           <div className="flex items-center gap-4">
             <Link to="/auth">
-              <Button variant="ghost" className="text-white hover:text-red-400 hover:bg-white/5">Log in</Button>
+              <Button variant="ghost" className="text-slate-600 hover:text-red-600 hover:bg-black/5">Log in</Button>
             </Link>
             <Link to="/auth">
-              <Button className="bg-red-600 hover:bg-red-700 text-white border-0">Get Started</Button>
+              <Button className="bg-red-600 hover:bg-red-700 text-white border-0 shadow-lg shadow-red-600/20">Get Started</Button>
             </Link>
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function Landing() {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-sm font-medium text-red-400"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 backdrop-blur-sm border border-black/5 text-sm font-medium text-red-600 shadow-sm"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -92,7 +92,7 @@ export default function Landing() {
 
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">
             <motion.span 
-              className="block text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-500"
+              className="block text-transparent bg-clip-text bg-gradient-to-b from-slate-900 to-slate-600"
               initial={{ x: -50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
@@ -100,18 +100,18 @@ export default function Landing() {
               Your Digital
             </motion.span>
             <motion.span 
-              className="block text-red-600 drop-shadow-[0_0_30px_rgba(220,38,38,0.5)]"
+              className="block text-red-600 drop-shadow-sm"
               initial={{ x: 50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              whileHover={{ scale: 1.05, textShadow: "0 0 50px rgba(220,38,38,0.8)" }}
+              whileHover={{ scale: 1.05 }}
             >
               Campus Reimagined.
             </motion.span>
           </h1>
 
           <motion.p 
-            className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed"
+            className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
@@ -127,7 +127,7 @@ export default function Landing() {
             transition={{ delay: 0.9 }}
           >
             <Link to="/auth">
-              <Button size="lg" className="h-14 px-8 text-lg bg-red-600 hover:bg-red-700 text-white border-2 border-transparent hover:border-white/20 shadow-[0_0_20px_rgba(220,38,38,0.3)] hover:shadow-[0_0_40px_rgba(220,38,38,0.5)] transition-all duration-300 group">
+              <Button size="lg" className="h-14 px-8 text-lg bg-red-600 hover:bg-red-700 text-white border-2 border-transparent shadow-xl shadow-red-600/20 hover:shadow-red-600/40 transition-all duration-300 group">
                 Join Now <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -135,7 +135,7 @@ export default function Landing() {
         </motion.div>
 
         <motion.div 
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/20"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-400"
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
@@ -152,37 +152,37 @@ export default function Landing() {
                 title: "Syllabus Tracker",
                 desc: "Track your progress topic by topic. Never miss a deadline.",
                 icon: BookCheck,
-                color: "text-blue-400"
+                color: "text-blue-600"
               },
               {
                 title: "AI Notebook",
                 desc: "Upload PDFs and get instant summaries, quizzes, and insights.",
                 icon: BrainCircuit,
-                color: "text-purple-400"
+                color: "text-purple-600"
               },
               {
                 title: "Arcade Zone",
                 desc: "Play retro games, earn points, and challenge your friends.",
                 icon: Gamepad2,
-                color: "text-green-400"
+                color: "text-green-600"
               },
               {
                 title: "Resource Library",
                 desc: "Access and share notes, past papers, and study materials.",
                 icon: BookOpen,
-                color: "text-yellow-400"
+                color: "text-yellow-600"
               },
               {
                 title: "Study Groups",
                 desc: "Collaborate with peers in real-time chat and video rooms.",
                 icon: Users,
-                color: "text-pink-400"
+                color: "text-pink-600"
               },
               {
                 title: "Event Calendar",
                 desc: "Stay updated with campus events, fests, and workshops.",
                 icon: Calendar,
-                color: "text-red-400"
+                color: "text-red-600"
               }
             ].map((feature, i) => (
               <motion.div
@@ -192,13 +192,13 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-red-500/30 hover:bg-white/10 transition-all duration-300 group"
+                className="p-8 rounded-3xl bg-white border border-slate-200 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-red-500/10 hover:border-red-200 transition-all duration-300 group"
               >
-                <div className={`h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 ${feature.color} group-hover:scale-110 transition-transform`}>
+                <div className={`h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-6 ${feature.color} group-hover:scale-110 transition-transform`}>
                   <feature.icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                <p className="text-slate-400 leading-relaxed">{feature.desc}</p>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -206,18 +206,18 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-white/10 bg-black/50">
+      <footer className="py-12 border-t border-slate-200 bg-white/50">
         <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
             <div className="h-6 w-6 bg-red-600 rounded flex items-center justify-center font-bold text-xs text-white">Y</div>
-            <span className="font-bold text-white">YuvaVerse</span>
+            <span className="font-bold text-slate-900">YuvaVerse</span>
           </div>
           <div className="text-slate-500 text-sm">
             © 2024 YuvaVerse. Built by Pawan Singh.
           </div>
           <div className="flex gap-4">
-            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Linkedin className="h-5 w-5" /></a>
-            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Mail className="h-5 w-5" /></a>
+            <a href="#" className="text-slate-400 hover:text-slate-900 transition-colors"><Linkedin className="h-5 w-5" /></a>
+            <a href="#" className="text-slate-400 hover:text-slate-900 transition-colors"><Mail className="h-5 w-5" /></a>
           </div>
         </div>
       </footer>
