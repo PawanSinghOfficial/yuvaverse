@@ -16,7 +16,7 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-red-500/30">
+    <div className="min-h-screen bg-transparent text-white overflow-x-hidden selection:bg-red-500/30 relative">
       <NinjaCursor />
       <ExitIntentPopup />
       
