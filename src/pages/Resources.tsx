@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Upload, Loader2, Code, ThumbsUp, ThumbsDown, AlertTriangle, Search, Flag } from "lucide-react";
+import { FileText, Download, Upload, Loader2, Code, ThumbsUp, ThumbsDown, AlertTriangle, Search, Flag, Filter } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -42,6 +42,7 @@ export default function Resources() {
   const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [selectedSubject, setSelectedSubject] = useState<string>("all");
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 500);
@@ -49,6 +50,15 @@ export default function Resources() {
   }, [search]);
 
   const resources = useQuery(api.resources.list, { search: debouncedSearch === "" ? undefined : debouncedSearch });
+  
+  // Extract unique subjects
+  const subjects = resources 
+    ? Array.from(new Set(resources.map(r => r.subject))).sort()
+    : [];
+
+  const filteredResources = resources?.filter(r => 
+    selectedSubject === "all" || r.subject === selectedSubject
+  );
   const generateUploadUrl = useMutation(api.resources.generateUploadUrl);
   const createResource = useMutation(api.resources.create);
   const toggleLike = useMutation(api.resources.toggleLike);
@@ -172,7 +182,25 @@ export default function Resources() {
           <p className="text-muted-foreground mt-2">Access study materials, notes, and past papers.</p>
         </div>
         
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+          {/* Subject Filter */}
+          <div className="w-full sm:w-48">
+             <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                <SelectTrigger className="w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                   <div className="flex items-center gap-2">
+                      <Filter className="h-4 w-4" />
+                      <SelectValue placeholder="Filter by Subject" />
+                   </div>
+                </SelectTrigger>
+                <SelectContent>
+                   <SelectItem value="all">All Subjects</SelectItem>
+                   {subjects.map(sub => (
+                      <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                   ))}
+                </SelectContent>
+             </Select>
+          </div>
+
           <div className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black font-bold" />
             <Input
@@ -310,7 +338,7 @@ export default function Resources() {
       </AlertDialog>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {resources?.map((resource) => {
+        {filteredResources?.map((resource) => {
           const hasLiked = user && resource.likes?.includes(user._id);
           const hasDisliked = user && resource.dislikes?.includes(user._id);
           const isReported = resource.reports && resource.reports.length > 0;
@@ -393,9 +421,9 @@ export default function Resources() {
             </CardContent>
           </Card>
         )})}
-        {resources?.length === 0 && (
+        {filteredResources?.length === 0 && (
             <div className="col-span-full text-center py-12 text-muted-foreground">
-                No resources found. Be the first to upload!
+                No resources found matching your criteria.
             </div>
         )}
       </div>

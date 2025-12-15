@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Users, Calendar, Shield, Linkedin, Mail, BookCheck, BrainCircuit, Trophy, ChevronDown, Gamepad2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
+import { Link } from "react-router";
+import { NinjaCursor } from "@/components/NinjaCursor";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -13,206 +15,210 @@ export default function Landing() {
     document.documentElement.classList.remove("dark");
   }, []);
 
-  // Generate random shapes for background
-  const shapes = Array.from({ length: 15 }).map((_, i) => ({
-    id: i,
-    type: i % 4, // 0: square, 1: circle, 2: triangle (rotated square), 3: rectangle
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: 20 + Math.random() * 60,
-    color: ['bg-yellow-300', 'bg-pink-300', 'bg-blue-300', 'bg-green-300', 'bg-purple-300'][Math.floor(Math.random() * 5)],
-    duration: 10 + Math.random() * 20,
-    delay: Math.random() * 5
-  }));
-
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden isolate">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-red-500/30">
+      <NinjaCursor />
       <ExitIntentPopup />
       
-      {/* Live Animated Background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden bg-white">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#1a1a1a_0%,#000000_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000,transparent)]" />
         
         {/* Floating Shapes */}
-        {shapes.map((shape) => (
-          <motion.div 
-            key={shape.id}
-            animate={{ 
-                y: [0, -30, 0], 
-                rotate: [0, 10, -10, 0],
-                x: [0, 20, 0]
-            }} 
-            transition={{ duration: shape.duration, repeat: Infinity, ease: "easeInOut", delay: shape.delay }}
-            className={`absolute border-4 border-black opacity-30 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] ${shape.color} ${shape.type === 1 ? 'rounded-full' : 'rounded-none'}`}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute bg-red-900/10 backdrop-blur-3xl rounded-full"
             style={{
-              top: `${shape.y}%`,
-              left: `${shape.x}%`,
-              width: shape.size,
-              height: shape.type === 3 ? shape.size * 1.5 : shape.size,
-              transform: shape.type === 2 ? 'rotate(45deg)' : 'none'
+              width: Math.random() * 300 + 50,
+              height: Math.random() * 300 + 50,
+              left: Math.random() * 100 + "%",
+              top: Math.random() * 100 + "%",
+            }}
+            animate={{
+              y: [0, Math.random() * 100 - 50],
+              x: [0, Math.random() * 100 - 50],
+              rotate: [0, 360],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: Math.random() * 20 + 10,
+              repeat: Infinity,
+              ease: "linear",
             }}
           />
         ))}
       </div>
-      
-      {/* Navbar */}
-      <nav className="py-4 px-6 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-border shadow-sm">
-        <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-          <img src={logoUrl} alt="YuvaVerse Logo" className="h-10 w-10 object-contain neo-brutal-sm bg-primary/10 p-1" />
-          YuvaVerse
-        </div>
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate("/auth")}>
-            Log in
-          </Button>
-          <Button onClick={() => navigate("/auth")} className="neo-brutal-sm">
-            Get Started
-          </Button>
+
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full z-50 border-b border-white/10 bg-black/50 backdrop-blur-md">
+        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 bg-red-600 rounded-lg flex items-center justify-center font-black text-white">Y</div>
+            <span className="font-bold text-xl tracking-tight text-white">YuvaVerse</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link to="/auth">
+              <Button variant="ghost" className="text-white hover:text-red-400 hover:bg-white/5">Log in</Button>
+            </Link>
+            <Link to="/auth">
+              <Button className="bg-red-600 hover:bg-red-700 text-white border-0">Get Started</Button>
+            </Link>
+          </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 py-24 max-w-5xl mx-auto min-h-[80vh]">
+      <section className="relative pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.8 }}
+          className="space-y-8 max-w-4xl mx-auto"
         >
-          <div className="inline-flex items-center rounded-full border-2 border-black px-3 py-1 text-xs font-bold transition-colors bg-yellow-300 text-black mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-sm font-medium text-red-400"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </span>
             🚀 Welcome to the Future of Campus Life
-          </div>
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-tight">
-            Your Digital Campus <br />
-            <span className="text-indigo-600 bg-indigo-50 px-2 border-2 border-transparent">Reimagined.</span>
+          </motion.div>
+
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">
+            <motion.span 
+              className="block text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-500"
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+            >
+              Your Digital
+            </motion.span>
+            <motion.span 
+              className="block text-red-600 drop-shadow-[0_0_30px_rgba(220,38,38,0.5)]"
+              initial={{ x: 50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              whileHover={{ scale: 1.05, textShadow: "0 0 50px rgba(220,38,38,0.8)" }}
+            >
+              Campus Reimagined.
+            </motion.span>
           </h1>
-          <p className="text-xl font-medium text-muted-foreground max-w-2xl mx-auto mb-10">
-            The all-in-one platform for students. Track your syllabus, get AI study help, play arcade games, and climb the leaderboard.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="h-14 px-8 text-lg font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={() => navigate("/auth")}>
-              Join Now <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
+
+          <motion.p 
+            className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            The all-in-one platform for students. Track your syllabus, get AI study help, 
+            play arcade games, and climb the leaderboard.
+          </motion.p>
+
+          <motion.div 
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+          >
+            <Link to="/auth">
+              <Button size="lg" className="h-14 px-8 text-lg bg-red-600 hover:bg-red-700 text-white border-2 border-transparent hover:border-white/20 shadow-[0_0_20px_rgba(220,38,38,0.3)] hover:shadow-[0_0_40px_rgba(220,38,38,0.5)] transition-all duration-300 group">
+                Join Now <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </motion.div>
         </motion.div>
 
-        {/* Scroll Indicator */}
         <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-muted-foreground/50"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/20"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
         >
-          <ChevronDown className="h-12 w-12" />
+          <ChevronDown className="h-8 w-8" />
         </motion.div>
       </section>
 
       {/* Features Grid */}
-      <section className="relative z-10 py-24 bg-white/50 backdrop-blur-sm border-t-2 border-black">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight mb-4">Everything You Need to Excel</h2>
-            <p className="text-lg text-muted-foreground font-medium max-w-2xl mx-auto">From academic tracking to social connections, we've got your campus life covered.</p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <motion.div 
-              whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#4f46e5]"
-            >
-              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-indigo-100 border-2 border-black">
-                <BookCheck className="h-10 w-10 text-indigo-600" />
-              </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Syllabus Tracker</h3>
-              <p className="text-muted-foreground font-medium">Track your B.Tech, BCA, or BBA progress topic-by-topic. Never lose track of what to study next.</p>
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#9333ea]"
-            >
-              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-purple-100 border-2 border-black">
-                <BrainCircuit className="h-10 w-10 text-purple-600" />
-              </div>
-              <h3 className="text-xl font-black mb-2 uppercase">AI Notebook</h3>
-              <p className="text-muted-foreground font-medium">Your personal AI tutor powered by NotebookLM. Upload documents and get instant summaries and quizzes.</p>
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#eab308]"
-            >
-              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-yellow-100 border-2 border-black">
-                <Gamepad2 className="h-10 w-10 text-yellow-600" />
-              </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Arcade & Gamification</h3>
-              <p className="text-muted-foreground font-medium">Challenge Vayuu in retro mini-games, earn points, unlock badges, and climb the campus leaderboard.</p>
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#0ea5e9]"
-            >
-              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-sky-100 border-2 border-black">
-                <BookOpen className="h-10 w-10 text-sky-600" />
-              </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Resource Library</h3>
-              <p className="text-muted-foreground font-medium">Access and share notes, practical files, and question papers with your peers.</p>
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#ec4899]"
-            >
-              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-pink-100 border-2 border-black">
-                <Users className="h-10 w-10 text-pink-600" />
-              </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Study Groups</h3>
-              <p className="text-muted-foreground font-medium">Collaborate in real-time with voice, video, and chat channels dedicated to your subjects.</p>
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#f97316]"
-            >
-              <div className="h-20 w-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-orange-100 border-2 border-black">
-                <Calendar className="h-10 w-10 text-orange-600" />
-              </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Event Calendar</h3>
-              <p className="text-muted-foreground font-medium">Never miss a society meeting, fest, or workshop again. Register and participate easily.</p>
-            </motion.div>
+      <section className="py-32 px-6 relative z-10">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Syllabus Tracker",
+                desc: "Track your progress topic by topic. Never miss a deadline.",
+                icon: BookCheck,
+                color: "text-blue-400"
+              },
+              {
+                title: "AI Notebook",
+                desc: "Upload PDFs and get instant summaries, quizzes, and insights.",
+                icon: BrainCircuit,
+                color: "text-purple-400"
+              },
+              {
+                title: "Arcade Zone",
+                desc: "Play retro games, earn points, and challenge your friends.",
+                icon: Gamepad2,
+                color: "text-green-400"
+              },
+              {
+                title: "Resource Library",
+                desc: "Access and share notes, past papers, and study materials.",
+                icon: BookOpen,
+                color: "text-yellow-400"
+              },
+              {
+                title: "Study Groups",
+                desc: "Collaborate with peers in real-time chat and video rooms.",
+                icon: Users,
+                color: "text-pink-400"
+              },
+              {
+                title: "Event Calendar",
+                desc: "Stay updated with campus events, fests, and workshops.",
+                icon: Calendar,
+                color: "text-red-400"
+              }
+            ].map((feature, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -5 }}
+                className="p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-red-500/30 hover:bg-white/10 transition-all duration-300 group"
+              >
+                <div className={`h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 ${feature.color} group-hover:scale-110 transition-transform`}>
+                  <feature.icon className="h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
+                <p className="text-slate-400 leading-relaxed">{feature.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 py-12 border-t bg-background/50 backdrop-blur-sm">
-        <div className="flex flex-col items-center justify-center gap-4 text-center">
-            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} YuvaVerse.</p>
-            
-            <div className="flex flex-col items-center gap-2">
-                <p className="text-[10px] font-bold tracking-widest text-muted-foreground/80 mb-1">
-                    BUILD FOR STUDENTS, BY STUDENT
-                </p>
-                <p className="font-serif text-lg font-medium text-foreground">
-                    Pawan Singh
-                </p>
-                <div className="flex items-center gap-4">
-                    <a 
-                        href="https://www.linkedin.com/in/pawansinghofficial/" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
-                    >
-                        <Linkedin className="h-5 w-5" />
-                    </a>
-                    <a 
-                        href="mailto:pawansinghmahori@gmail.com"
-                        className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
-                    >
-                        <Mail className="h-5 w-5" />
-                    </a>
-                </div>
-            </div>
+      <footer className="py-12 border-t border-white/10 bg-black/50">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-6 bg-red-600 rounded flex items-center justify-center font-bold text-xs text-white">Y</div>
+            <span className="font-bold text-white">YuvaVerse</span>
+          </div>
+          <div className="text-slate-500 text-sm">
+            © 2024 YuvaVerse. Built by Pawan Singh.
+          </div>
+          <div className="flex gap-4">
+            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Linkedin className="h-5 w-5" /></a>
+            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Mail className="h-5 w-5" /></a>
+          </div>
         </div>
       </footer>
     </div>

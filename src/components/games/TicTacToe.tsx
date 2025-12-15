@@ -109,6 +109,18 @@ export default function TicTacToe() {
             spread: 70,
             origin: { y: 0.6 }
          });
+         
+         // Vayuu Tease when User Wins
+         const username = user?.username || user?.name || "Player";
+         const winTeases = [
+            `Beginner's luck, ${username}! I'll get you next time. 😤`,
+            `Okay, okay, you won. But can you do it again? 🤔`,
+            `I was just warming up! Rematch? 🤖`,
+            `Vayuu: 0, ${username}: 1. Don't get cocky! 😒`
+         ];
+         const randomTease = winTeases[Math.floor(Math.random() * winTeases.length)];
+         setTeaseMessage(randomTease);
+
          handleGameEnd(true);
       } else {
          playSound('lose');

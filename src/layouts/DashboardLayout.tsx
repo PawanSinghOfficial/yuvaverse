@@ -9,6 +9,9 @@ import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { LogoDropdown } from "@/components/LogoDropdown";
+import { VayuuChat } from "@/components/VayuuChat";
 
 export default function DashboardLayout() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -53,16 +56,18 @@ export default function DashboardLayout() {
 
   return (
     <SidebarProvider>
-      <ExitIntentPopup />
-      <div className="flex w-full bg-background h-screen overflow-hidden">
-        <AppSidebar onGuideClick={handleGuideClick} className="w-72 hidden md:flex shrink-0 border-r h-full" />
-        <SidebarInset className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
-          <main className="flex-1 overflow-y-auto p-6 pb-10 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
-            <Outlet />
-          </main>
-          <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
-        </SidebarInset>
-      </div>
+      <AppSidebar />
+      <main className="flex-1 flex flex-col min-h-screen overflow-hidden bg-background">
+        <div className="flex items-center gap-4 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
+          <SidebarTrigger />
+          <div className="flex-1" />
+          <LogoDropdown />
+        </div>
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
+           <Outlet />
+        </div>
+        <VayuuChat />
+      </main>
     </SidebarProvider>
   );
 }
