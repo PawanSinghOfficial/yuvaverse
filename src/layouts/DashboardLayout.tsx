@@ -54,10 +54,10 @@ export default function DashboardLayout() {
   return (
     <SidebarProvider>
       <ExitIntentPopup />
-      <div className="flex w-full bg-background min-h-screen">
-        <AppSidebar onGuideClick={handleGuideClick} className="w-72 hidden md:flex shrink-0 border-r" />
-        <SidebarInset className="flex flex-col flex-1 min-w-0">
-          <main className="flex-1 p-6 pb-10">
+      <div className="flex w-full bg-background h-screen overflow-hidden">
+        <AppSidebar onGuideClick={handleGuideClick} className="w-72 hidden md:flex shrink-0 border-r h-full" />
+        <SidebarInset className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
+          <main className="flex-1 overflow-y-auto p-6 pb-10 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
             <Outlet />
           </main>
           <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />

@@ -150,14 +150,31 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
          <div className="bg-card neo-brutal p-4 mb-4">
             <div className="flex items-center gap-3 mb-3">
                 <div className="relative">
-                  {user?.image ? (
-                    <img src={user.image} alt={user.name || "User"} className="h-10 w-10 rounded-full object-cover border border-border" />
-                  ) : (
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg border border-border">
-                        {user?.name?.[0] || "U"}
+                  {(user?.role === "admin" || user?.tier === "premium" || user?.tier === "elite") ? (
+                    <div className="relative p-[3px]">
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-300 via-orange-400 to-yellow-300 animate-[spin_3s_linear_infinite]" />
+                      <div className="relative bg-background rounded-full p-[2px]">
+                        {user?.image ? (
+                          <img src={user.image} alt={user.name || "User"} className="h-10 w-10 rounded-full object-cover" />
+                        ) : (
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
+                              {user?.name?.[0] || "U"}
+                          </div>
+                        )}
+                      </div>
                     </div>
+                  ) : (
+                    <>
+                      {user?.image ? (
+                        <img src={user.image} alt={user.name || "User"} className="h-10 w-10 rounded-full object-cover border border-border" />
+                      ) : (
+                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg border border-border">
+                            {user?.name?.[0] || "U"}
+                        </div>
+                      )}
+                    </>
                   )}
-                  <div className={`absolute -bottom-1 -right-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gradient-to-r ${badge.gradient} text-white shadow-lg`}>
+                  <div className={`absolute -bottom-1 -right-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gradient-to-r ${badge.gradient} text-white shadow-lg z-10`}>
                     {badge.icon}
                   </div>
                 </div>

@@ -94,7 +94,7 @@ export default function Events() {
           <p className="text-muted-foreground mt-2 font-medium">Stay updated with society meetings, workshops, and fests.</p>
         </div>
         
-        {(user?.role === "society_head" || user?.role === "admin") && (
+        {user?.role === "admin" && (
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <Button className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
