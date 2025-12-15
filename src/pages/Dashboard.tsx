@@ -474,7 +474,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {leaderboard.slice(0, 5).map((u, i) => {
+                {leaderboard.slice(0, 3).map((u, i) => {
                   const entryBadge = getBadgeFromPoints(u.points);
                   return (
                     <div key={i} className="flex items-center justify-between bg-card border border-border p-2 shadow-[2px_2px_0px_0px_var(--shadow)]">
@@ -500,56 +500,15 @@ export default function Dashboard() {
                   );
                 })}
                 
-                {leaderboard.length > 5 && (
-                  <Dialog open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen}>
-                    <DialogTrigger asChild>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="w-full inline-flex items-center justify-center h-10 px-4 py-2 rounded-md text-sm font-bold uppercase tracking-wider border-2 border-black bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      >
-                        View Full Leaderboard
-                      </motion.button>
-                    </DialogTrigger>
-                    <DialogContent className="max-h-[80vh] overflow-y-auto border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                      <DialogHeader>
-                        <DialogTitle className="text-2xl font-black uppercase flex items-center gap-2">
-                          <Trophy className="h-6 w-6 text-yellow-500" />
-                          Leaderboard
-                        </DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-3 mt-4">
-                        {leaderboard.map((u, i) => {
-                          const entryBadge = getBadgeFromPoints(u.points);
-                          return (
-                            <div key={i} className="flex items-center justify-between bg-card border border-border p-3 shadow-[2px_2px_0px_0px_var(--shadow)]">
-                              <div className="flex items-center gap-4">
-                                <span className={`font-black text-xl w-8 text-center ${i < 3 ? "text-yellow-600" : "text-gray-500"}`}>
-                                  #{i + 1}
-                                </span>
-                                <div className="flex items-center gap-3">
-                                  {u.image ? (
-                                    <img src={u.image} alt={u.name} className="h-8 w-8 rounded-full border border-black object-cover" />
-                                  ) : (
-                                    <div className="h-8 w-8 bg-gray-200 rounded-full border border-black flex items-center justify-center font-bold text-xs">
-                                      {u.name[0]}
-                                    </div>
-                                  )}
-                                  <span className="font-bold">{u.name}</span>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <span className="font-black text-foreground">{u.points} pts</span>
-                                <span className={`text-xs font-bold px-3 py-1 border-2 border-black bg-gradient-to-r ${entryBadge.gradient} ${entryBadge.accent} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-1`}>
-                                  {entryBadge.icon} {entryBadge.label}
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                {leaderboard.length > 3 && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-full inline-flex items-center justify-center h-10 px-4 py-2 rounded-md text-sm font-bold uppercase tracking-wider border-2 border-black bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    onClick={() => navigate("/games")}
+                  >
+                    See More
+                  </motion.button>
                 )}
               </div>
             </CardContent>
