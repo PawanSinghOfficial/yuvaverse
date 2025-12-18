@@ -19,8 +19,8 @@ export default function Landing() {
       <NinjaCursor />
       <ExitIntentPopup />
       
-      {/* Animated Background - Fixed at z-0 to cover body but sit behind content */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* Animated Background - Fixed at z-[-1] to cover body but sit behind content */}
+      <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#ffffff_0%,#e2e8f0_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000,transparent)]" />
         
