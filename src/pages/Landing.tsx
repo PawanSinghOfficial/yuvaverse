@@ -19,8 +19,8 @@ export default function Landing() {
       <NinjaCursor />
       <ExitIntentPopup />
       
-      {/* Animated Background - Fixed at z-[-1] to cover body but sit behind content */}
-      <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+      {/* Animated Background - Fixed at z-0 to ensure visibility over body background */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#ffffff_0%,#e2e8f0_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000,transparent)]" />
         
@@ -28,7 +28,7 @@ export default function Landing() {
         {Array.from({ length: 20 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute bg-red-500/5 backdrop-blur-3xl rounded-full"
+            className="absolute bg-red-500/20 backdrop-blur-3xl rounded-full"
             style={{
               width: Math.random() * 300 + 50,
               height: Math.random() * 300 + 50,
@@ -50,8 +50,8 @@ export default function Landing() {
         ))}
       </div>
 
-      {/* Content Wrapper - Relative at z-10 to sit above background */}
-      <div className="relative z-10">
+      {/* Content Wrapper - Relative at z-10 to sit above background with temporary background color */}
+      <div className="relative z-10 bg-slate-50/80">
         {/* Navigation */}
         <nav className="sticky top-0 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
           <div className="container mx-auto px-6 h-16 flex items-center justify-between">
