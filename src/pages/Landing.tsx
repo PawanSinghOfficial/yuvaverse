@@ -15,11 +15,16 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Landing() {
   const navigate = useNavigate();
   const logoUrl =
     "https://harmless-tapir-303.convex.cloud/api/storage/db1724ed-9b2f-4ed4-8514-69ae556175c8";
+
+  const { isAuthenticated } = useAuth();
+  const primaryCtaLabel = isAuthenticated ? "Go to Dashboard" : "Join Now";
+  const primaryCtaPath = isAuthenticated ? "/dashboard" : "/auth";
 
   useEffect(() => {
     document.documentElement.classList.remove("dark");
@@ -81,11 +86,20 @@ export default function Landing() {
           YuvaVerse
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate("/auth")}>
-            Log in
-          </Button>
-          <Button onClick={() => navigate("/auth")} className="neo-brutal-sm">
-            Get Started
+          {isAuthenticated ? (
+            <Button variant="ghost" onClick={() => navigate("/dashboard")}>
+              Dashboard
+            </Button>
+          ) : (
+            <Button variant="ghost" onClick={() => navigate("/auth")}>
+              Log in
+            </Button>
+          )}
+          <Button
+            onClick={() => navigate(primaryCtaPath)}
+            className="neo-brutal-sm"
+          >
+            {isAuthenticated ? "Resume Journey" : "Get Started"}
           </Button>
         </div>
       </nav>
@@ -114,9 +128,9 @@ export default function Landing() {
             <Button
               size="lg"
               className="h-14 px-8 text-lg font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
-              onClick={() => navigate("/auth")}
+              onClick={() => navigate(primaryCtaPath)}
             >
-              Join Now <ArrowRight className="ml-2 h-5 w-5" />
+              {primaryCtaLabel} <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </motion.div>
