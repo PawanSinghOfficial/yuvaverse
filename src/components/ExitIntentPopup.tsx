@@ -23,9 +23,9 @@ export function ExitIntentPopup() {
         localStorage.setItem("exitIntentCount", counter.toString());
 
         // Show every 5th time (1 in 5)
-        if (counter % 5 === 0) {
+        // if (counter % 5 === 0) {
            triggerPopup();
-        }
+        // }
       }
     };
 

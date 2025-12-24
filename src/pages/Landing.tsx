@@ -5,8 +5,11 @@ import { ArrowRight, BookOpen, Users, Calendar, Gamepad2, BrainCircuit, BookChec
 import { Link } from "react-router";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { NinjaCursor } from "@/components/NinjaCursor";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Landing() {
+  const { isAuthenticated } = useAuth();
+
   useEffect(() => {
     document.documentElement.classList.remove("dark");
   }, []);
@@ -72,14 +75,24 @@ export default function Landing() {
             <span className="font-black text-2xl tracking-tight">YuvaVerse</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/auth">
-              <Button variant="ghost" className="font-bold hover:bg-transparent hover:underline">LOG IN</Button>
-            </Link>
-            <Link to="/auth">
-              <Button className="bg-[#5b6bf9] hover:bg-[#4a5ae8] text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all rounded-none px-6">
-                GET STARTED
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link to="/dashboard">
+                <Button className="bg-[#5b6bf9] hover:bg-[#4a5ae8] text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all rounded-none px-6">
+                  GO TO DASHBOARD
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/auth">
+                  <Button variant="ghost" className="font-bold hover:bg-transparent hover:underline">LOG IN</Button>
+                </Link>
+                <Link to="/auth">
+                  <Button className="bg-[#5b6bf9] hover:bg-[#4a5ae8] text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all rounded-none px-6">
+                    GET STARTED
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -114,9 +127,9 @@ export default function Landing() {
           </p>
 
           <div className="pt-8">
-            <Link to="/auth">
+            <Link to={isAuthenticated ? "/dashboard" : "/auth"}>
               <Button className="h-16 px-10 text-xl bg-[#5b6bf9] hover:bg-[#4a5ae8] text-white font-black border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all rounded-none">
-                JOIN NOW <ArrowRight className="ml-2 h-6 w-6" />
+                {isAuthenticated ? "GO TO DASHBOARD" : "JOIN NOW"} <ArrowRight className="ml-2 h-6 w-6" />
               </Button>
             </Link>
           </div>
@@ -146,59 +159,66 @@ export default function Landing() {
                 desc: "Track your progress topic by topic. Never miss a deadline.",
                 icon: BookCheck,
                 color: "bg-blue-100",
-                accent: "text-blue-600"
+                accent: "text-blue-600",
+                path: "/syllabus"
               },
               {
                 title: "AI Notebook",
                 desc: "Upload PDFs and get instant summaries, quizzes, and insights.",
                 icon: BrainCircuit,
                 color: "bg-purple-100",
-                accent: "text-purple-600"
+                accent: "text-purple-600",
+                path: "/notebook"
               },
               {
                 title: "Arcade Zone",
                 desc: "Play retro games, earn points, and challenge your friends.",
                 icon: Gamepad2,
                 color: "bg-green-100",
-                accent: "text-green-600"
+                accent: "text-green-600",
+                path: "/games"
               },
               {
                 title: "Resource Library",
                 desc: "Access and share notes, past papers, and study materials.",
                 icon: BookOpen,
                 color: "bg-yellow-100",
-                accent: "text-yellow-600"
+                accent: "text-yellow-600",
+                path: "/resources"
               },
               {
                 title: "Study Groups",
                 desc: "Collaborate with peers in real-time chat and video rooms.",
                 icon: Users,
                 color: "bg-pink-100",
-                accent: "text-pink-600"
+                accent: "text-pink-600",
+                path: "/groups"
               },
               {
                 title: "Event Calendar",
                 desc: "Stay updated with campus events, fests, and workshops.",
                 icon: Calendar,
                 color: "bg-red-100",
-                accent: "text-red-600"
+                accent: "text-red-600",
+                path: "/events"
               }
             ].map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -5, rotate: 1 }}
-                className="p-8 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300"
-              >
-                <div className={`h-16 w-16 ${feature.color} border-2 border-black flex items-center justify-center mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
-                  <feature.icon className={`h-8 w-8 ${feature.accent}`} />
-                </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-3">{feature.title}</h3>
-                <p className="text-slate-700 font-medium leading-relaxed">{feature.desc}</p>
-              </motion.div>
+              <Link to={isAuthenticated ? feature.path : "/auth"} key={i}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ y: -5, rotate: 1 }}
+                  className="p-8 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full"
+                >
+                  <div className={`h-16 w-16 ${feature.color} border-2 border-black flex items-center justify-center mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
+                    <feature.icon className={`h-8 w-8 ${feature.accent}`} />
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-3">{feature.title}</h3>
+                  <p className="text-slate-700 font-medium leading-relaxed">{feature.desc}</p>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
