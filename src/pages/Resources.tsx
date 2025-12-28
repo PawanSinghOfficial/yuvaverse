@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Upload, Loader2, Code, ThumbsUp, ThumbsDown, AlertTriangle, Search, Flag, Filter } from "lucide-react";
+import { FileText, Download, Upload, Loader2, Code, ThumbsUp, ThumbsDown, AlertTriangle, Search, Flag, Filter, BrainCircuit } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +37,7 @@ import confetti from "canvas-confetti";
 import { useAuth } from "@/hooks/use-auth";
 import { Textarea } from "@/components/ui/textarea";
 import { Id } from "@/convex/_generated/dataModel";
+import { FlashcardGenerator } from "@/components/FlashcardGenerator";
 
 export default function Resources() {
   const { user } = useAuth();
@@ -396,6 +397,18 @@ export default function Resources() {
                    </Button>
                 </div>
                 <div className="flex items-center gap-2">
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <FlashcardGenerator 
+                            title={resource.title} 
+                            sourceType="resource" 
+                            sourceId={resource._id}
+                            trigger={
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-50" title="Generate Flashcards">
+                                    <BrainCircuit className="h-4 w-4" />
+                                </Button>
+                            }
+                        />
+                    </div>
                     <Button
                         variant="ghost"
                         size="sm"

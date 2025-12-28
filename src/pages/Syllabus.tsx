@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { BookCheck, ChevronRight, Trophy, BookOpen, Search } from "lucide-react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
+import { FlashcardGenerator } from "@/components/FlashcardGenerator";
+import { BrainCircuit } from "lucide-react";
 
 export default function Syllabus() {
   const [course, setCourse] = useState("B.Tech");
@@ -281,21 +283,36 @@ export default function Syllabus() {
                         <AccordionContent className="pb-6">
                           <div className="space-y-3 pl-2">
                             {unit.topics.map((topic) => (
-                              <div key={topic._id} className="flex items-start gap-3 group">
-                                <Checkbox 
-                                  id={topic._id} 
-                                  checked={topic.isCompleted}
-                                  onCheckedChange={(checked) => handleToggle(topic._id, checked as boolean)}
-                                  className="mt-1 h-6 w-6 border-2 border-black bg-white data-[state=checked]:bg-indigo-600 data-[state=checked]:text-white shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)] transition-all data-[state=checked]:shadow-none data-[state=checked]:translate-x-[1px] data-[state=checked]:translate-y-[1px]"
-                                />
-                                <label 
-                                  htmlFor={topic._id} 
-                                  className={`text-base leading-relaxed cursor-pointer transition-colors ${
-                                    topic.isCompleted ? "text-muted-foreground line-through decoration-2 decoration-indigo-300" : "font-medium"
-                                  }`}
-                                >
-                                  {topic.title}
-                                </label>
+                              <div key={topic._id} className="flex items-center justify-between gap-3 group/topic p-2 rounded-md hover:bg-gray-50 transition-colors">
+                                <div className="flex items-start gap-3">
+                                    <Checkbox 
+                                      id={topic._id} 
+                                      checked={topic.isCompleted}
+                                      onCheckedChange={(checked) => handleToggle(topic._id, checked as boolean)}
+                                      className="mt-1 h-6 w-6 border-2 border-black bg-white data-[state=checked]:bg-indigo-600 data-[state=checked]:text-white shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)] transition-all data-[state=checked]:shadow-none data-[state=checked]:translate-x-[1px] data-[state=checked]:translate-y-[1px]"
+                                    />
+                                    <label 
+                                      htmlFor={topic._id} 
+                                      className={`text-base leading-relaxed cursor-pointer transition-colors ${
+                                        topic.isCompleted ? "text-muted-foreground line-through decoration-2 decoration-indigo-300" : "font-medium"
+                                      }`}
+                                    >
+                                      {topic.title}
+                                    </label>
+                                </div>
+                                <div className="opacity-0 group-hover/topic:opacity-100 transition-opacity">
+                                    <FlashcardGenerator 
+                                        title={topic.title} 
+                                        sourceType="syllabus_topic" 
+                                        sourceId={topic._id}
+                                        trigger={
+                                            <Button variant="ghost" size="sm" className="h-8 px-2 text-xs font-bold text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 gap-1">
+                                                <BrainCircuit className="h-3 w-3" />
+                                                Study
+                                            </Button>
+                                        }
+                                    />
+                                </div>
                               </div>
                             ))}
                           </div>

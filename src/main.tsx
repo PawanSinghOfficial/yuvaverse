@@ -23,6 +23,7 @@ import NotebookLM from "./pages/NotebookLM.tsx";
 import Syllabus from "./pages/Syllabus.tsx";
 import Pomodoro from "./pages/Pomodoro";
 import Games from "./pages/Games";
+import Flashcards from "./pages/Flashcards";
 import "./types/global.d.ts";
 
 // Force light mode
@@ -68,8 +69,9 @@ createRoot(document.getElementById("root")!).render(
             {/* Protected Routes */}
             <Route element={<DashboardLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="resources" element={<Resources />} />
+                <Route path="flashcards" element={<Flashcards />} />
                 <Route path="/syllabus" element={<Syllabus />} />
-                <Route path="/resources" element={<Resources />} />
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/groups/:groupId" element={<GroupChat />} />
                 <Route path="/events" element={<Events />} />

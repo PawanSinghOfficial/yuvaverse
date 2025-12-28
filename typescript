@@ -1,70 +1,35 @@
-import React from 'react';
-import { cn } from "@/lib/utils";
-import { AvatarConfig } from './avatar/constants';
-import { AvatarFace } from './avatar/AvatarFace';
-import { AvatarBody } from './avatar/AvatarBody';
-import { AvatarHair } from './avatar/AvatarHair';
-import { AvatarAccessories } from './avatar/AvatarAccessories';
+import { BookCheck, ChevronRight, Trophy, BookOpen, Search, BrainCircuit } from "lucide-react";
+import { toast } from "sonner";
+import confetti from "canvas-confetti";
+import { FlashcardGenerator } from "@/components/FlashcardGenerator";
 
-export type { AvatarConfig };
-
-interface UserAvatarProps {
-  config: AvatarConfig;
-  className?: string;
-  pose?: "portrait" | "landscape";
-  size?: "sm" | "md" | "lg" | "xl" | "2xl";
-}
-
-export default function UserAvatar({ config, className, pose = "portrait", size = "md" }: UserAvatarProps) {
-  if (!config) {
-    return (
-      <div className={cn("rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold", 
-        size === "sm" && "w-8 h-8 text-xs",
-        size === "md" && "w-12 h-12 text-sm",
-        size === "lg" && "w-24 h-24 text-xl",
-        size === "xl" && "w-32 h-32 text-2xl",
-        size === "2xl" && "w-48 h-48 text-4xl",
-        className
-      )}>
-        ?
-      </div>
-    );
-  }
-
-  const sizePx = size === "sm" ? 32 : size === "md" ? 48 : size === "lg" ? 96 : size === "xl" ? 128 : 192;
-  const viewBox = pose === "portrait" ? "0 0 100 100" : "0 0 100 200";
-  
+export default function Syllabus() {
   return (
-    <div 
-      className={cn("relative overflow-hidden rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]", className)}
-      style={{ 
-        backgroundColor: config.backgroundColor,
-        width: sizePx,
-        height: sizePx,
-        borderRadius: pose === "portrait" ? "50%" : "16px"
-      }}
-    >
-      <svg viewBox={viewBox} className="w-full h-full">
-        <defs>
-          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="2" dy="2" stdDeviation="1" floodOpacity="0.3" />
-          </filter>
-        </defs>
-
-        {/* Body Group */}
-        <AvatarBody config={config} pose={pose} />
-
-        {/* Head Group */}
-        <g filter="url(#shadow)">
-          <AvatarFace config={config} />
-          
-          {/* Hair (Front) */}
-          <AvatarHair config={config} />
-
-          {/* Accessories */}
-          <AvatarAccessories config={config} />
-        </g>
-      </svg>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Resources</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Flashcard Generator</h2>
+          <p className="text-gray-600 mb-4">Create custom flashcards from your text content.</p>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Generate Flashcards
+          </button>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Text to Study Notes</h2>
+          <p className="text-gray-600 mb-4">Convert any text into structured study notes.</p>
+          <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            Create Notes
+          </button>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Quiz Generator</h2>
+          <p className="text-gray-600 mb-4">Generate quizzes from your study material.</p>
+          <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+            Generate Quiz
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

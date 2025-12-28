@@ -250,6 +250,21 @@ const schema = defineSchema(
       }), 
     }).index("by_notebook", ["notebookId"]),
 
+    flashcard_sets: defineTable({
+      userId: v.id("users"),
+      title: v.string(),
+      description: v.optional(v.string()),
+      sourceType: v.union(v.literal("resource"), v.literal("syllabus_topic"), v.literal("manual")),
+      sourceId: v.optional(v.string()), // ID of the resource or topic
+    }).index("by_user", ["userId"]),
+
+    flashcards: defineTable({
+      setId: v.id("flashcard_sets"),
+      front: v.string(),
+      back: v.string(),
+      order: v.number(),
+    }).index("by_set", ["setId"]),
+
     presence: defineTable({
       userId: v.id("users"),
       groupId: v.id("groups"),

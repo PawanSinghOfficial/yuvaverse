@@ -13,6 +13,7 @@ import type * as auth from "../auth.js";
 import type * as auth_emailOtp from "../auth/emailOtp.js";
 import type * as events from "../events.js";
 import type * as feedback from "../feedback.js";
+import type * as flashcards from "../flashcards.js";
 import type * as groups from "../groups.js";
 import type * as http from "../http.js";
 import type * as presence from "../presence.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   "auth/emailOtp": typeof auth_emailOtp;
   events: typeof events;
   feedback: typeof feedback;
+  flashcards: typeof flashcards;
   groups: typeof groups;
   http: typeof http;
   presence: typeof presence;
