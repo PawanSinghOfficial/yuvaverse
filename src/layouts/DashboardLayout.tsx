@@ -56,18 +56,23 @@ export default function DashboardLayout() {
 
   return (
     <SidebarProvider>
-      <AppSidebar onGuideClick={handleGuideClick} />
-      <main className="flex-1 flex flex-col min-h-screen overflow-hidden bg-background">
-        <div className="flex items-center gap-4 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
-          <SidebarTrigger />
-          <div className="flex-1" />
-          <LogoDropdown />
-        </div>
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
-           <Outlet />
-        </div>
-        <VayuuChat />
-      </main>
+      <div className="flex h-screen overflow-hidden bg-background">
+        <AppSidebar
+          onGuideClick={handleGuideClick}
+          className="flex-shrink-0 h-full w-72 border-r border-border/60 bg-secondary/10"
+        />
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex items-center gap-4 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
+            <SidebarTrigger />
+            <div className="flex-1" />
+            <LogoDropdown />
+          </div>
+          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent p-4 md:p-8">
+            <Outlet />
+          </div>
+          <VayuuChat />
+        </main>
+      </div>
       <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
     </SidebarProvider>
   );
