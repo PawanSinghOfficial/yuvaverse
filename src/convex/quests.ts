@@ -16,6 +16,25 @@ export const getToday = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayTime = today.getTime();
+
+    const dailyQuest = await ctx.db
+      .query("daily_quests")
+      .withIndex("by_user_date", (q) => q.eq("userId", userId).eq("date", todayTime))
+      .first();
+
+    return dailyQuest;
+  },
+});
+
+export const claimDailyBonus = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
 
     const today = new Date();

@@ -106,7 +106,7 @@ export const getSetCards = query({
     return await ctx.db
       .query("flashcards")
       .withIndex("by_set", (q) => q.eq("setId", args.setId))
-      .collect(); // Order isn't strictly guaranteed by index unless we sort in JS or add index on order
+      .collect();
   },
 });
 
