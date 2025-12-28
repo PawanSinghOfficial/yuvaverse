@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { internal } from "./_generated/api";
 
 const HEARTBEAT_TIMEOUT = 10000; // 10 seconds
 const LIBRARY_TIMEOUT = 60000; // 1 minute for library presence
@@ -99,6 +100,15 @@ export const updateFocusPresence = mutation({
         status: args.status,
         focusDuration: args.focusDuration,
         startTime: args.startTime,
+      });
+    }
+
+    // Update Daily Quest if status is focusing
+    if (args.status === "focusing") {
+      await ctx.scheduler.runAfter(0, internal.quests.updateProgress, {
+        userId,
+        questType: "join_library",
+        increment: 1,
       });
     }
   },

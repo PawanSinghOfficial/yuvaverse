@@ -8,13 +8,15 @@ const QUEST_TYPES = [
   { type: "math_win", title: "Win a Math Challenge", target: 1, xp: 30 },
   { type: "upload", title: "Upload a Resource", target: 1, xp: 50 },
   { type: "play_games", title: "Play 3 Games", target: 3, xp: 15 },
+  { type: "generate_flashcards", title: "Generate a Flashcard Set", target: 1, xp: 25 },
+  { type: "join_library", title: "Join The Library", target: 1, xp: 10 },
 ];
 
 export const getToday = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return null;
+    if (!userId) throw new Error("Unauthorized");
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -25,7 +27,21 @@ export const getToday = query({
       .withIndex("by_user_date", (q) => q.eq("userId", userId).eq("date", todayTime))
       .first();
 
-    return dailyQuest;
+    if (!dailyQuest) throw new Error("No quests found for today");
+    if (dailyQuest.rewardsClaimed) throw new Error("Rewards already claimed");
+
+    const allCompleted = dailyQuest.quests.every((q) => q.isCompleted);
+    if (!allCompleted) throw new Error("Quests not completed");
+
+    // Award Bonus
+    const BONUS_XP = 100;
+    const user = await ctx.db.get(userId);
+    if (user) {
+      await ctx.db.patch(userId, { points: (user.points || 0) + BONUS_XP });
+    }
+
+    await ctx.db.patch(dailyQuest._id, { rewardsClaimed: true });
+    return BONUS_XP;
   },
 });
 

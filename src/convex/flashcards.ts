@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query, action } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 
 export const generate = action({
   args: {
@@ -68,6 +68,13 @@ export const saveGeneratedSet = mutation({
         order: i,
       });
     }
+
+    // Update Daily Quest
+    await ctx.scheduler.runAfter(0, internal.quests.updateProgress, {
+      userId,
+      questType: "generate_flashcards",
+      increment: 1,
+    });
 
     return setId;
   },
