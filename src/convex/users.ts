@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { query, mutation, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
+import { internal } from "./_generated/api";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -204,6 +205,13 @@ export const completePomodoroSession = mutation({
       points: currentPoints + pointsEarned,
       pomodoroSessionsCompleted: currentCompleted + 1,
     });
+
+    // Update Daily Quest
+    await ctx.scheduler.runAfter(0, internal.quests.updateProgress, {
+        userId,
+        questType: "pomodoro",
+        increment: 1
+    });
     
     return pointsEarned;
   },
@@ -291,6 +299,21 @@ export const recordGameResult = mutation({
     }
 
     await ctx.db.patch(userId, patchData);
+
+    // Update Daily Quests
+    await ctx.scheduler.runAfter(0, internal.quests.updateProgress, {
+        userId,
+        questType: "any_game", // For "Play 3 Games"
+        increment: 1
+    });
+
+    if (args.win) {
+        await ctx.scheduler.runAfter(0, internal.quests.updateProgress, {
+            userId,
+            questType: `${args.gameId}_win`,
+            increment: 1
+        });
+    }
     
     return { 
       pointsAwarded, 

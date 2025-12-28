@@ -58,6 +58,21 @@ const schema = defineSchema(
       totalGamesWon: v.optional(v.number()),
     }).index("email", ["email"]).index("by_username", ["username"]), // index for the email. do not remove or modify
 
+    daily_quests: defineTable({
+      userId: v.id("users"),
+      date: v.number(), // Start of day timestamp
+      quests: v.array(v.object({
+        id: v.string(),
+        type: v.string(), // "pomodoro", "snake_win", "math_win", "upload", "play_games"
+        title: v.string(),
+        target: v.number(),
+        progress: v.number(),
+        isCompleted: v.boolean(),
+        xpReward: v.number(),
+      })),
+      rewardsClaimed: v.boolean(),
+    }).index("by_user_date", ["userId", "date"]),
+
     resources: defineTable({
       title: v.string(),
       description: v.optional(v.string()),

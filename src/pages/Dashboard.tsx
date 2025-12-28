@@ -15,6 +15,7 @@ import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DailyQuests } from "@/components/DailyQuests";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -392,6 +393,10 @@ export default function Dashboard() {
             </Card>
           )}
 
+          {/* Daily Quests Section */}
+          <DailyQuests />
+
+          {/* Recent Resources */}
           <Card className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
             <CardHeader>
               <CardTitle className="uppercase">Recent Resources</CardTitle>

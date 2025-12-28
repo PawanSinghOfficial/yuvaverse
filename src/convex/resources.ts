@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { internal } from "./_generated/api";
 
 export const list = query({
   args: { semester: v.optional(v.number()), search: v.optional(v.string()) },
@@ -275,6 +276,13 @@ export const create = mutation({
     // Award points for upload
     const currentPoints = user.points || 0;
     await ctx.db.patch(user._id, { points: currentPoints + 10 });
+
+    // Update Daily Quest
+    await ctx.scheduler.runAfter(0, internal.quests.updateProgress, {
+        userId,
+        questType: "upload",
+        increment: 1
+    });
   },
 });
 
