@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Gamepad2, Brain, Scissors, Calculator, Grid3X3, Sparkles } from "lucide-react";
@@ -213,6 +213,10 @@ const ArcadeBackground = () => {
 export default function Games() {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const { playSound } = useGameSounds();
+
+  useEffect(() => {
+    document.documentElement.classList.remove("dark");
+  }, []);
 
   const ActiveGame = GAMES.find(g => g.id === selectedGame)?.component;
 

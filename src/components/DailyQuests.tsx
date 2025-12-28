@@ -62,7 +62,7 @@ export function DailyQuests() {
   const allCompleted = dailyQuests.quests.every(q => q.isCompleted);
 
   return (
-    <Card className="bg-pink-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#ec4899] h-full flex flex-col">
+    <Card className="bg-pink-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#ec4899] h-full flex flex-col min-h-[420px]">
       <CardHeader>
         <CardTitle className="flex items-center justify-between uppercase text-pink-700 dark:text-pink-400">
           <div className="flex items-center gap-2">
@@ -76,21 +76,21 @@ export function DailyQuests() {
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col">
-        <div className="space-y-4 flex-1">
+      <CardContent className="flex-1 flex flex-col gap-6">
+        <div className="flex-1 space-y-4 overflow-visible">
           {dailyQuests.quests.map((quest) => (
             <motion.div
               key={quest.id}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className={`p-3 border-2 ${
+              className={`p-4 rounded-2xl border-2 ${
                 quest.isCompleted
                   ? "bg-green-100 border-green-600 dark:bg-green-900/20 dark:border-green-500"
                   : "bg-white border-border dark:bg-card"
-              } shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] transition-all`}
+              } shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] transition-all flex flex-col gap-3`}
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-start gap-3 flex-1 min-w-0">
                   {quest.isCompleted ? (
                     <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500" />
                   ) : (
@@ -105,13 +105,13 @@ export function DailyQuests() {
                     </p>
                   </div>
                 </div>
-                <span className="text-xs font-black bg-black text-white px-2 py-1">
+                <span className="text-xs font-black bg-black text-white px-3 py-1 rounded-full w-full sm:w-auto text-center">
                   {quest.progress}/{quest.target}
                 </span>
               </div>
-              <Progress 
-                value={(quest.progress / quest.target) * 100} 
-                className="h-2 border border-black/20" 
+              <Progress
+                value={(quest.progress / quest.target) * 100}
+                className="h-2 w-full rounded-full border border-black/20"
                 indicatorClassName={quest.isCompleted ? "bg-green-500" : "bg-pink-500"}
               />
             </motion.div>
@@ -124,7 +124,7 @@ export function DailyQuests() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-6"
+              className="mt-auto"
             >
               <Button 
                 onClick={handleClaimBonus} 
