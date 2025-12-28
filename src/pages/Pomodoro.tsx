@@ -41,6 +41,7 @@ import {
 import { toast } from "sonner";
 import { VayuuTease } from "@/components/VayuuTease";
 import { GrowingPlant } from "@/components/pomodoro/GrowingPlant";
+import { LibrarySeating } from "@/components/pomodoro/LibrarySeating";
 
 const AMBIENT_SOUNDS = [
   {
@@ -106,6 +107,7 @@ export default function Pomodoro() {
   const user = useQuery(api.users.currentUser);
   const completeSession = useMutation(api.users.completePomodoroSession);
   const abortSession = useMutation(api.users.abortPomodoroSession);
+  const updatePresence = useMutation(api.presence.updateFocusPresence);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const successAudioRef = useRef<HTMLAudioElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -194,6 +196,25 @@ export default function Pomodoro() {
       document.title = "YuvaVerse";
     };
   }, [isActive, timeLeft]);
+
+  // Add Presence Heartbeat
+  useEffect(() => {
+    const sendHeartbeat = () => {
+      updatePresence({
+        status: isActive ? "focusing" : "idle",
+        focusDuration: isActive ? totalTime / 60 : undefined,
+        startTime: isActive ? (Date.now() - ((totalTime - timeLeft) * 1000)) : undefined,
+      });
+    };
+
+    // Send immediately on mount/change
+    sendHeartbeat();
+
+    // Send every 30 seconds
+    const interval = setInterval(sendHeartbeat, 30000);
+
+    return () => clearInterval(interval);
+  }, [isActive, totalTime, timeLeft, updatePresence]);
 
   // Timer Logic
   useEffect(() => {
@@ -690,6 +711,16 @@ export default function Pomodoro() {
             </Card>
         </motion.div>
       </div>
+
+      {/* Add Library Seating Component */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="w-full relative z-10"
+      >
+        <LibrarySeating />
+      </motion.div>
 
       {/* Completion Dialog */}
       <Dialog open={showCompletion} onOpenChange={setShowCompletion}>

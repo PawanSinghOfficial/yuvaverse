@@ -273,6 +273,14 @@ const schema = defineSchema(
     })
     .index("by_group_updated", ["groupId", "updatedAt"])
     .index("by_user_group", ["userId", "groupId"]),
+
+    focus_presence: defineTable({
+      userId: v.id("users"),
+      updatedAt: v.number(),
+      status: v.union(v.literal("focusing"), v.literal("break"), v.literal("idle")),
+      focusDuration: v.optional(v.number()), // Total duration in minutes
+      startTime: v.optional(v.number()), // When they started
+    }).index("by_updated", ["updatedAt"]),
   },
   {
     schemaValidation: false,

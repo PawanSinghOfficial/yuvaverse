@@ -1,35 +1,8 @@
-import { BookCheck, ChevronRight, Trophy, BookOpen, Search, BrainCircuit } from "lucide-react";
-import { toast } from "sonner";
-import confetti from "canvas-confetti";
-import { FlashcardGenerator } from "@/components/FlashcardGenerator";
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
-export default function Syllabus() {
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Resources</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Flashcard Generator</h2>
-          <p className="text-gray-600 mb-4">Create custom flashcards from your text content.</p>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Generate Flashcards
-          </button>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Text to Study Notes</h2>
-          <p className="text-gray-600 mb-4">Convert any text into structured study notes.</p>
-          <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            Create Notes
-          </button>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Quiz Generator</h2>
-          <p className="text-gray-600 mb-4">Generate quizzes from your study material.</p>
-          <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-            Generate Quiz
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+const HEARTBEAT_TIMEOUT = 10000; // 10 seconds
+
+export const heartbeat = mutation({
+//...

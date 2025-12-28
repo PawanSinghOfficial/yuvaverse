@@ -3,6 +3,7 @@ import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 const HEARTBEAT_TIMEOUT = 10000; // 10 seconds
+const LIBRARY_TIMEOUT = 60000; // 1 minute for library presence
 
 export const heartbeat = mutation({
   args: {
@@ -64,5 +65,70 @@ export const getGroupPresence = query({
     );
 
     return presenceWithUser.filter(p => p.user !== null);
+  },
+});
+
+// --- Focus Mode / Library Presence ---
+
+export const updateFocusPresence = mutation({
+  args: {
+    status: v.union(v.literal("focusing"), v.literal("break"), v.literal("idle")),
+    focusDuration: v.optional(v.number()),
+    startTime: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return;
+
+    const existing = await ctx.db
+      .query("focus_presence")
+      .filter((q) => q.eq(q.field("userId"), userId))
+      .first();
+
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        updatedAt: Date.now(),
+        status: args.status,
+        focusDuration: args.focusDuration,
+        startTime: args.startTime,
+      });
+    } else {
+      await ctx.db.insert("focus_presence", {
+        userId,
+        updatedAt: Date.now(),
+        status: args.status,
+        focusDuration: args.focusDuration,
+        startTime: args.startTime,
+      });
+    }
+  },
+});
+
+export const getLibraryUsers = query({
+  args: {},
+  handler: async (ctx) => {
+    const now = Date.now();
+    
+    const activeUsers = await ctx.db
+      .query("focus_presence")
+      .withIndex("by_updated", (q) => q.gt("updatedAt", now - LIBRARY_TIMEOUT))
+      .collect();
+
+    const usersWithInfo = await Promise.all(
+      activeUsers.map(async (p) => {
+        const user = await ctx.db.get(p.userId);
+        return {
+          ...p,
+          user: user ? {
+            _id: user._id,
+            name: user.name,
+            image: user.image,
+            username: user.username,
+          } : null
+        };
+      })
+    );
+
+    return usersWithInfo.filter((u) => u.user !== null);
   },
 });
