@@ -78,7 +78,7 @@ export function DailyQuests() {
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-6">
         <div className="flex-1 space-y-4 overflow-visible">
-          {dailyQuests.quests.map((quest) => (
+          {dailyQuests.quests.slice(0, 3).map((quest) => (
             <motion.div
               key={quest.id}
               initial={{ opacity: 0, x: -20 }}

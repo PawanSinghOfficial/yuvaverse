@@ -192,7 +192,7 @@ export default function Groups() {
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 space-y-8 w-full">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Study & Social Groups</h1>
