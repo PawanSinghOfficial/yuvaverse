@@ -52,9 +52,10 @@ export default function Resources() {
 
   const resources = useQuery(api.resources.list, { search: debouncedSearch === "" ? undefined : debouncedSearch });
   
-  // Extract unique subjects
-  const subjects = resources 
-    ? Array.from(new Set(resources.map(r => r.subject))).sort()
+  // Extract unique subjects with codes
+  const uniqueSubjects = resources 
+    ? Array.from(new Map(resources.map(r => [r.subject, r.subjectCode])).entries())
+        .sort((a, b) => a[0].localeCompare(b[0]))
     : [];
 
   const filteredResources = resources?.filter(r => 
@@ -195,8 +196,10 @@ export default function Resources() {
                 </SelectTrigger>
                 <SelectContent>
                    <SelectItem value="all">All Subjects</SelectItem>
-                   {subjects.map(sub => (
-                      <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                   {uniqueSubjects.map(([name, code]) => (
+                      <SelectItem key={name} value={name}>
+                        {name} {code ? `(${code})` : ""}
+                      </SelectItem>
                    ))}
                 </SelectContent>
              </Select>

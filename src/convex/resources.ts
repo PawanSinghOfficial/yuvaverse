@@ -29,6 +29,15 @@ export const list = query({
       resources = await ctx.db.query("resources").order("desc").collect();
     }
 
+    // Fetch all syllabus subjects to map codes
+    const syllabusSubjects = await ctx.db.query("syllabus_subjects").collect();
+    const subjectCodeMap = new Map<string, string>();
+    for (const sub of syllabusSubjects) {
+        if (sub.code) {
+            subjectCodeMap.set(sub.name, sub.code);
+        }
+    }
+
     // Enrich with uploader username and file URL
     return await Promise.all(resources.map(async (r) => {
       const uploader = await ctx.db.get(r.uploaderId);
@@ -42,6 +51,7 @@ export const list = query({
         hasLiked: false, // Will be handled in frontend by checking user ID against array if needed, or we can do it here if we pass userId. 
         // For simplicity in list, we return the arrays or counts. 
         // Let's return the arrays so frontend can check `hasLiked`.
+        subjectCode: subjectCodeMap.get(r.subject),
       };
     }));
   },
