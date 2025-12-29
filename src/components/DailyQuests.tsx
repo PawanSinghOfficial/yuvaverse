@@ -41,17 +41,17 @@ export function DailyQuests() {
 
   if (!dailyQuests) {
     return (
-      <Card className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 uppercase">
-            <Target className="h-6 w-6" />
+      <Card className="border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)]">
+        <CardHeader className="p-4 pb-2">
+          <CardTitle className="flex items-center gap-2 uppercase text-base">
+            <Target className="h-5 w-5" />
             Daily Quests
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4 animate-pulse">
+        <CardContent className="p-4 pt-0">
+          <div className="space-y-2 animate-pulse">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-12 bg-muted rounded-md" />
+              <div key={i} className="h-10 bg-muted rounded-md" />
             ))}
           </div>
         </CardContent>
@@ -62,11 +62,11 @@ export function DailyQuests() {
   const allCompleted = dailyQuests.quests.every(q => q.isCompleted);
 
   return (
-    <Card className="bg-pink-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#ec4899] flex flex-col">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center justify-between uppercase text-pink-700 dark:text-pink-400 text-lg">
+    <Card className="bg-pink-50 dark:bg-card border-2 border-border shadow-[4px_4px_0px_0px_#ec4899] flex flex-col">
+      <CardHeader className="p-3 pb-1">
+        <CardTitle className="flex items-center justify-between uppercase text-pink-700 dark:text-pink-400 text-base">
           <div className="flex items-center gap-2">
-            <Target className="h-5 w-5" />
+            <Target className="h-4 w-4" />
             Daily Quests
           </div>
           {dailyQuests.rewardsClaimed && (
@@ -76,42 +76,42 @@ export function DailyQuests() {
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        <div className="space-y-2 overflow-visible">
+      <CardContent className="p-3 flex flex-col gap-2">
+        <div className="space-y-1.5 overflow-visible">
           {dailyQuests.quests.slice(0, 3).map((quest) => (
             <motion.div
               key={quest.id}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className={`p-3 rounded-xl border-2 ${
+              className={`p-2 rounded-lg border-2 ${
                 quest.isCompleted
                   ? "bg-green-100 border-green-600 dark:bg-green-900/20 dark:border-green-500"
                   : "bg-white border-border dark:bg-card"
-              } shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)] transition-all flex flex-col gap-2`}
+              } shadow-[1px_1px_0px_0px_rgba(0,0,0,0.1)] transition-all flex flex-col gap-1`}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <div className="flex items-start gap-2 flex-1 min-w-0">
                   {quest.isCompleted ? (
-                    <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500 mt-0.5" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-green-600 dark:text-green-500 mt-0.5" />
                   ) : (
-                    <Circle className="h-4 w-4 text-muted-foreground mt-0.5" />
+                    <Circle className="h-3.5 w-3.5 text-muted-foreground mt-0.5" />
                   )}
                   <div>
-                    <p className={`font-bold text-sm ${quest.isCompleted ? "line-through text-muted-foreground" : ""}`}>
+                    <p className={`font-bold text-xs ${quest.isCompleted ? "line-through text-muted-foreground" : ""}`}>
                       {quest.title}
                     </p>
-                    <p className="text-[10px] font-bold text-pink-600 dark:text-pink-400">
+                    <p className="text-[9px] font-bold text-pink-600 dark:text-pink-400">
                       +{quest.xpReward} XP
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] font-black bg-black text-white px-2 py-0.5 rounded-full w-fit text-center">
+                <span className="text-[9px] font-black bg-black text-white px-1.5 py-0.5 rounded-full w-fit text-center">
                   {quest.progress}/{quest.target}
                 </span>
               </div>
               <Progress
                 value={(quest.progress / quest.target) * 100}
-                className="h-1.5 w-full rounded-full border border-black/20"
+                className="h-1 w-full rounded-full border border-black/20"
                 indicatorClassName={quest.isCompleted ? "bg-green-500" : "bg-pink-500"}
               />
             </motion.div>
@@ -124,16 +124,16 @@ export function DailyQuests() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-1"
+              className="mt-0"
             >
               <Button 
                 onClick={handleClaimBonus} 
                 disabled={isClaiming}
-                className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-black uppercase tracking-wider border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all h-10 text-sm"
+                className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-black uppercase tracking-wider border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all h-8 text-xs"
               >
                 {isClaiming ? "Claiming..." : (
                   <span className="flex items-center gap-2">
-                    <Gift className="h-4 w-4" />
+                    <Gift className="h-3.5 w-3.5" />
                     Claim Bonus (+100 XP)
                   </span>
                 )}
