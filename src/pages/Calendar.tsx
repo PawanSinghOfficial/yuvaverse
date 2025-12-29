@@ -85,7 +85,7 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-8 bg-pink-50 dark:bg-background min-h-full w-full">
+    <div className="p-4 md:p-8 space-y-8 bg-pink-50 dark:bg-background min-h-full w-full flex flex-col">
       <div className="flex flex-col gap-2">
         <h1 className="text-4xl font-black tracking-tighter uppercase">Calendar & To-Do</h1>
         <p className="text-lg font-medium text-muted-foreground border border-border bg-white dark:bg-card p-2 inline-block shadow-[4px_4px_0px_0px_var(--shadow)]">
@@ -93,7 +93,7 @@ export default function CalendarPage() {
         </p>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-[auto_1fr]">
+      <div className="grid gap-8 md:grid-cols-[auto_1fr] flex-1">
         <Card className="h-fit border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)] bg-card">
           <CardContent className="p-4">
             <CalendarComponent
