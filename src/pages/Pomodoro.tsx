@@ -469,7 +469,7 @@ export default function Pomodoro() {
   };
 
   return (
-    <div ref={containerRef} className={cn("p-8 min-h-full w-full flex flex-col items-center justify-center space-y-8 relative overflow-y-auto transition-colors duration-1000", pageBackground)}>
+    <div ref={containerRef} className={cn("p-8 min-h-full w-full flex flex-col items-center justify-center space-y-8 relative overflow-y-auto transition-colors duration-1000 border-4 border-black", pageBackground)}>
       <VayuuTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
       
       {/* Hidden Canvas and Video for PiP */}

@@ -42,7 +42,7 @@ export default function NotebookLM() {
   };
 
   return (
-    <div className="h-full w-full flex bg-background overflow-hidden">
+    <div className="h-full w-full flex bg-background overflow-hidden border-4 border-black">
       {/* Sidebar - Notebooks List */}
       <div className="w-72 border-r-2 border-border bg-slate-50/50 flex flex-col hidden md:flex">
         <div className="p-6 border-b-2 border-border flex items-center justify-between bg-white">
