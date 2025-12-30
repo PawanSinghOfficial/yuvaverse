@@ -42,23 +42,23 @@ export default function NotebookLM() {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex bg-background overflow-hidden">
+    <div className="h-full w-full flex bg-background overflow-hidden">
       {/* Sidebar - Notebooks List */}
-      <div className="w-72 border-r bg-slate-50/50 flex flex-col hidden md:flex">
-        <div className="p-6 border-b flex items-center justify-between bg-white">
-            <h2 className="font-black text-xl flex items-center gap-2 tracking-tight">
+      <div className="w-72 border-r-2 border-border bg-slate-50/50 flex flex-col hidden md:flex">
+        <div className="p-6 border-b-2 border-border flex items-center justify-between bg-white">
+            <h2 className="font-black text-xl flex items-center gap-2 tracking-tight uppercase">
                 <Sparkles className="h-5 w-5 text-purple-600" />
                 AI Notebooks
             </h2>
             <Dialog open={isCreating} onOpenChange={setIsCreating}>
                 <DialogTrigger asChild>
-                    <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600">
+                    <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600 border-2 border-transparent hover:border-purple-200 hover:shadow-sm transition-all">
                         <Plus className="h-5 w-5" />
                     </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                     <DialogHeader>
-                        <DialogTitle>Create New Notebook</DialogTitle>
+                        <DialogTitle className="text-2xl font-black uppercase">Create New Notebook</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleCreateNotebook} className="space-y-4 mt-4">
                         <Input 
@@ -66,8 +66,9 @@ export default function NotebookLM() {
                             value={newNotebookTitle}
                             onChange={(e) => setNewNotebookTitle(e.target.value)}
                             autoFocus
+                            className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                         />
-                        <Button type="submit" className="w-full font-bold">Create Notebook</Button>
+                        <Button type="submit" className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Create Notebook</Button>
                     </form>
                 </DialogContent>
             </Dialog>
@@ -78,14 +79,14 @@ export default function NotebookLM() {
                     <div 
                         key={notebook._id}
                         onClick={() => setSelectedNotebookId(notebook._id)}
-                        className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all border ${
+                        className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all border-2 ${
                             selectedNotebookId === notebook._id 
-                                ? "bg-white border-purple-200 shadow-md ring-1 ring-purple-100" 
+                                ? "bg-white border-purple-600 shadow-[4px_4px_0px_0px_rgba(147,51,234,0.2)]" 
                                 : "bg-transparent border-transparent hover:bg-white hover:border-slate-200 hover:shadow-sm"
                         }`}
                     >
                         <div className="flex items-center gap-3 truncate">
-                            <span className="text-2xl bg-slate-100 p-1.5 rounded-lg">{notebook.icon || "📓"}</span>
+                            <span className="text-2xl bg-slate-100 p-1.5 rounded-lg border border-slate-200">{notebook.icon || "📓"}</span>
                             <div className="flex flex-col truncate">
                                 <span className={`font-bold truncate ${selectedNotebookId === notebook._id ? "text-purple-900" : "text-slate-700"}`}>
                                     {notebook.title}
@@ -112,9 +113,9 @@ export default function NotebookLM() {
                     </div>
                 ))}
                 {notebooks?.length === 0 && (
-                    <div className="text-center p-8 border-2 border-dashed rounded-xl bg-slate-50/50">
+                    <div className="text-center p-8 border-4 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
                         <p className="text-sm text-muted-foreground font-medium">No notebooks yet.</p>
-                        <Button variant="link" onClick={() => setIsCreating(true)} className="text-purple-600">Create one</Button>
+                        <Button variant="link" onClick={() => setIsCreating(true)} className="text-purple-600 font-bold">Create one</Button>
                     </div>
                 )}
             </div>
@@ -127,14 +128,14 @@ export default function NotebookLM() {
             <NotebookView notebookId={selectedNotebookId} />
         ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-50/30">
-                <div className="h-24 w-24 bg-purple-100 rounded-full flex items-center justify-center mb-8 animate-bounce shadow-xl border-4 border-white">
+                <div className="h-24 w-24 bg-purple-100 rounded-full flex items-center justify-center mb-8 animate-bounce shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] border-4 border-white">
                     <Sparkles className="h-12 w-12 text-purple-600" />
                 </div>
-                <h1 className="text-4xl font-black mb-4 tracking-tight text-slate-900">Welcome to AI Notebook</h1>
-                <p className="text-slate-500 max-w-md mb-8 text-lg leading-relaxed">
+                <h1 className="text-4xl font-black mb-4 tracking-tight text-slate-900 uppercase">Welcome to AI Notebook</h1>
+                <p className="text-slate-500 max-w-md mb-8 text-lg leading-relaxed font-medium">
                     Select a notebook from the sidebar or create a new one to start analyzing your documents with AI power.
                 </p>
-                <Button onClick={() => setIsCreating(true)} size="lg" className="font-bold shadow-lg h-12 px-8 text-base bg-purple-600 hover:bg-purple-700">
+                <Button onClick={() => setIsCreating(true)} size="lg" className="font-bold shadow-[4px_4px_0px_0px_rgba(147,51,234,0.3)] h-12 px-8 text-base bg-purple-600 hover:bg-purple-700 border-2 border-purple-800">
                     <Plus className="mr-2 h-5 w-5" /> Create First Notebook
                 </Button>
             </div>

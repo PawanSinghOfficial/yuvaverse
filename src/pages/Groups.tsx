@@ -192,80 +192,85 @@ export default function Groups() {
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-8 w-full">
+    <div className="p-4 md:p-8 space-y-8 w-full min-h-full bg-pink-50 dark:bg-background">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Study & Social Groups</h1>
-          <p className="text-muted-foreground mt-2">Connect with peers, join discussions, and collaborate.</p>
+          <h1 className="text-4xl font-black tracking-tighter uppercase">Study & Social Groups</h1>
+          <p className="text-lg font-medium text-muted-foreground border border-border bg-white dark:bg-card p-2 inline-block shadow-[4px_4px_0px_0px_var(--shadow)] mt-2">
+            Connect with peers, join discussions, and collaborate.
+          </p>
         </div>
         
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
               <Plus className="mr-2 h-4 w-4" />
               Create Group
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <DialogHeader>
-              <DialogTitle>Create a Group</DialogTitle>
+              <DialogTitle className="text-2xl font-black uppercase">Create a Group</DialogTitle>
               <DialogDescription>Start a new community for study or social activities.</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="image">Group Image (Optional)</Label>
+                <Label htmlFor="image" className="font-bold uppercase">Group Image (Optional)</Label>
                 <div className="flex items-center gap-4">
                     <Input 
                         id="image" 
                         type="file" 
                         accept="image/*"
                         onChange={(e) => setFormData({...formData, image: e.target.files?.[0] || null})}
-                        className="cursor-pointer"
+                        className="cursor-pointer border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                     />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="name">Group Name</Label>
+                <Label htmlFor="name" className="font-bold uppercase">Group Name</Label>
                 <Input 
                   id="name" 
                   required 
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                   placeholder="e.g., React Learners"
+                  className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description" className="font-bold uppercase">Description</Label>
                 <Textarea 
                   id="description" 
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   placeholder="What is this group about?"
+                  className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="type">Type</Label>
+                <Label htmlFor="type" className="font-bold uppercase">Type</Label>
                 <Select 
                   value={formData.type} 
                   onValueChange={(v: "study" | "social") => setFormData({...formData, type: v})}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="border-2 border-black">
                     <SelectItem value="study">Study Group</SelectItem>
                     <SelectItem value="social">Social Group</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+              <div className="flex items-center justify-between rounded-lg border-2 border-black p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-white">
                 <div className="space-y-0.5">
-                  <Label>Private Group</Label>
+                  <Label className="font-bold uppercase">Private Group</Label>
                   <p className="text-xs text-muted-foreground">Only invited members can join</p>
                 </div>
                 <Switch 
                   checked={formData.isPrivate}
                   onCheckedChange={(c) => setFormData({...formData, isPrivate: c})}
+                  className="data-[state=checked]:bg-black"
                 />
               </div>
               {formData.isPrivate && (
@@ -278,11 +283,12 @@ export default function Groups() {
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
                     placeholder="Set a password"
+                    className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                   />
                 </div>
               )}
               <DialogFooter>
-                <Button type="submit" disabled={isCreating}>
+                <Button type="submit" disabled={isCreating} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Create Group
                 </Button>
@@ -292,9 +298,9 @@ export default function Groups() {
         </Dialog>
 
         <Dialog open={isJoinDialogOpen} onOpenChange={setIsJoinDialogOpen}>
-          <DialogContent>
+          <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <DialogHeader>
-              <DialogTitle>Enter Password</DialogTitle>
+              <DialogTitle className="text-2xl font-black uppercase">Enter Password</DialogTitle>
               <DialogDescription>This group is private. Please enter the password to join.</DialogDescription>
             </DialogHeader>
             <Input 
@@ -302,43 +308,44 @@ export default function Groups() {
               value={joinPassword} 
               onChange={(e) => setJoinPassword(e.target.value)}
               placeholder="Password"
+              className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             />
             <DialogFooter>
-              <Button onClick={handlePrivateJoin}>Join</Button>
+              <Button onClick={handlePrivateJoin} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Join</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
-          <DialogContent>
+          <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <DialogHeader>
-              <DialogTitle>Report Group</DialogTitle>
+              <DialogTitle className="text-2xl font-black uppercase">Report Group</DialogTitle>
               <DialogDescription>Please explain why you are reporting this group. Admins will review your report.</DialogDescription>
             </DialogHeader>
             <Textarea 
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
               placeholder="Reason for reporting (e.g., inappropriate content, spam)..."
-              className="min-h-[100px]"
+              className="min-h-[100px] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             />
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsReportDialogOpen(false)}>Cancel</Button>
-              <Button variant="destructive" onClick={handleReportSubmitClick}>Submit Report</Button>
+              <Button variant="outline" onClick={() => setIsReportDialogOpen(false)} className="font-bold border-2 border-black">Cancel</Button>
+              <Button variant="destructive" onClick={handleReportSubmitClick} className="font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Submit Report</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         <AlertDialog open={isConfirmReportOpen} onOpenChange={setIsConfirmReportOpen}>
-          <AlertDialogContent>
+          <AlertDialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <AlertDialogHeader>
-              <AlertDialogTitle>Confirm Report</AlertDialogTitle>
+              <AlertDialogTitle className="text-2xl font-black uppercase">Confirm Report</AlertDialogTitle>
               <AlertDialogDescription>
                 Are you sure you want to report this group? False reporting may lead to account restrictions.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmReport} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              <AlertDialogCancel className="font-bold border-2 border-black">Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmReport} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 Confirm Report
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -354,7 +361,7 @@ export default function Groups() {
           const canDelete = user?.role === "admin" && reportCount >= 2;
 
           return (
-            <Card key={group._id} className="flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 relative group">
+            <Card key={group._id} className="flex flex-col overflow-hidden border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all relative group bg-card">
               {isReported && (
                 <div className="absolute top-2 right-2 z-10 animate-pulse">
                    <div className="bg-red-500 text-white text-[10px] font-black uppercase px-2 py-1 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-1">
@@ -363,7 +370,7 @@ export default function Groups() {
                    </div>
                 </div>
               )}
-              <div className="h-24 bg-gradient-to-r from-primary/20 to-primary/5 relative">
+              <div className="h-24 bg-gradient-to-r from-primary/20 to-primary/5 relative border-b-2 border-black">
                  {group.imageUrl ? (
                     <img src={group.imageUrl} alt={group.name} className="w-full h-full object-cover" />
                  ) : (
@@ -372,23 +379,23 @@ export default function Groups() {
                     </div>
                  )}
               </div>
-              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2 relative -mt-6">
-                <div className="space-y-1 bg-card/80 backdrop-blur p-2 rounded-lg shadow-sm">
-                  <CardTitle className="text-base font-medium">{group.name}</CardTitle>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2 relative -mt-6 px-4">
+                <div className="space-y-1 bg-white dark:bg-card border-2 border-black p-2 rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <CardTitle className="text-base font-black uppercase">{group.name}</CardTitle>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground font-bold">
                     {group.isPrivate ? <Lock className="h-3 w-3" /> : <Globe className="h-3 w-3" />}
                     <span className="capitalize">{group.type} Group</span>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="flex-1 flex flex-col pt-4">
-                <p className="text-sm text-muted-foreground mt-2 line-clamp-2 flex-1">
+              <CardContent className="flex-1 flex flex-col pt-4 px-4 pb-4">
+                <p className="text-sm text-muted-foreground mt-2 line-clamp-2 flex-1 font-medium">
                   {group.description || "No description provided."}
                 </p>
                 <div className="flex gap-2 mt-4">
                     <Button 
-                      className="flex-1" 
-                      variant={member ? "secondary" : "outline"}
+                      className="flex-1 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all" 
+                      variant={member ? "secondary" : "default"}
                       onClick={() => {
                         if (member) {
                           navigate(`/groups/${group._id}`);
@@ -414,7 +421,7 @@ export default function Groups() {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 border-2 border-transparent hover:border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
                             onClick={() => openReportDialog(group._id)}
                             title="Report Group"
                         >
@@ -427,8 +434,10 @@ export default function Groups() {
           );
         })}
          {groups?.length === 0 && (
-            <div className="col-span-full text-center py-12 text-muted-foreground">
-                No groups found. Create one to get started!
+            <div className="col-span-full text-center py-12 text-muted-foreground border-4 border-dashed border-black/20 rounded-xl bg-white/50">
+                <Users className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                <p className="text-xl font-bold">No groups found.</p>
+                <p>Create one to get started!</p>
             </div>
         )}
       </div>

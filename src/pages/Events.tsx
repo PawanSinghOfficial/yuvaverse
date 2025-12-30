@@ -87,11 +87,13 @@ export default function Events() {
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-8 w-full">
+    <div className="p-4 md:p-8 space-y-8 w-full min-h-full bg-pink-50 dark:bg-background">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-4xl font-black tracking-tighter uppercase">Campus Events</h1>
-          <p className="text-muted-foreground mt-2 font-medium">Stay updated with society meetings, workshops, and fests.</p>
+          <p className="text-lg font-medium text-muted-foreground border border-border bg-white dark:bg-card p-2 inline-block shadow-[4px_4px_0px_0px_var(--shadow)] mt-2">
+            Stay updated with society meetings, workshops, and fests.
+          </p>
         </div>
         
         {user?.role === "admin" && (
