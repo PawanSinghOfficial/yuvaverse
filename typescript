@@ -1,8 +1,1 @@
-import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
-
-const HEARTBEAT_TIMEOUT = 10000; // 10 seconds
-
-export const heartbeat = mutation({
-//...
+<h4 className="text-sm font-bold truncate text-slate-800" title={source.title}>{source.title}</h4>

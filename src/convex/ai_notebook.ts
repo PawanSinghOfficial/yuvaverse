@@ -1,8 +1,92 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalMutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { internal } from "./_generated/api";
 
 // Notebooks
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+export const addSource = mutation({
+  args: {
+    notebookId: v.id("ai_notebooks"),
+    title: v.string(),
+    type: v.string(),
+    content: v.optional(v.string()),
+    fileId: v.optional(v.id("_storage")),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    // Simple mock summary generation
+    const summary = args.content 
+        ? `Summary of ${args.title}: ${args.content.substring(0, 100)}...` 
+        : "Processing document content...";
+
+    await ctx.db.insert("ai_sources", {
+      notebookId: args.notebookId,
+      title: args.title,
+      type: args.type,
+      content: args.content,
+      fileId: args.fileId,
+      summary: summary,
+      isProcessing: false,
+    });
+  },
+});
+=======
+export const addSource = mutation({
+  args: {
+    notebookId: v.id("ai_notebooks"),
+    title: v.string(),
+    type: v.string(),
+    content: v.optional(v.string()),
+    fileId: v.optional(v.id("_storage")),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const isPdf = args.type === "pdf" && args.fileId;
+    
+    // Simple mock summary generation
+    const summary = args.content 
+        ? `Summary of ${args.title}: ${args.content.substring(0, 100)}...` 
+        : isPdf ? "Processing PDF content..." : "No content available";
+
+    const sourceId = await ctx.db.insert("ai_sources", {
+      notebookId: args.notebookId,
+      title: args.title,
+      type: args.type,
+      content: args.content || "",
+      fileId: args.fileId,
+      summary: summary,
+      isProcessing: isPdf ? true : false,
+    });
+
+    if (isPdf && args.fileId) {
+      await ctx.scheduler.runAfter(0, internal.ai_notebook_actions.processPdfAction, {
+        sourceId,
+        fileId: args.fileId,
+      });
+    }
+  },
+});
+
+export const updateSourceContent = internalMutation({
+  args: {
+    sourceId: v.id("ai_sources"),
+    content: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const summary = `Summary: ${args.content.substring(0, 150)}...`;
+    await ctx.db.patch(args.sourceId, {
+      content: args.content,
+      summary: summary,
+      isProcessing: false,
+    });
+  },
+});
 export const createNotebook = mutation({
   args: {
     title: v.string(),

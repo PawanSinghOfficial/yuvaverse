@@ -32,9 +32,17 @@ export function SourcesPanel({ notebookId, isOpen }: { notebookId: Id<"ai_notebo
                 <div className="space-y-3">
                     <AddSourceButton notebookId={notebookId} />
                     {sources?.map((source) => (
-                        <Card key={source._id} className="p-3 hover:bg-slate-50 transition-all cursor-pointer border-l-4 border-l-transparent hover:border-l-purple-500 group shadow-sm hover:shadow-md">
+                        <Card key={source._id} className="p-3 hover:bg-slate-50 transition-all cursor-pointer border-l-4 border-l-transparent hover:border-l-purple-500 group shadow-sm hover:shadow-md relative overflow-hidden">
+                            {source.isProcessing && (
+                                <div className="absolute top-0 right-0 p-1">
+                                    <span className="flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                                    </span>
+                                </div>
+                            )}
                             <div className="flex items-start gap-3">
-                                <div className="mt-1 p-1.5 bg-slate-100 rounded-md">
+                                <div className="mt-1 p-1.5 bg-slate-100 rounded-md" title={source.summary || "No summary available"}>
                                     {source.type === "pdf" ? (
                                         <FileText className="h-4 w-4 text-red-500" />
                                     ) : source.type === "url" ? (
@@ -44,13 +52,24 @@ export function SourcesPanel({ notebookId, isOpen }: { notebookId: Id<"ai_notebo
                                     )}
                                 </div>
                                 <div className="flex-1 overflow-hidden">
-                                    <h4 className="text-sm font-bold truncate text-slate-800" title={source.title}>{source.title}</h4>
-                                    <p className="text-xs text-muted-foreground truncate capitalize">{source.type} Source</p>
+                                    <h4 className="text-sm font-bold truncate text-slate-800" title={source.summary || source.title}>{source.title}</h4>
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-xs text-muted-foreground truncate capitalize">{source.type} Source</p>
+                                        {source.isProcessing && (
+                                            <span className="text-[10px] font-bold px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded-full animate-pulse">
+                                                Processing...
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 <Button 
                                     variant="ghost" 
                                     size="icon" 
                                     className="h-6 w-6 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        // Add delete functionality here if needed, or keep the menu
+                                    }}
                                 >
                                     <MoreVertical className="h-3 w-3" />
                                 </Button>
