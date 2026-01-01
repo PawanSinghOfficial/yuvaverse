@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { FileText, Link as LinkIcon, Plus, MoreVertical, BookOpen } from "lucide-react";
+import { FileText, Link as LinkIcon, Plus, MoreVertical, BookOpen, Upload, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -35,7 +35,13 @@ export function SourcesPanel({ notebookId, isOpen }: { notebookId: Id<"ai_notebo
                         <Card key={source._id} className="p-3 hover:bg-slate-50 transition-all cursor-pointer border-l-4 border-l-transparent hover:border-l-purple-500 group shadow-sm hover:shadow-md">
                             <div className="flex items-start gap-3">
                                 <div className="mt-1 p-1.5 bg-slate-100 rounded-md">
-                                    {source.type === "pdf" ? <FileText className="h-4 w-4 text-red-500" /> : <LinkIcon className="h-4 w-4 text-blue-500" />}
+                                    {source.type === "pdf" ? (
+                                        <FileText className="h-4 w-4 text-red-500" />
+                                    ) : source.type === "url" ? (
+                                        <LinkIcon className="h-4 w-4 text-blue-500" />
+                                    ) : (
+                                        <FileText className="h-4 w-4 text-slate-500" />
+                                    )}
                                 </div>
                                 <div className="flex-1 overflow-hidden">
                                     <h4 className="text-sm font-bold truncate text-slate-800" title={source.title}>{source.title}</h4>
@@ -59,26 +65,63 @@ export function SourcesPanel({ notebookId, isOpen }: { notebookId: Id<"ai_notebo
 
 function AddSourceButton({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
     const [isOpen, setIsOpen] = useState(false);
-    const [type, setType] = useState<"text" | "url">("text");
+    const [type, setType] = useState<"text" | "url" | "pdf">("text");
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
+    const [file, setFile] = useState<File | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
     
     const addSource = useMutation(api.ai_notebook.addSource);
+    const generateUploadUrl = useMutation(api.ai_notebook.generateUploadUrl);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!content || !title) return;
+        if (!title) return;
         
-        await addSource({
-            notebookId,
-            title,
-            type,
-            content,
-        });
-        setIsOpen(false);
-        setContent("");
-        setTitle("");
-        toast.success("Source added successfully");
+        setIsUploading(true);
+        try {
+            let storageId = undefined;
+            let contentToSave = content;
+
+            if (type === "pdf" && file) {
+                // 1. Get upload URL
+                const postUrl = await generateUploadUrl();
+                
+                // 2. Upload file
+                const result = await fetch(postUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": file.type },
+                    body: file,
+                });
+                
+                if (!result.ok) throw new Error("Upload failed");
+                const { storageId: id } = await result.json();
+                storageId = id;
+                contentToSave = "PDF Document"; // Placeholder content
+            } else if (type !== "pdf" && !content) {
+                 setIsUploading(false);
+                 return;
+            }
+
+            await addSource({
+                notebookId,
+                title,
+                type,
+                content: contentToSave,
+                fileId: storageId,
+            });
+            setIsOpen(false);
+            setContent("");
+            setTitle("");
+            setFile(null);
+            setType("text");
+            toast.success("Source added successfully");
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to add source");
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     return (
@@ -88,9 +131,9 @@ function AddSourceButton({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                     <Plus className="mr-2 h-4 w-4" /> Add New Source
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[500px] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                 <DialogHeader>
-                    <DialogTitle className="text-xl font-black">Add Knowledge Source</DialogTitle>
+                    <DialogTitle className="text-xl font-black uppercase">Add Knowledge Source</DialogTitle>
                 </DialogHeader>
                 <div className="flex gap-2 mb-4 p-1 bg-slate-100 rounded-lg">
                     <Button 
@@ -98,14 +141,21 @@ function AddSourceButton({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                         onClick={() => setType("text")}
                         className={`flex-1 rounded-md ${type === "text" ? "shadow-sm" : ""}`}
                     >
-                        <FileText className="mr-2 h-4 w-4" /> Text Content
+                        <FileText className="mr-2 h-4 w-4" /> Text
                     </Button>
                     <Button 
                         variant={type === "url" ? "default" : "ghost"} 
                         onClick={() => setType("url")}
                         className={`flex-1 rounded-md ${type === "url" ? "shadow-sm" : ""}`}
                     >
-                        <LinkIcon className="mr-2 h-4 w-4" /> Website URL
+                        <LinkIcon className="mr-2 h-4 w-4" /> URL
+                    </Button>
+                    <Button 
+                        variant={type === "pdf" ? "default" : "ghost"} 
+                        onClick={() => setType("pdf")}
+                        className={`flex-1 rounded-md ${type === "pdf" ? "shadow-sm" : ""}`}
+                    >
+                        <Upload className="mr-2 h-4 w-4" /> PDF
                     </Button>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -116,29 +166,58 @@ function AddSourceButton({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             required
-                            className="font-medium"
+                            className="font-medium border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                         />
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Content</label>
                         {type === "text" ? (
                             <textarea 
-                                className="w-full min-h-[150px] p-3 rounded-md border bg-transparent text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
+                                className="w-full min-h-[150px] p-3 rounded-md border-2 border-black bg-transparent text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
                                 placeholder="Paste your study material text here..."
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
                                 required
                             />
-                        ) : (
+                        ) : type === "url" ? (
                             <Input 
                                 placeholder="https://example.com/article" 
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
                                 required
+                                className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                             />
+                        ) : (
+                            <div className="border-2 border-dashed border-black rounded-md p-6 flex flex-col items-center justify-center text-center hover:bg-slate-50 transition-colors cursor-pointer relative bg-slate-50/50">
+                                <input 
+                                    type="file" 
+                                    accept=".pdf"
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    onChange={(e) => {
+                                        const f = e.target.files?.[0];
+                                        if (f) {
+                                            setFile(f);
+                                            if (!title) setTitle(f.name.replace(".pdf", ""));
+                                        }
+                                    }}
+                                    required={type === "pdf"}
+                                />
+                                <Upload className="h-8 w-8 text-slate-400 mb-2" />
+                                {file ? (
+                                    <div className="text-sm font-bold text-purple-600">{file.name}</div>
+                                ) : (
+                                    <>
+                                        <p className="text-sm font-medium text-slate-600">Click to upload PDF</p>
+                                        <p className="text-xs text-slate-400">Max size 10MB</p>
+                                    </>
+                                )}
+                            </div>
                         )}
                     </div>
-                    <Button type="submit" className="w-full font-bold">Add to Notebook</Button>
+                    <Button type="submit" disabled={isUploading} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        {isUploading ? "Uploading..." : "Add to Notebook"}
+                    </Button>
                 </form>
             </DialogContent>
         </Dialog>
