@@ -67,13 +67,11 @@ export default function DashboardLayout() {
             <div className="flex-1" />
             <LogoDropdown />
           </div>
-          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent">
+          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent p-0">
             <Outlet />
           </div>
-          <VayuuChat />
         </main>
       </div>
-      <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
     </SidebarProvider>
   );
 }

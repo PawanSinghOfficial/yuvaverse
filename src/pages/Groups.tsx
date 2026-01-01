@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Lock, Globe, Plus, Loader2, Image as ImageIcon, Flag, AlertTriangle, Trash2 } from "lucide-react";
+import { Users, Lock, Globe, Plus, Loader2, Image as ImageIcon, Flag, AlertTriangle, Trophy, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import {
   Dialog,
@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Id } from "@/convex/_generated/dataModel";
@@ -43,7 +44,7 @@ import { useAuth } from "@/hooks/use-auth";
 export default function Groups() {
   const { user } = useAuth();
   const groups = useQuery(api.groups.list);
-  const memberships = useQuery(api.groups.getUserMemberships);
+  const userGroups = useQuery(api.groups.getUserGroups);
   const createGroup = useMutation(api.groups.create);
   const generateUploadUrl = useMutation(api.groups.generateUploadUrl);
   const joinGroup = useMutation(api.groups.join);
@@ -73,7 +74,7 @@ export default function Groups() {
   const [isConfirmReportOpen, setIsConfirmReportOpen] = useState(false);
 
   const isMember = (groupId: Id<"groups">) => {
-    return memberships?.some((m) => m.groupId === groupId);
+    return userGroups?.includes(groupId);
   };
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -192,254 +193,116 @@ export default function Groups() {
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-8 w-full min-h-full bg-pink-50 dark:bg-background border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-black tracking-tighter uppercase">Study & Social Groups</h1>
-          <p className="text-lg font-medium text-muted-foreground border border-border bg-white dark:bg-card p-2 inline-block shadow-[4px_4px_0px_0px_var(--shadow)] mt-2">
-            Connect with peers, join discussions, and collaborate.
-          </p>
-        </div>
-        
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild>
-            <Button className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <Plus className="mr-2 h-4 w-4" />
-              Create Group
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-black uppercase">Create a Group</DialogTitle>
-              <DialogDescription>Start a new community for study or social activities.</DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="image" className="font-bold uppercase">Group Image (Optional)</Label>
-                <div className="flex items-center gap-4">
-                    <Input 
-                        id="image" 
-                        type="file" 
-                        accept="image/*"
-                        onChange={(e) => setFormData({...formData, image: e.target.files?.[0] || null})}
-                        className="cursor-pointer border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                    />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="name" className="font-bold uppercase">Group Name</Label>
-                <Input 
-                  id="name" 
-                  required 
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="e.g., React Learners"
-                  className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description" className="font-bold uppercase">Description</Label>
-                <Textarea 
-                  id="description" 
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  placeholder="What is this group about?"
-                  className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="type" className="font-bold uppercase">Type</Label>
-                <Select 
-                  value={formData.type} 
-                  onValueChange={(v: "study" | "social") => setFormData({...formData, type: v})}
-                >
-                  <SelectTrigger className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent className="border-2 border-black">
-                    <SelectItem value="study">Study Group</SelectItem>
-                    <SelectItem value="social">Social Group</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center justify-between rounded-lg border-2 border-black p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-white">
-                <div className="space-y-0.5">
-                  <Label className="font-bold uppercase">Private Group</Label>
-                  <p className="text-xs text-muted-foreground">Only invited members can join</p>
-                </div>
-                <Switch 
-                  checked={formData.isPrivate}
-                  onCheckedChange={(c) => setFormData({...formData, isPrivate: c})}
-                  className="data-[state=checked]:bg-black"
-                />
-              </div>
-              {formData.isPrivate && (
+    <div className="w-full min-h-full bg-pink-50 dark:bg-background border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+      <div className="p-4 md:p-8 space-y-8 flex-1">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-black tracking-tighter uppercase">Student Groups</h1>
+            <p className="text-lg font-medium text-muted-foreground border border-border bg-white dark:bg-card p-2 inline-block shadow-[4px_4px_0px_0px_var(--shadow)] mt-2">
+              Join a squad, collaborate, and conquer quests together.
+            </p>
+          </div>
+          
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+              <Button className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Group
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-black uppercase">Create a New Group</DialogTitle>
+                <DialogDescription>Form a team and start your journey.</DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleCreate} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password">Group Password</Label>
+                  <Label htmlFor="name">Group Name</Label>
                   <Input 
-                    id="password" 
-                    type="password"
+                    id="name" 
                     required 
-                    value={formData.password}
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
-                    placeholder="Set a password"
-                    className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    placeholder="e.g., The Code Warriors"
+                    className="border-2 border-black"
                   />
                 </div>
-              )}
-              <DialogFooter>
-                <Button type="submit" disabled={isCreating} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                  {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create Group
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={isJoinDialogOpen} onOpenChange={setIsJoinDialogOpen}>
-          <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-black uppercase">Enter Password</DialogTitle>
-              <DialogDescription>This group is private. Please enter the password to join.</DialogDescription>
-            </DialogHeader>
-            <Input 
-              type="password" 
-              value={joinPassword} 
-              onChange={(e) => setJoinPassword(e.target.value)}
-              placeholder="Password"
-              className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-            />
-            <DialogFooter>
-              <Button onClick={handlePrivateJoin} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Join</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
-          <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-black uppercase">Report Group</DialogTitle>
-              <DialogDescription>Please explain why you are reporting this group. Admins will review your report.</DialogDescription>
-            </DialogHeader>
-            <Textarea 
-              value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)}
-              placeholder="Reason for reporting (e.g., inappropriate content, spam)..."
-              className="min-h-[100px] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-            />
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsReportDialogOpen(false)} className="font-bold border-2 border-black">Cancel</Button>
-              <Button variant="destructive" onClick={handleReportSubmitClick} className="font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Submit Report</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <AlertDialog open={isConfirmReportOpen} onOpenChange={setIsConfirmReportOpen}>
-          <AlertDialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-2xl font-black uppercase">Confirm Report</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to report this group? False reporting may lead to account restrictions.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="font-bold border-2 border-black">Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmReport} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                Confirm Report
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {groups?.map((group) => {
-          const member = isMember(group._id);
-          const reportCount = group.reports?.length || 0;
-          const isReported = reportCount > 0;
-          const canDelete = user?.role === "admin" && reportCount >= 2;
-
-          return (
-            <Card key={group._id} className="flex flex-col overflow-hidden border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all relative group bg-card">
-              {isReported && (
-                <div className="absolute top-2 right-2 z-10 animate-pulse">
-                   <div className="bg-red-500 text-white text-[10px] font-black uppercase px-2 py-1 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-1">
-                      <AlertTriangle className="h-3 w-3" />
-                      Reported {reportCount > 1 ? `(${reportCount})` : ""}
-                   </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Input 
+                    id="description" 
+                    required 
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    placeholder="What's your group about?"
+                    className="border-2 border-black"
+                  />
                 </div>
-              )}
-              <div className="h-24 bg-gradient-to-r from-primary/20 to-primary/5 relative border-b-2 border-black">
-                 {group.imageUrl ? (
-                    <img src={group.imageUrl} alt={group.name} className="w-full h-full object-cover" />
-                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-primary/20">
-                        <Users className="h-12 w-12" />
-                    </div>
-                 )}
-              </div>
-              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2 relative -mt-6 px-4">
-                <div className="space-y-1 bg-white dark:bg-card border-2 border-black p-2 rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <CardTitle className="text-base font-black uppercase">{group.name}</CardTitle>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground font-bold">
-                    {group.isPrivate ? <Lock className="h-3 w-3" /> : <Globe className="h-3 w-3" />}
-                    <span className="capitalize">{group.type} Group</span>
-                  </div>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    id="private" 
+                    checked={formData.isPrivate}
+                    onCheckedChange={(checked) => setFormData({...formData, isPrivate: checked})}
+                  />
+                  <Label htmlFor="private">Private Group</Label>
+                </div>
+                <DialogFooter>
+                  <Button type="submit" disabled={isCreating} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Create Group
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {groups?.map((group) => (
+            <Card key={group._id} className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all bg-white dark:bg-card flex flex-col">
+              <CardHeader className="border-b-4 border-black bg-secondary/10 pb-4">
+                <div className="flex justify-between items-start">
+                  <CardTitle className="text-xl font-black uppercase tracking-tight">{group.name}</CardTitle>
+                  {group.isPrivate && <Badge variant="outline" className="border-2 border-black font-bold">PRIVATE</Badge>}
                 </div>
               </CardHeader>
-              <CardContent className="flex-1 flex flex-col pt-4 px-4 pb-4">
-                <p className="text-sm text-muted-foreground mt-2 line-clamp-2 flex-1 font-medium">
-                  {group.description || "No description provided."}
-                </p>
-                <div className="flex gap-2 mt-4">
-                    <Button 
-                      className="flex-1 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all" 
-                      variant={member ? "secondary" : "default"}
-                      onClick={() => {
-                        if (member) {
-                          navigate(`/groups/${group._id}`);
-                        } else {
-                          handleJoin(group._id, group.isPrivate);
-                        }
-                      }}
-                    >
-                      {member ? "View Group" : (group.isPrivate ? "Join Private Group" : "Join Group")}
-                    </Button>
-                    
-                    {canDelete ? (
-                        <Button
-                            variant="destructive"
-                            size="icon"
-                            className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                            onClick={() => handleDelete(group._id)}
-                            title="Delete Reported Group"
-                        >
-                            <Trash2 className="h-4 w-4" />
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 border-2 border-transparent hover:border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
-                            onClick={() => openReportDialog(group._id)}
-                            title="Report Group"
-                        >
-                            <Flag className="h-4 w-4" />
-                        </Button>
-                    )}
+              <CardContent className="pt-6 flex-1 flex flex-col justify-between gap-4">
+                <div>
+                  <p className="text-muted-foreground font-medium mb-4 line-clamp-2">{group.description}</p>
+                  <div className="flex items-center gap-4 text-sm font-bold text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Users className="h-4 w-4" />
+                      <span>{group.members.length} Members</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Trophy className="h-4 w-4 text-yellow-600" />
+                      <span>{group.xp} XP</span>
+                    </div>
+                  </div>
                 </div>
+                
+                <Button 
+                  onClick={() => handleJoin(group._id, group.isPrivate)} 
+                  disabled={isMember(group._id)}
+                  className={`w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                    isMember(group._id) 
+                      ? "bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-800" 
+                      : "bg-primary text-primary-foreground hover:bg-primary/90"
+                  }`}
+                >
+                  {isMember(group._id) ? "Member ✓" : "Join Squad"}
+                </Button>
               </CardContent>
             </Card>
-          );
-        })}
-         {groups?.length === 0 && (
-            <div className="col-span-full text-center py-12 text-muted-foreground border-4 border-dashed border-black/20 rounded-xl bg-white/50">
-                <Users className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                <p className="text-xl font-bold">No groups found.</p>
-                <p>Create one to get started!</p>
-            </div>
-        )}
+          ))}
+          {groups?.length === 0 && (
+              <div className="col-span-full text-center py-20 text-muted-foreground border-4 border-dashed border-black/20 rounded-xl bg-secondary/5">
+                  <Users className="h-16 w-16 mx-auto mb-4 opacity-20" />
+                  <p className="text-xl font-bold">No groups found.</p>
+                  <p>Be the first to create a squad!</p>
+              </div>
+          )}
+        </div>
       </div>
     </div>
   );

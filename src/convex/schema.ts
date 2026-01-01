@@ -109,6 +109,7 @@ const schema = defineSchema(
       password: v.optional(v.string()),
       creatorId: v.id("users"),
       reports: v.optional(v.array(v.id("users"))),
+      xp: v.optional(v.number()),
     }),
 
     group_members: defineTable({

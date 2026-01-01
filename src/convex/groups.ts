@@ -12,8 +12,32 @@ export const list = query({
       if (g.image) {
         imageUrl = await ctx.storage.getUrl(g.image);
       }
-      return { ...g, imageUrl };
+      const members = await ctx.db.query("group_members")
+        .withIndex("by_group", (q) => q.eq("groupId", g._id))
+        .collect();
+        
+      return { 
+        ...g, 
+        imageUrl,
+        members: members.map(m => m.userId),
+        xp: g.xp || 0
+      };
     }));
+  },
+});
+
+export const getUserGroups = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+    
+    const memberships = await ctx.db
+      .query("group_members")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+      
+    return memberships.map(m => m.groupId);
   },
 });
 
