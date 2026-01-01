@@ -62,7 +62,7 @@ export default function DashboardLayout() {
           className="flex-shrink-0 h-full w-72 border-r border-border/60 bg-secondary/10"
         />
         <main className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex items-center gap-4 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
+          <div className="flex items-center gap-4 px-4 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
             <SidebarTrigger />
             <div className="flex-1" />
             <LogoDropdown />
