@@ -3,9 +3,6 @@ import { mutation, query, internalMutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { internal } from "./_generated/api";
 
-// Notebooks
->>>>>>> REPLACE
-<<<<<<< SEARCH
 export const addSource = mutation({
   args: {
     notebookId: v.id("ai_notebooks"),
@@ -18,21 +15,222 @@ export const addSource = mutation({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
 
+    const isPdf = args.type === "pdf" && args.fileId;
+    
     // Simple mock summary generation
     const summary = args.content 
         ? `Summary of ${args.title}: ${args.content.substring(0, 100)}...` 
-        : "Processing document content...";
+        : isPdf ? "Processing PDF content..." : "No content available";
 
-    await ctx.db.insert("ai_sources", {
+    const sourceId = await ctx.db.insert("ai_sources", {
       notebookId: args.notebookId,
       title: args.title,
       type: args.type,
-      content: args.content,
+      content: args.content || "",
       fileId: args.fileId,
+      summary: summary,
+      isProcessing: isPdf ? true : false,
+    });
+
+    if (isPdf && args.fileId) {
+      await ctx.scheduler.runAfter(0, internal.ai_notebook_actions.processPdfAction, {
+        sourceId,
+        fileId: args.fileId,
+      });
+    }
+  },
+});
+
+export const updateSourceContent = internalMutation({
+  args: {
+    sourceId: v.id("ai_sources"),
+    content: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const summary = `Summary: ${args.content.substring(0, 150)}...`;
+    await ctx.db.patch(args.sourceId, {
+      content: args.content,
       summary: summary,
       isProcessing: false,
     });
   },
+});
+export const createNotebook = mutation({
+  args: {
+    title: v.string(),
+    description: v.optional(v.string()),
+    icon: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const notebookId = await ctx.db.insert("ai_notebooks", {
+      userId,
+      title: args.title,
+      description: args.description,
+      icon: args.icon || "📓",
+    });
+
+    // Create a default chat for this notebook
+    await ctx.db.insert("ai_chats", {
+      notebookId,
+      title: "General Chat",
+      lastMessageAt: Date.now(),
+    });
+
+    return notebookId;
+  },
+});
+
+export const getNotebooks = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+    return await ctx.db
+      .query("ai_notebooks")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const getNotebook = query({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+    const notebook = await ctx.db.get(args.notebookId);
+    if (notebook?.userId !== userId) return null;
+    return notebook;
+  },
+});
+
+export const deleteNotebook = mutation({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    
+    const notebook = await ctx.db.get(args.notebookId);
+    if (!notebook || notebook.userId !== userId) throw new Error("Unauthorized");
+
+    // Delete associated data (cascade manually)
+    const sources = await ctx.db.query("ai_sources").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const s of sources) {
+        if (s.fileId) await ctx.storage.delete(s.fileId);
+        await ctx.db.delete(s._id);
+    }
+
+    const chats = await ctx.db.query("ai_chats").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const c of chats) {
+        const messages = await ctx.db.query("ai_messages").withIndex("by_chat", q => q.eq("chatId", c._id)).collect();
+        for (const m of messages) await ctx.db.delete(m._id);
+        await ctx.db.delete(c._id);
+    }
+
+    const notes = await ctx.db.query("ai_notes").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const n of notes) await ctx.db.delete(n._id);
+
+    const quizzes = await ctx.db.query("ai_quizzes").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const q of quizzes) await ctx.db.delete(q._id);
+
+    const mindmaps = await ctx.db.query("ai_mindmaps").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const m of mindmaps) await ctx.db.delete(m._id);
+
+    await ctx.db.delete(args.notebookId);
+  }
+});
+=======
+// Notebooks
+
+export const createNotebook = mutation({
+  args: {
+    title: v.string(),
+    description: v.optional(v.string()),
+    icon: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const notebookId = await ctx.db.insert("ai_notebooks", {
+      userId,
+      title: args.title,
+      description: args.description,
+      icon: args.icon || "📓",
+    });
+
+    // Create a default chat for this notebook
+    await ctx.db.insert("ai_chats", {
+      notebookId,
+      title: "General Chat",
+      lastMessageAt: Date.now(),
+    });
+
+    return notebookId;
+  },
+});
+
+export const getNotebooks = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+    return await ctx.db
+      .query("ai_notebooks")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const getNotebook = query({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+    const notebook = await ctx.db.get(args.notebookId);
+    if (notebook?.userId !== userId) return null;
+    return notebook;
+  },
+});
+
+export const deleteNotebook = mutation({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    
+    const notebook = await ctx.db.get(args.notebookId);
+    if (!notebook || notebook.userId !== userId) throw new Error("Unauthorized");
+
+    // Delete associated data (cascade manually)
+    const sources = await ctx.db.query("ai_sources").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const s of sources) {
+        if (s.fileId) await ctx.storage.delete(s.fileId);
+        await ctx.db.delete(s._id);
+    }
+
+    const chats = await ctx.db.query("ai_chats").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const c of chats) {
+        const messages = await ctx.db.query("ai_messages").withIndex("by_chat", q => q.eq("chatId", c._id)).collect();
+        for (const m of messages) await ctx.db.delete(m._id);
+        await ctx.db.delete(c._id);
+    }
+
+    const notes = await ctx.db.query("ai_notes").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const n of notes) await ctx.db.delete(n._id);
+
+    const quizzes = await ctx.db.query("ai_quizzes").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const q of quizzes) await ctx.db.delete(q._id);
+
+    const mindmaps = await ctx.db.query("ai_mindmaps").withIndex("by_notebook", q => q.eq("notebookId", args.notebookId)).collect();
+    for (const m of mindmaps) await ctx.db.delete(m._id);
+
+    await ctx.db.delete(args.notebookId);
+  }
 });
 =======
 export const addSource = mutation({
@@ -192,17 +390,41 @@ export const addSource = mutation({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
 
+    const isPdf = args.type === "pdf" && args.fileId;
+    
     // Simple mock summary generation
     const summary = args.content 
         ? `Summary of ${args.title}: ${args.content.substring(0, 100)}...` 
-        : "Processing document content...";
+        : isPdf ? "Processing PDF content..." : "No content available";
 
-    await ctx.db.insert("ai_sources", {
+    const sourceId = await ctx.db.insert("ai_sources", {
       notebookId: args.notebookId,
       title: args.title,
       type: args.type,
-      content: args.content,
+      content: args.content || "",
       fileId: args.fileId,
+      summary: summary,
+      isProcessing: isPdf ? true : false,
+    });
+
+    if (isPdf && args.fileId) {
+      await ctx.scheduler.runAfter(0, internal.ai_notebook_actions.processPdfAction, {
+        sourceId,
+        fileId: args.fileId,
+      });
+    }
+  },
+});
+
+export const updateSourceContent = internalMutation({
+  args: {
+    sourceId: v.id("ai_sources"),
+    content: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const summary = `Summary: ${args.content.substring(0, 150)}...`;
+    await ctx.db.patch(args.sourceId, {
+      content: args.content,
       summary: summary,
       isProcessing: false,
     });
