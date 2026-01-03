@@ -2,7 +2,7 @@
 import { internalAction } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import pdf from "pdf-parse";
+import { createRequire } from "module";
 
 export const processPdfAction = internalAction({
   args: {
@@ -10,7 +10,11 @@ export const processPdfAction = internalAction({
     fileId: v.id("_storage"),
   },
   handler: async (ctx, args) => {
+    const require = createRequire(import.meta.url);
+    const pdf = require("pdf-parse");
+
     try {
+      console.log(`Starting PDF processing for source: ${args.sourceId}`);
       const fileUrl = await ctx.storage.getUrl(args.fileId);
       if (!fileUrl) {
         throw new Error("File not found");
