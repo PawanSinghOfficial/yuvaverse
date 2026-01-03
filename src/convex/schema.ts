@@ -207,6 +207,7 @@ const schema = defineSchema(
       fileId: v.optional(v.id("_storage")),
       summary: v.optional(v.string()),
       isProcessing: v.optional(v.boolean()),
+      error: v.optional(v.string()), // Added for error handling
     }).index("by_notebook", ["notebookId"]),
 
     ai_chats: defineTable({
@@ -238,6 +239,7 @@ const schema = defineSchema(
       })),
       userScore: v.optional(v.number()),
       isCompleted: v.boolean(),
+      isGenerating: v.optional(v.boolean()), // Added for loading state
     }).index("by_notebook", ["notebookId"]),
 
     ai_mindmaps: defineTable({
@@ -249,6 +251,7 @@ const schema = defineSchema(
         label: v.string(),
         children: v.optional(v.array(v.any())), // Recursive structure is hard to validate strictly in v.object, using v.any for children for flexibility or stringified JSON
       }), 
+      isGenerating: v.optional(v.boolean()), // Added for loading state
     }).index("by_notebook", ["notebookId"]),
 
     flashcard_sets: defineTable({
