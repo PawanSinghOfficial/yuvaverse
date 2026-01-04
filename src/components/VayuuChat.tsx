@@ -3,9 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageCircle, X, Send, Bot, User } from "lucide-react";
+import { MessageCircle, X, Send, Bot, User, Palette, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAction } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useTheme } from "next-themes";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Message {
   id: string;
@@ -27,55 +36,56 @@ export function VayuuChat({ user }: VayuuChatProps) {
     }
   ]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  const chatAction = useAction(api.vayuu.chat);
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isLoading]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
 
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: input };
     setMessages(prev => [...prev, userMsg]);
     setInput("");
+    setIsLoading(true);
 
-    // Simple keyword-based response logic
-    setTimeout(() => {
-      let response = "I'm not sure about that. Try asking about syllabus, resources, games, or your profile!";
-      const lowerInput = userMsg.content.toLowerCase();
+    try {
+      // Prepare history for context (last 10 messages)
+      const history = messages.slice(-10).map(m => ({
+        role: m.role,
+        content: m.content
+      }));
 
-      if (lowerInput.includes("syllabus")) {
-        response = "You can track your academic progress in the Syllabus section. Select your stream and semester to see topics!";
-      } else if (lowerInput.includes("resource") || lowerInput.includes("notes") || lowerInput.includes("paper")) {
-        response = "Head to the Resources page to find notes, question papers, and books uploaded by the community. You can also upload your own!";
-      } else if (lowerInput.includes("game") || lowerInput.includes("play") || lowerInput.includes("arcade")) {
-        response = "Need a break? The Arcade Zone features games like Tic-Tac-Toe, Snake, and more. Win games to earn points!";
-      } else if (lowerInput.includes("point") || lowerInput.includes("leaderboard") || lowerInput.includes("rank")) {
-        response = "You earn points by uploading resources, winning games, and maintaining streaks. Check the Leaderboard on the Dashboard to see where you stand!";
-      } else if (lowerInput.includes("group") || lowerInput.includes("chat")) {
-        response = "You can join or create Study Groups to collaborate with peers. Premium users can create more groups!";
-      } else if (lowerInput.includes("notebook") || lowerInput.includes("ai")) {
-        response = "NotebookLM is your AI study companion. Upload documents and get summaries, quizzes, and mind maps generated instantly.";
-      } else if (lowerInput.includes("hello") || lowerInput.includes("hi") || lowerInput.includes("hey")) {
-        response = `Hello ${user?.name || "friend"}! Ready to study or play today? ⚡`;
-      } else if (lowerInput.includes("who are you")) {
-        response = "I am Vayuu, your personal AI guide for the YuvaVerse campus!";
-      } else if (lowerInput.includes("my details") || lowerInput.includes("who am i") || lowerInput.includes("my profile")) {
-        if (user) {
-            response = `You are ${user.name} (${user.email}). You joined on ${new Date(user._creationTime).toLocaleDateString()}. Your current role is ${user.role || "Student"}.`;
-        } else {
-            response = "I can't see your details right now. Are you logged in?";
-        }
-      } else if (lowerInput.includes("thank")) {
-        response = "You're welcome! Let me know if you need anything else. Happy learning! 🌟";
-      }
+      const response = await chatAction({
+        message: userMsg.content,
+        history,
+        userName: user?.name
+      });
 
-      const botMsg: Message = { id: (Date.now() + 1).toString(), role: "assistant", content: response };
+      const botMsg: Message = { 
+        id: (Date.now() + 1).toString(), 
+        role: "assistant", 
+        content: response 
+      };
       setMessages(prev => [...prev, botMsg]);
-    }, 600);
+    } catch (error) {
+      console.error("Failed to get response:", error);
+      const errorMsg: Message = { 
+        id: (Date.now() + 1).toString(), 
+        role: "assistant", 
+        content: "Sorry, I'm having trouble connecting right now. Please try again later." 
+      };
+      setMessages(prev => [...prev, errorMsg]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -96,9 +106,24 @@ export function VayuuChat({ user }: VayuuChatProps) {
                   </div>
                   <CardTitle className="text-white text-lg">Chat with Vayuu</CardTitle>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-white hover:bg-white/20">
-                  <X className="h-5 w-5" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-8 w-8">
+                        <Palette className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("retro")}>Retro</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("cyberpunk")}>Cyberpunk</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-white hover:bg-white/20 h-8 w-8">
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="p-0">
                 <ScrollArea className="h-[300px] p-4" ref={scrollRef}>
@@ -119,6 +144,14 @@ export function VayuuChat({ user }: VayuuChatProps) {
                         </div>
                       </div>
                     ))}
+                    {isLoading && (
+                      <div className="flex justify-start">
+                        <div className="bg-muted text-foreground rounded-2xl rounded-bl-none px-4 py-2 flex items-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="text-xs opacity-70">Vayuu is thinking...</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </ScrollArea>
               </CardContent>
@@ -135,8 +168,9 @@ export function VayuuChat({ user }: VayuuChatProps) {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask Vayuu..."
                     className="bg-background border-black/20 focus-visible:ring-primary"
+                    disabled={isLoading}
                   />
-                  <Button type="submit" size="icon" disabled={!input.trim()}>
+                  <Button type="submit" size="icon" disabled={!input.trim() || isLoading}>
                     <Send className="h-4 w-4" />
                   </Button>
                 </form>

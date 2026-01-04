@@ -115,6 +115,60 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+[data-theme="retro"] {
+  --background: #e0dcd3;
+  --foreground: #2c2c2c;
+  --card: #ebe6dc;
+  --card-foreground: #2c2c2c;
+  --popover: #ebe6dc;
+  --popover-foreground: #2c2c2c;
+  --primary: #d97757;
+  --primary-foreground: #ffffff;
+  --secondary: #8aa29e;
+  --secondary-foreground: #ffffff;
+  --muted: #d3cec4;
+  --muted-foreground: #5c5c5c;
+  --accent: #dbbc7f;
+  --accent-foreground: #2c2c2c;
+  --destructive: #c25e5e;
+  --border: #b0aca3;
+  --input: #b0aca3;
+  --ring: #d97757;
+  --radius: 0rem;
+  --chart-1: #d97757;
+  --chart-2: #8aa29e;
+  --chart-3: #dbbc7f;
+  --chart-4: #c25e5e;
+  --chart-5: #5c5c5c;
+}
+
+[data-theme="cyberpunk"] {
+  --background: #0b0b15;
+  --foreground: #00ff9f;
+  --card: #121220;
+  --card-foreground: #00ff9f;
+  --popover: #121220;
+  --popover-foreground: #00ff9f;
+  --primary: #ff003c;
+  --primary-foreground: #ffffff;
+  --secondary: #00b8ff;
+  --secondary-foreground: #000000;
+  --muted: #1a1a2e;
+  --muted-foreground: #00b8ff;
+  --accent: #fcee0a;
+  --accent-foreground: #000000;
+  --destructive: #ff003c;
+  --border: #00ff9f;
+  --input: #00ff9f;
+  --ring: #fcee0a;
+  --radius: 0.25rem;
+  --chart-1: #ff003c;
+  --chart-2: #00b8ff;
+  --chart-3: #fcee0a;
+  --chart-4: #00ff9f;
+  --chart-5: #b500ff;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
