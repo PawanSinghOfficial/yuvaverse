@@ -76,7 +76,7 @@ export default function DashboardLayout() {
       </SidebarInset>
       
       <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
-      <VayuuChat />
+      <VayuuChat user={user} />
       <ExitIntentPopup />
 
       <Sheet open={isResourcesOpen} onOpenChange={setIsResourcesOpen}>

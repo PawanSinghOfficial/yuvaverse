@@ -13,7 +13,11 @@ interface Message {
   content: string;
 }
 
-export function VayuuChat() {
+interface VayuuChatProps {
+  user?: any;
+}
+
+export function VayuuChat({ user }: VayuuChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -56,9 +60,17 @@ export function VayuuChat() {
       } else if (lowerInput.includes("notebook") || lowerInput.includes("ai")) {
         response = "NotebookLM is your AI study companion. Upload documents and get summaries, quizzes, and mind maps generated instantly.";
       } else if (lowerInput.includes("hello") || lowerInput.includes("hi") || lowerInput.includes("hey")) {
-        response = "Hello there! Ready to study or play today? ⚡";
+        response = `Hello ${user?.name || "friend"}! Ready to study or play today? ⚡`;
       } else if (lowerInput.includes("who are you")) {
         response = "I am Vayuu, your personal AI guide for the YuvaVerse campus!";
+      } else if (lowerInput.includes("my details") || lowerInput.includes("who am i") || lowerInput.includes("my profile")) {
+        if (user) {
+            response = `You are ${user.name} (${user.email}). You joined on ${new Date(user._creationTime).toLocaleDateString()}. Your current role is ${user.role || "Student"}.`;
+        } else {
+            response = "I can't see your details right now. Are you logged in?";
+        }
+      } else if (lowerInput.includes("thank")) {
+        response = "You're welcome! Let me know if you need anything else. Happy learning! 🌟";
       }
 
       const botMsg: Message = { id: (Date.now() + 1).toString(), role: "assistant", content: response };
@@ -74,7 +86,7 @@ export function VayuuChat() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 z-50 w-80 md:w-96 shadow-2xl"
+            className="fixed bottom-24 left-6 z-50 w-80 md:w-96 shadow-2xl"
           >
             <Card className="border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] overflow-hidden">
               <CardHeader className="bg-primary p-4 flex flex-row items-center justify-between">
@@ -138,7 +150,7 @@ export function VayuuChat() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 h-14 w-14 bg-black text-white rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] flex items-center justify-center border-2 border-white/20 hover:bg-gray-900 transition-colors"
+        className="fixed bottom-6 left-6 z-50 h-14 w-14 bg-black text-white rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] flex items-center justify-center border-2 border-white/20 hover:bg-gray-900 transition-colors"
       >
         {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
       </motion.button>
