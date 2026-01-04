@@ -40,6 +40,7 @@ import { toast } from "sonner";
 import { Id } from "@/convex/_generated/dataModel";
 import confetti from "canvas-confetti";
 import { useAuth } from "@/hooks/use-auth";
+import { GroupCard } from "@/components/groups/GroupCard";
 
 export default function Groups() {
   const { user } = useAuth();
@@ -74,7 +75,7 @@ export default function Groups() {
   const [isConfirmReportOpen, setIsConfirmReportOpen] = useState(false);
 
   const isMember = (groupId: Id<"groups">) => {
-    return userGroups?.includes(groupId);
+    return userGroups?.includes(groupId) ?? false;
   };
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -274,63 +275,14 @@ export default function Groups() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {groups?.map((group) => (
-            <Card key={group._id} className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all bg-white dark:bg-card flex flex-col overflow-hidden">
-              <div className="h-32 w-full bg-secondary/10 border-b-4 border-black relative">
-                {group.imageUrl ? (
-                  <img 
-                    src={group.imageUrl} 
-                    alt={group.name} 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-pink-100 dark:bg-pink-900/20">
-                    <Users className="h-12 w-12 text-pink-400/50" />
-                  </div>
-                )}
-                {group.isPrivate && (
-                  <div className="absolute top-2 right-2">
-                    <Badge variant="outline" className="bg-background border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                      <Lock className="w-3 h-3 mr-1" /> PRIVATE
-                    </Badge>
-                  </div>
-                )}
-              </div>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-xl font-black uppercase tracking-tight line-clamp-1">{group.name}</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-2 flex-1 flex flex-col justify-between gap-4">
-                <div>
-                  <p className="text-muted-foreground font-medium mb-4 line-clamp-2 text-sm">{group.description}</p>
-                  <div className="flex items-center gap-4 text-sm font-bold text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      <span>{group.members.length} Members</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Trophy className="h-4 w-4 text-yellow-600" />
-                      <span>{group.xp} XP</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <Button 
-                  onClick={() => {
-                    if (isMember(group._id)) {
-                      navigate(`/groups/${group._id}`);
-                    } else {
-                      handleJoin(group._id, group.isPrivate);
-                    }
-                  }}
-                  className={`w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
-                    isMember(group._id) 
-                      ? "bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-800" 
-                      : "bg-primary text-primary-foreground hover:bg-primary/90"
-                  }`}
-                >
-                  {isMember(group._id) ? "Enter Chat" : "Join Squad"}
-                </Button>
-              </CardContent>
-            </Card>
+            <GroupCard
+              key={group._id}
+              group={group}
+              isMember={isMember(group._id)}
+              onJoin={handleJoin}
+              onEnter={(groupId) => navigate(`/groups/${groupId}`)}
+              onReport={openReportDialog}
+            />
           ))}
           {groups?.length === 0 && (
               <div className="col-span-full text-center py-20 text-muted-foreground border-4 border-dashed border-black/20 rounded-xl bg-secondary/5">
