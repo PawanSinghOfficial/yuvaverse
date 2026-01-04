@@ -22,6 +22,7 @@ import type * as quests from "../quests.js";
 import type * as resources from "../resources.js";
 import type * as seed_syllabus from "../seed_syllabus.js";
 import type * as syllabus from "../syllabus.js";
+import type * as test_ai from "../test_ai.js";
 import type * as todos from "../todos.js";
 import type * as users from "../users.js";
 
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   resources: typeof resources;
   seed_syllabus: typeof seed_syllabus;
   syllabus: typeof syllabus;
+  test_ai: typeof test_ai;
   todos: typeof todos;
   users: typeof users;
 }>;

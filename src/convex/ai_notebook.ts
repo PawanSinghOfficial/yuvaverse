@@ -2,8 +2,53 @@ import { v } from "convex/values";
 import { mutation, query, internalMutation, internalQuery } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 
 // Notebooks
+
+export const createTestNotebook = internalMutation({
+  args: {
+    title: v.string(),
+    fileId: v.id("_storage"),
+    fileName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Use a dummy user ID for testing
+    const userId = "test_user_id" as Id<"users">;
+
+    const notebookId = await ctx.db.insert("ai_notebooks", {
+      userId,
+      title: args.title,
+      description: "Test Notebook",
+      icon: "🧪",
+    });
+
+    // Create a default chat for this notebook
+    await ctx.db.insert("ai_chats", {
+      notebookId,
+      title: "General Chat",
+      lastMessageAt: Date.now(),
+    });
+
+    // Add initial source
+    const sourceId = await ctx.db.insert("ai_sources", {
+      notebookId,
+      title: args.fileName,
+      type: "pdf",
+      content: "", 
+      fileId: args.fileId,
+      summary: "Processing PDF content...",
+      isProcessing: true,
+    });
+
+    await ctx.scheduler.runAfter(0, internal.ai_notebook_actions.processPdfAction, {
+      sourceId,
+      fileId: args.fileId,
+    });
+
+    return notebookId;
+  },
+});
 
 export const createNotebook = mutation({
   args: {
@@ -214,7 +259,28 @@ export const getChats = query({
   },
 });
 
+export const getChatsInternal = internalQuery({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("ai_chats")
+      .withIndex("by_notebook", (q) => q.eq("notebookId", args.notebookId))
+      .order("desc")
+      .collect();
+  },
+});
+
 export const getMessages = query({
+  args: { chatId: v.id("ai_chats") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("ai_messages")
+      .withIndex("by_chat", (q) => q.eq("chatId", args.chatId))
+      .collect();
+  },
+});
+
+export const getMessagesInternal = internalQuery({
   args: { chatId: v.id("ai_chats") },
   handler: async (ctx, args) => {
     return await ctx.db
@@ -286,6 +352,17 @@ export const internalSaveNote = internalMutation({
 });
 
 export const getNotes = query({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("ai_notes")
+      .withIndex("by_notebook", (q) => q.eq("notebookId", args.notebookId))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const getNotesInternal = internalQuery({
   args: { notebookId: v.id("ai_notebooks") },
   handler: async (ctx, args) => {
     return await ctx.db
