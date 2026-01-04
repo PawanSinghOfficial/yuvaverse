@@ -7,9 +7,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { LogoDropdown } from "@/components/LogoDropdown";
 import { VayuuChat } from "@/components/VayuuChat";
 
@@ -56,22 +54,21 @@ export default function DashboardLayout() {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen overflow-hidden bg-background">
-        <AppSidebar
-          onGuideClick={handleGuideClick}
-          className="flex-shrink-0 h-full w-72 border-r border-border/60 bg-secondary/10"
-        />
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex items-center gap-4 px-4 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
-            <SidebarTrigger />
-            <div className="flex-1" />
-            <LogoDropdown />
-          </div>
-          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent p-0">
-            <Outlet />
-          </div>
-        </main>
-      </div>
+      <AppSidebar onGuideClick={handleGuideClick} />
+      <SidebarInset>
+        <div className="flex items-center gap-4 px-4 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
+          <SidebarTrigger />
+          <div className="flex-1" />
+          <LogoDropdown />
+        </div>
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent p-0">
+          <Outlet />
+        </div>
+      </SidebarInset>
+      
+      <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
+      <VayuuChat />
+      <ExitIntentPopup />
     </SidebarProvider>
   );
 }

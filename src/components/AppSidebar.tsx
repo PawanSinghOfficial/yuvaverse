@@ -6,32 +6,38 @@ import {
   Home,
   LogOut,
   MessageSquare,
-  Settings,
-  Users,
   Shield,
-  GraduationCap,
-  Lock,
+  Users,
+  Timer,
   BrainCircuit,
   BookCheck,
-  Timer,
   Gamepad2,
-  Palette
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
-import { Button } from "./ui/button";
-import { ScrollArea } from "./ui/scroll-area";
 import { getBadgeFromPoints } from "@/lib/utils";
-import { Bot } from "lucide-react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarRail,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   onGuideClick?: () => void;
 }
 
-export function AppSidebar({ className, onGuideClick }: SidebarProps) {
+export function AppSidebar({ onGuideClick, ...props }: AppSidebarProps) {
   const { pathname } = useLocation();
   const { user, signOut } = useAuth();
   const badge = getBadgeFromPoints(user?.points || 0);
   const logoUrl = "https://harmless-tapir-303.convex.cloud/api/storage/db1724ed-9b2f-4ed4-8514-69ae556175c8";
+  const { state } = useSidebar();
 
   const routes = [
     {
@@ -106,101 +112,107 @@ export function AppSidebar({ className, onGuideClick }: SidebarProps) {
   }
 
   return (
-    <div className={cn("space-y-4 py-4 flex flex-col h-full bg-secondary/10 border-r-0 shadow-lg", className)}>
-      <div className="px-3 py-2">
-        <Link to="/dashboard" className="flex items-center pl-3 mb-14">
-          <div className="relative h-10 w-10 mr-3">
-             <img src={logoUrl} alt="YuvaVerse" className="h-full w-full object-contain neo-brutal-sm bg-primary/10 p-1" />
-          </div>
-          <h1 className="text-2xl font-bold">
-            YuvaVerse
-          </h1>
-        </Link>
-        <div className="space-y-1">
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <Link to="/dashboard">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <img src={logoUrl} alt="YuvaVerse" className="size-6 object-contain" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-bold">YuvaVerse</span>
+                  <span className="truncate text-xs">Campus Platform</span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarMenu>
           {routes.map((route) => (
-            <Link
-              key={route.href}
-              to={route.href}
-              id={`sidebar-nav-${route.href.replace("/", "")}`}
-              className={cn(
-                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 transition hover:neo-brutal-sm",
-                pathname === route.href ? "text-primary bg-primary/10 neo-brutal-sm" : "text-muted-foreground"
-              )}
-            >
-              <div className="flex items-center flex-1">
-                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
-                {route.label}
-              </div>
-            </Link>
+            <SidebarMenuItem key={route.href}>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === route.href}
+                tooltip={route.label}
+                className={cn(
+                  pathname === route.href && "bg-primary/10 text-primary font-medium"
+                )}
+              >
+                <Link to={route.href} id={`sidebar-nav-${route.href.replace("/", "")}`}>
+                  <route.icon className={cn("h-4 w-4", route.color)} />
+                  <span>{route.label}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           ))}
           
-          <button
-            className="text-sm group flex p-3 w-full justify-start font-medium cursor-pointer text-muted-foreground hover:text-primary hover:bg-primary/10 transition hover:neo-brutal-sm"
-            onClick={onGuideClick}
-          >
-             <div className="flex items-center flex-1">
-                <img src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" alt="Vayuu" className="h-6 w-6 mr-3 rounded-full object-cover border border-indigo-500" />
-                Vayuu Guide
-             </div>
-          </button>
-        </div>
-      </div>
-      
-      <div className="mt-auto px-3 py-2">
-         <div className="bg-card neo-brutal p-4 mb-4">
-            <div className="flex items-center gap-3 mb-3">
-                <div className="relative">
-                  {(user?.role === "admin" || user?.tier === "premium" || user?.tier === "elite") ? (
-                    <div className="relative p-[3px]">
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-300 via-orange-400 to-yellow-300 animate-[spin_3s_linear_infinite]" />
-                      <div className="relative bg-background rounded-full p-[2px]">
-                        {user?.image ? (
-                          <img src={user.image} alt={user.name || "User"} className="h-10 w-10 rounded-full object-cover" />
-                        ) : (
-                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                              {user?.name?.[0] || "U"}
-                          </div>
-                        )}
-                      </div>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={onGuideClick} tooltip="Vayuu Guide">
+              <div className="flex h-4 w-4 items-center justify-center rounded-full overflow-hidden border border-indigo-500">
+                 <img src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a" alt="Vayuu" className="h-full w-full object-cover" />
+              </div>
+              <span>Vayuu Guide</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <div className={cn(
+              "flex items-center gap-3 p-2 rounded-lg bg-card border shadow-sm transition-all",
+              state === "collapsed" ? "justify-center p-0 border-0 shadow-none bg-transparent" : ""
+            )}>
+              <div className="relative shrink-0">
+                {(user?.role === "admin" || user?.tier === "premium" || user?.tier === "elite") ? (
+                  <div className="relative p-[2px]">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-300 via-orange-400 to-yellow-300 animate-[spin_3s_linear_infinite]" />
+                    <div className="relative bg-background rounded-full p-[2px]">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={user?.image} alt={user?.name} />
+                        <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+                      </Avatar>
                     </div>
-                  ) : (
-                    <>
-                      {user?.image ? (
-                        <img src={user.image} alt={user.name || "User"} className="h-10 w-10 rounded-full object-cover border border-border" />
-                      ) : (
-                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg border border-border">
-                            {user?.name?.[0] || "U"}
-                        </div>
-                      )}
-                    </>
-                  )}
-                  <div className={`absolute -bottom-1 -right-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gradient-to-r ${badge.gradient} text-white shadow-lg z-10`}>
-                    {badge.icon}
+                  </div>
+                ) : (
+                  <Avatar className="h-8 w-8 border border-border">
+                    <AvatarImage src={user?.image} alt={user?.name} />
+                    <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+                  </Avatar>
+                )}
+                <div className={cn(
+                  "absolute -bottom-1 -right-1 text-[10px] font-semibold px-1 py-0 rounded-full bg-gradient-to-r text-white shadow-lg z-10 flex items-center justify-center h-4 min-w-4",
+                  badge.gradient
+                )}>
+                  {badge.icon}
+                </div>
+              </div>
+              
+              {state !== "collapsed" && (
+                <div className="grid flex-1 text-left text-sm leading-tight overflow-hidden">
+                  <span className="truncate font-semibold">{user?.username || user?.name}</span>
+                  <span className="truncate text-xs text-muted-foreground capitalize">{user?.role || "Student"}</span>
+                  <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1">
+                    <span>{user?.points || 0} pts</span>
+                    <span className="capitalize text-primary font-medium">{user?.tier || "Free"}</span>
                   </div>
                 </div>
-                <div className="overflow-hidden">
-                    <p className="text-sm font-medium truncate">{user?.username || user?.name}</p>
-                    <p className="text-xs text-muted-foreground truncate capitalize">{user?.role || "Student"}</p>
-                </div>
+              )}
             </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>{user?.points || 0} Points</span>
-                <span className="capitalize text-primary font-semibold">{user?.tier || "Freemium"}</span>
-            </div>
-            <p className="mt-2 text-[10px] uppercase tracking-wide text-muted-foreground/70">
-              Badge: {badge.label}
-            </p>
-        </div>
-
-        <Button 
-            variant="ghost" 
-            className="w-full justify-start text-muted-foreground hover:text-destructive"
-            onClick={() => signOut()}
-        >
-            <LogOut className="h-5 w-5 mr-3" />
-            Sign Out
-        </Button>
-      </div>
-    </div>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={() => signOut()} tooltip="Sign Out">
+              <LogOut className="h-4 w-4" />
+              <span>Sign Out</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
   );
 }
