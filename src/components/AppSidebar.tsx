@@ -30,9 +30,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   onGuideClick?: () => void;
+  onResourcesClick?: () => void;
+  onCalendarClick?: () => void;
 }
 
-export function AppSidebar({ onGuideClick, ...props }: AppSidebarProps) {
+export function AppSidebar({ onGuideClick, onResourcesClick, onCalendarClick, ...props }: AppSidebarProps) {
   const { pathname } = useLocation();
   const { user, signOut } = useAuth();
   const badge = getBadgeFromPoints(user?.points || 0);
@@ -132,23 +134,59 @@ export function AppSidebar({ onGuideClick, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          {routes.map((route) => (
-            <SidebarMenuItem key={route.href}>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === route.href}
-                tooltip={route.label}
-                className={cn(
-                  pathname === route.href && "bg-primary/10 text-primary font-medium"
-                )}
-              >
-                <Link to={route.href} id={`sidebar-nav-${route.href.replace("/", "")}`}>
-                  <route.icon className={cn("h-4 w-4", route.color)} />
-                  <span>{route.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {routes.map((route) => {
+            if (route.href === "/resources" && onResourcesClick) {
+              return (
+                <SidebarMenuItem key={route.href}>
+                  <SidebarMenuButton
+                    onClick={onResourcesClick}
+                    tooltip={route.label}
+                    className={cn(
+                      pathname === route.href && "bg-primary/10 text-primary font-medium"
+                    )}
+                  >
+                    <route.icon className={cn("h-4 w-4", route.color)} />
+                    <span>{route.label}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            }
+
+            if (route.href === "/calendar" && onCalendarClick) {
+              return (
+                <SidebarMenuItem key={route.href}>
+                  <SidebarMenuButton
+                    onClick={onCalendarClick}
+                    tooltip={route.label}
+                    className={cn(
+                      pathname === route.href && "bg-primary/10 text-primary font-medium"
+                    )}
+                  >
+                    <route.icon className={cn("h-4 w-4", route.color)} />
+                    <span>{route.label}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            }
+
+            return (
+              <SidebarMenuItem key={route.href}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === route.href}
+                  tooltip={route.label}
+                  className={cn(
+                    pathname === route.href && "bg-primary/10 text-primary font-medium"
+                  )}
+                >
+                  <Link to={route.href} id={`sidebar-nav-${route.href.replace("/", "")}`}>
+                    <route.icon className={cn("h-4 w-4", route.color)} />
+                    <span>{route.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
           
           <SidebarMenuItem>
             <SidebarMenuButton onClick={onGuideClick} tooltip="Vayuu Guide">

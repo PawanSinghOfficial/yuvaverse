@@ -10,6 +10,9 @@ import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { LogoDropdown } from "@/components/LogoDropdown";
 import { VayuuChat } from "@/components/VayuuChat";
+import Resources from "@/pages/Resources";
+import CalendarPage from "@/pages/Calendar";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 export default function DashboardLayout() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -17,6 +20,8 @@ export default function DashboardLayout() {
   const location = useLocation();
   const syncAdmin = useMutation(api.users.syncAdminRole);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [isResourcesOpen, setIsResourcesOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -54,7 +59,11 @@ export default function DashboardLayout() {
 
   return (
     <SidebarProvider>
-      <AppSidebar onGuideClick={handleGuideClick} />
+      <AppSidebar 
+        onGuideClick={handleGuideClick} 
+        onResourcesClick={() => setIsResourcesOpen(true)}
+        onCalendarClick={() => setIsCalendarOpen(true)}
+      />
       <SidebarInset>
         <div className="flex items-center gap-4 px-4 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
           <SidebarTrigger />
@@ -69,6 +78,18 @@ export default function DashboardLayout() {
       <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
       <VayuuChat />
       <ExitIntentPopup />
+
+      <Sheet open={isResourcesOpen} onOpenChange={setIsResourcesOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-[85vw] p-0 overflow-y-auto border-l-4 border-black">
+          <Resources />
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-[85vw] p-0 overflow-y-auto border-l-4 border-black">
+          <CalendarPage />
+        </SheetContent>
+      </Sheet>
     </SidebarProvider>
   );
 }
