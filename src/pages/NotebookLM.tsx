@@ -165,7 +165,7 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                 <Button 
                     variant="secondary" 
                     size="icon" 
-                    className="absolute top-4 -left-3 h-8 w-6 rounded-r-md shadow-md border border-l-0 bg-white hover:bg-slate-50"
+                    className="absolute top-4 -left-3 h-8 w-6 rounded-r-md border-2 border-black border-l-0 bg-white hover:bg-yellow-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                     onClick={() => setIsSourcePanelOpen(!isSourcePanelOpen)}
                     title="Toggle Sources"
                 >
@@ -174,15 +174,15 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col bg-slate-50/30">
+            <div className="flex-1 flex flex-col bg-yellow-50/30">
                 {/* Header */}
-                <header className="h-16 border-b bg-white px-6 flex items-center justify-between shadow-sm z-10">
+                <header className="h-16 border-b-2 border-border bg-white px-6 flex items-center justify-between z-10">
                     <div className="flex items-center gap-6">
-                        <h2 className="text-xl font-black tracking-tight flex items-center gap-2 text-slate-800">
+                        <h2 className="text-xl font-black tracking-tight flex items-center gap-2 text-black uppercase">
                             <span className="text-2xl">{notebook?.icon}</span> {notebook?.title}
                         </h2>
-                        <div className="h-8 w-px bg-slate-200"></div>
-                        <div className="flex bg-slate-100 p-1 rounded-lg gap-1">
+                        <div className="h-8 w-0.5 bg-border"></div>
+                        <div className="flex bg-yellow-50 p-1 rounded-md border-2 border-black gap-1">
                             {[
                                 { id: "chat", label: "Chat", icon: MessageSquare },
                                 { id: "notes", label: "Notes", icon: StickyNote },
@@ -192,10 +192,10 @@ function NotebookView({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                                 <button 
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id as any)}
-                                    className={`px-4 py-1.5 text-sm font-bold rounded-md transition-all flex items-center gap-2 ${
+                                    className={`px-4 py-1.5 text-sm font-bold rounded-sm transition-all flex items-center gap-2 uppercase tracking-wide ${
                                         activeTab === tab.id 
-                                            ? "bg-white shadow-sm text-purple-700 ring-1 ring-black/5" 
-                                            : "text-slate-500 hover:text-slate-900 hover:bg-white/50"
+                                            ? "bg-black text-white shadow-sm" 
+                                            : "text-slate-600 hover:text-black hover:bg-black/5"
                                     }`}
                                 >
                                     <tab.icon className="h-4 w-4" />

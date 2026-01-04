@@ -146,7 +146,7 @@ function AddSourceButton({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="w-full border-dashed border-2 border-slate-300 hover:border-purple-500 hover:bg-purple-50 hover:text-purple-700 transition-all font-bold">
+                <Button variant="outline" className="w-full border-dashed border-2 border-black/30 hover:border-black hover:bg-yellow-50 hover:text-black transition-all font-bold uppercase tracking-wide">
                     <Plus className="mr-2 h-4 w-4" /> Add New Source
                 </Button>
             </DialogTrigger>
@@ -154,25 +154,25 @@ function AddSourceButton({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
                 <DialogHeader>
                     <DialogTitle className="text-xl font-black uppercase">Add Knowledge Source</DialogTitle>
                 </DialogHeader>
-                <div className="flex gap-2 mb-4 p-1 bg-slate-100 rounded-lg">
+                <div className="flex gap-2 mb-4 p-1 bg-yellow-50 border-2 border-black rounded-sm">
                     <Button 
                         variant={type === "text" ? "default" : "ghost"} 
                         onClick={() => setType("text")}
-                        className={`flex-1 rounded-md ${type === "text" ? "shadow-sm" : ""}`}
+                        className={`flex-1 rounded-sm font-bold uppercase ${type === "text" ? "bg-black text-white shadow-none" : "hover:bg-black/10"}`}
                     >
                         <FileText className="mr-2 h-4 w-4" /> Text
                     </Button>
                     <Button 
                         variant={type === "url" ? "default" : "ghost"} 
                         onClick={() => setType("url")}
-                        className={`flex-1 rounded-md ${type === "url" ? "shadow-sm" : ""}`}
+                        className={`flex-1 rounded-sm font-bold uppercase ${type === "url" ? "bg-black text-white shadow-none" : "hover:bg-black/10"}`}
                     >
                         <LinkIcon className="mr-2 h-4 w-4" /> URL
                     </Button>
                     <Button 
                         variant={type === "pdf" ? "default" : "ghost"} 
                         onClick={() => setType("pdf")}
-                        className={`flex-1 rounded-md ${type === "pdf" ? "shadow-sm" : ""}`}
+                        className={`flex-1 rounded-sm font-bold uppercase ${type === "pdf" ? "bg-black text-white shadow-none" : "hover:bg-black/10"}`}
                     >
                         <Upload className="mr-2 h-4 w-4" /> PDF
                     </Button>
