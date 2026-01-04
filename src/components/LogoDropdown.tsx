@@ -10,13 +10,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
-import { Home, LogOut, User } from "lucide-react";
+import { Home, LogOut, User, Users } from "lucide-react";
 import { useNavigate } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState } from "react";
+import { FriendsDialog } from "./FriendsDialog";
 
 export function LogoDropdown() {
   const { isAuthenticated, signOut, user } = useAuth();
   const navigate = useNavigate();
+  const [showFriends, setShowFriends] = useState(false);
 
   const handleSignOut = async () => {
     try {
@@ -32,6 +35,7 @@ export function LogoDropdown() {
   };
 
   return (
+    <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full overflow-hidden border-2 border-transparent hover:border-primary/20">
@@ -69,6 +73,10 @@ export function LogoDropdown() {
         </DropdownMenuItem>
         {isAuthenticated && (
           <>
+            <DropdownMenuItem onClick={() => setShowFriends(true)} className="cursor-pointer font-medium">
+              <Users className="mr-2 h-4 w-4" />
+              Friends
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleSignOut}
@@ -81,5 +89,7 @@ export function LogoDropdown() {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+    <FriendsDialog open={showFriends} onOpenChange={setShowFriends} />
+    </>
   );
 }

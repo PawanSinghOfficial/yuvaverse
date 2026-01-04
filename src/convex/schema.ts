@@ -45,6 +45,7 @@ const schema = defineSchema(
       tier: v.optional(tierValidator),
       points: v.optional(v.number()),
       username: v.optional(v.string()),
+      friendCode: v.optional(v.string()),
       streakCount: v.optional(v.number()),
       lastActiveDate: v.optional(v.number()),
       hasSeenOnboarding: v.optional(v.boolean()),
@@ -56,7 +57,18 @@ const schema = defineSchema(
       mathHighScore: v.optional(v.number()),
       totalGamesPlayed: v.optional(v.number()),
       totalGamesWon: v.optional(v.number()),
-    }).index("email", ["email"]).index("by_username", ["username"]), // index for the email. do not remove or modify
+    }).index("email", ["email"]).index("by_username", ["username"]).index("by_friend_code", ["friendCode"]), // index for the email. do not remove or modify
+
+    friends: defineTable({
+      userId: v.id("users"),
+      friendId: v.id("users"),
+    }).index("by_user", ["userId"]).index("by_user_friend", ["userId", "friendId"]),
+
+    friend_requests: defineTable({
+      senderId: v.id("users"),
+      receiverId: v.id("users"),
+      status: v.union(v.literal("pending"), v.literal("accepted"), v.literal("rejected")),
+    }).index("by_receiver_status", ["receiverId", "status"]).index("by_sender_receiver", ["senderId", "receiverId"]),
 
     daily_quests: defineTable({
       userId: v.id("users"),

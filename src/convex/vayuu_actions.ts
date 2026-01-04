@@ -41,6 +41,9 @@ export const generateResponse = action({
     - Games: Snake, Tic-Tac-Toe, Math Challenge. Earn points!
     - Groups: Study or social groups.
     - NotebookLM: AI-powered study companion for PDFs/text.
+    - Friends: Users can connect with friends using a unique 4-digit code.
+      - To add a friend: Click the profile icon (top right) -> Select "Friends" -> Enter their 4-digit code in the "Add Friend" tab.
+      - To find your code: Click profile icon -> Friends -> Your code is displayed at the top.
     
     User context:
     - User Name: ${user?.name || "Student"}

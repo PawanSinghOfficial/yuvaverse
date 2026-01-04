@@ -1,5 +1,11 @@
-src/pages/Events.tsx
-src/pages/Calendar.tsx
-src/pages/Pomodoro.tsx
-src/pages/Groups.tsx
-src/pages/NotebookLM.tsx
+        {isAuthenticated && user && (
+            <>
+                <DropdownMenuLabel className=\"font-normal\">
+                    <div className=\"flex flex-col space-y-1\">
+                        <p className=\"text-sm font-medium leading-none\">{user.name}</p>
+                        <p className=\"text-xs leading-none text-muted-foreground\">{user.email}</p>
+                    </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+            </>
+        )}
