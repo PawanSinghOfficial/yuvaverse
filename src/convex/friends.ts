@@ -146,6 +146,56 @@ export const respondToRequest = mutation({
   },
 });
 
+export const removeFriend = mutation({
+  args: { friendId: v.id("users") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    // Find friendship records (bidirectional)
+    const friendship1 = await ctx.db
+      .query("friends")
+      .withIndex("by_user_friend", (q) => q.eq("userId", userId).eq("friendId", args.friendId))
+      .first();
+
+    const friendship2 = await ctx.db
+      .query("friends")
+      .withIndex("by_user_friend", (q) => q.eq("userId", args.friendId).eq("friendId", userId))
+      .first();
+
+    if (friendship1) await ctx.db.delete(friendship1._id);
+    if (friendship2) await ctx.db.delete(friendship2._id);
+
+    // Clean up any existing requests between these two users to allow re-adding
+    const request1 = await ctx.db.query("friend_requests")
+        .withIndex("by_sender_receiver", q => q.eq("senderId", userId).eq("receiverId", args.friendId))
+        .first();
+        
+    const request2 = await ctx.db.query("friend_requests")
+        .withIndex("by_sender_receiver", q => q.eq("senderId", args.friendId).eq("receiverId", userId))
+        .first();
+        
+    if (request1) await ctx.db.delete(request1._id);
+    if (request2) await ctx.db.delete(request2._id);
+  }
+});
+
+export const cancelRequest = mutation({
+  args: { requestId: v.id("friend_requests") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    
+    const req = await ctx.db.get(args.requestId);
+    if (!req) throw new Error("Request not found");
+    
+    if (req.senderId !== userId) throw new Error("Unauthorized");
+    if (req.status !== "pending") throw new Error("Cannot cancel non-pending request");
+    
+    await ctx.db.delete(req._id);
+  }
+});
+
 export const getFriends = query({
   args: {},
   handler: async (ctx) => {
@@ -195,6 +245,39 @@ export const getIncomingRequests = query({
             name: sender.name,
             username: sender.username,
             image: sender.image,
+          },
+          sentAt: r._creationTime,
+        } : null;
+      })
+    );
+
+    return requestDetails.filter((r) => r !== null);
+  },
+});
+
+export const getSentRequests = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+
+    const requests = await ctx.db
+      .query("friend_requests")
+      .withIndex("by_sender_receiver", (q) => q.eq("senderId", userId))
+      .collect();
+      
+    const pendingRequests = requests.filter(r => r.status === "pending");
+
+    const requestDetails = await Promise.all(
+      pendingRequests.map(async (r) => {
+        const receiver = await ctx.db.get(r.receiverId);
+        return receiver ? {
+          _id: r._id,
+          receiver: {
+            _id: receiver._id,
+            name: receiver.name,
+            username: receiver.username,
+            image: receiver.image,
           },
           sentAt: r._creationTime,
         } : null;
