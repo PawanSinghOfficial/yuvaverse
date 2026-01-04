@@ -30,7 +30,7 @@ export function NinjaCursor() {
       }}
     >
       <div className="relative">
-        <span className="relative z-10">🥷</span>
+        <span className="relative z-10">👀</span>
         <div className="absolute inset-0 bg-black/10 blur-sm rounded-full transform translate-y-2 scale-x-125" />
       </div>
     </motion.div>

@@ -1,5 +1,5 @@
 /* FONT IMPORTS GO HERE */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Merriweather:wght@100;200;300;400;500;600;700;800;900&family=Fira+Code:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Libre+Baskerville:wght@100;200;300;400;500;600;700;800;900&family=Fira+Code:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 /* DO NOT CHANGE */
 @import "tailwindcss";
@@ -128,18 +128,9 @@
     font-family: Montserrat, system-ui, sans-serif;
   }
   .font-serif {
-    font-family: Merriweather, Georgia, serif;
+    font-family: Libre Baskerville, Georgia, serif;
   }
   .font-mono {
     font-family: Fira Code, "Courier New", monospace;
-  }
-}
-
-@layer components {
-  .neu-flat {
-    @apply border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)];
-  }
-  .neo-brutal-sm {
-    @apply border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all;
   }
 }
