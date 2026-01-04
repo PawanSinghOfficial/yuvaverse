@@ -238,6 +238,21 @@ export default function Groups() {
                     className="border-2 border-black"
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="image">Group Image (Optional)</Label>
+                  <div className="flex items-center gap-2">
+                    <Input 
+                      id="image" 
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) setFormData({...formData, image: file});
+                      }}
+                      className="border-2 border-black cursor-pointer file:cursor-pointer file:text-foreground file:border-0 file:bg-transparent file:text-sm file:font-medium"
+                    />
+                  </div>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Switch 
                     id="private" 
