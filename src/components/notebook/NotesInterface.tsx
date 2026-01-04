@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Trash2, StickyNote } from "lucide-react";
+import { Plus, Trash2, StickyNote, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export function NotesInterface({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
     const notes = useQuery(api.ai_notebook.getNotes, { notebookId });
     const saveNote = useMutation(api.ai_notebook.saveNote);
+    const generateNotes = useAction(api.ai_notebook_actions.generateNotes);
     const deleteNote = useMutation(api.ai_notebook.deleteNote);
     const [newNote, setNewNote] = useState("");
 
@@ -20,11 +21,26 @@ export function NotesInterface({ notebookId }: { notebookId: Id<"ai_notebooks"> 
         toast.success("Note saved");
     };
 
+    const handleGenerateNotes = async () => {
+        try {
+            toast.info("Generating notes from sources...");
+            await generateNotes({ notebookId });
+            toast.success("Notes generated!");
+        } catch (error) {
+            toast.error("Failed to generate notes");
+        }
+    };
+
     return (
         <div className="p-6 h-full flex flex-col max-w-6xl mx-auto">
-            <div className="flex items-center gap-2 mb-6">
-                <StickyNote className="h-6 w-6 text-yellow-600" />
-                <h2 className="text-2xl font-black tracking-tight">Study Notes</h2>
+            <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                    <StickyNote className="h-6 w-6 text-yellow-600" />
+                    <h2 className="text-2xl font-black tracking-tight">Study Notes</h2>
+                </div>
+                <Button onClick={handleGenerateNotes} className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm">
+                    <Sparkles className="h-4 w-4 mr-2" /> Generate AI Notes
+                </Button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

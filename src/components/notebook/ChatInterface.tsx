@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ export function ChatInterface({ notebookId, chatId }: { notebookId: Id<"ai_noteb
     const [input, setInput] = useState("");
     const messages = useQuery(api.ai_notebook.getMessages, { chatId });
     const sources = useQuery(api.ai_notebook.getSources, { notebookId });
-    const sendMessage = useMutation(api.ai_notebook.sendMessage);
+    const sendMessage = useAction(api.ai_notebook_actions.sendMessage);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

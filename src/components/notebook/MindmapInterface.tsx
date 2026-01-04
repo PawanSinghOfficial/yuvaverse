@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 
 export function MindmapInterface({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
     const mindmaps = useQuery(api.ai_notebook.getMindmaps, { notebookId });
-    const generateMindmap = useMutation(api.ai_notebook.generateMindmap);
+    const generateMindmap = useAction(api.ai_notebook_actions.generateMindmap);
     const deleteMindmap = useMutation(api.ai_notebook.deleteMindmap);
     const [activeMindmapId, setActiveMindmapId] = useState<Id<"ai_mindmaps"> | null>(null);
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export function QuizInterface({ notebookId }: { notebookId: Id<"ai_notebooks"> }) {
     const quizzes = useQuery(api.ai_notebook.getQuizzes, { notebookId });
-    const generateQuiz = useMutation(api.ai_notebook.generateQuiz);
+    const generateQuiz = useAction(api.ai_notebook_actions.generateQuiz);
     const deleteQuiz = useMutation(api.ai_notebook.deleteQuiz);
     const [activeQuizId, setActiveQuizId] = useState<Id<"ai_quizzes"> | null>(null);
 

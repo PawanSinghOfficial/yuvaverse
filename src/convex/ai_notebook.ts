@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query, internalMutation } from "./_generated/server";
+import { mutation, query, internalMutation, internalQuery } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { internal } from "./_generated/api";
 
@@ -171,6 +171,16 @@ export const updateSourceContent = internalMutation({
   },
 });
 
+export const getSourcesInternal = internalQuery({
+  args: { notebookId: v.id("ai_notebooks") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("ai_sources")
+      .withIndex("by_notebook", (q) => q.eq("notebookId", args.notebookId))
+      .collect();
+  },
+});
+
 export const getSources = query({
   args: { notebookId: v.id("ai_notebooks") },
   handler: async (ctx, args) => {
@@ -214,58 +224,18 @@ export const getMessages = query({
   },
 });
 
-export const sendMessage = mutation({
+export const saveMessage = internalMutation({
   args: {
-    notebookId: v.id("ai_notebooks"),
     chatId: v.id("ai_chats"),
+    role: v.union(v.literal("user"), v.literal("assistant")),
     content: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Unauthorized");
-
-    // 1. Save User Message
     await ctx.db.insert("ai_messages", {
       chatId: args.chatId,
-      role: "user",
+      role: args.role,
       content: args.content,
     });
-
-    // 2. "AI" Processing (Mock RAG)
-    // Fetch sources to simulate reading them
-    const sources = await ctx.db
-        .query("ai_sources")
-        .withIndex("by_notebook", q => q.eq("notebookId", args.notebookId))
-        .collect();
-
-    let aiResponse = "I don't have enough information in the sources to answer that.";
-    
-    // Simple keyword matching simulation
-    const keywords = args.content.toLowerCase().split(" ").filter(w => w.length > 3);
-    const relevantSources = sources.filter(s => {
-        const text = (s.content || s.title).toLowerCase();
-        return keywords.some(k => text.includes(k));
-    });
-
-    if (relevantSources.length > 0) {
-        aiResponse = `Based on your sources (${relevantSources.map(s => s.title).join(", ")}), here is what I found:\n\n`;
-        aiResponse += "The documents contain information relevant to your query. ";
-        aiResponse += `Specifically, in "${relevantSources[0].title}", it mentions details about ${keywords[0] || "the topic"}.`;
-        aiResponse += "\n\n(Note: This is a simulated AI response. Connect a real LLM provider for full analysis.)";
-    } else if (sources.length === 0) {
-        aiResponse = "You haven't uploaded any sources yet. Please add some documents so I can answer your questions.";
-    } else {
-        aiResponse = "I couldn't find specific keywords matching your question in the uploaded sources, but I'm ready to help analyze them further.";
-    }
-
-    // 3. Save AI Response
-    await ctx.db.insert("ai_messages", {
-      chatId: args.chatId,
-      role: "assistant",
-      content: aiResponse,
-    });
-
-    // Update chat timestamp
     await ctx.db.patch(args.chatId, { lastMessageAt: Date.now() });
   },
 });
@@ -302,6 +272,19 @@ export const saveNote = mutation({
   },
 });
 
+export const internalSaveNote = internalMutation({
+  args: {
+    notebookId: v.id("ai_notebooks"),
+    content: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.insert("ai_notes", {
+        notebookId: args.notebookId,
+        content: args.content,
+    });
+  },
+});
+
 export const getNotes = query({
   args: { notebookId: v.id("ai_notebooks") },
   handler: async (ctx, args) => {
@@ -332,43 +315,22 @@ export const getQuizzes = query({
   },
 });
 
-export const generateQuiz = mutation({
-  args: { notebookId: v.id("ai_notebooks") },
+export const saveQuiz = internalMutation({
+  args: { 
+    notebookId: v.id("ai_notebooks"),
+    title: v.string(),
+    questions: v.array(v.object({
+        question: v.string(),
+        options: v.array(v.string()),
+        correctAnswer: v.number(),
+        explanation: v.string(),
+    })),
+  },
   handler: async (ctx, args) => {
-    // Mock Quiz Generation based on sources
-    const sources = await ctx.db
-        .query("ai_sources")
-        .withIndex("by_notebook", q => q.eq("notebookId", args.notebookId))
-        .collect();
-
-    if (sources.length === 0) throw new Error("No sources to generate quiz from");
-
-    // In a real app, this would call an LLM
-    const mockQuestions = [
-        {
-            question: "What is the main concept discussed in the uploaded documents?",
-            options: ["Quantum Physics", "The concept found in the source", "Ancient History", "Cooking Recipes"],
-            correctAnswer: 1,
-            explanation: "Based on the source title, this seems to be the most relevant topic."
-        },
-        {
-            question: "Which of the following is NOT mentioned in the text?",
-            options: ["Key Feature A", "Key Feature B", "Alien Invasion", "Key Feature C"],
-            correctAnswer: 2,
-            explanation: "Alien Invasion is not typically found in academic notes."
-        },
-        {
-            question: "True or False: The documents support the primary hypothesis.",
-            options: ["True", "False"],
-            correctAnswer: 0,
-            explanation: "Most academic texts tend to support their hypothesis."
-        }
-    ];
-
     await ctx.db.insert("ai_quizzes", {
         notebookId: args.notebookId,
-        title: `Quiz generated on ${new Date().toLocaleDateString()}`,
-        questions: mockQuestions,
+        title: args.title,
+        questions: args.questions,
         isCompleted: false,
     });
   },
@@ -403,55 +365,17 @@ export const getMindmaps = query({
   },
 });
 
-export const generateMindmap = mutation({
-  args: { notebookId: v.id("ai_notebooks") },
+export const saveMindmap = internalMutation({
+  args: { 
+    notebookId: v.id("ai_notebooks"),
+    title: v.string(),
+    rootNode: v.any(),
+  },
   handler: async (ctx, args) => {
-    const sources = await ctx.db
-        .query("ai_sources")
-        .withIndex("by_notebook", q => q.eq("notebookId", args.notebookId))
-        .collect();
-
-    if (sources.length === 0) throw new Error("No sources to generate mindmap from");
-
-    // Mock Mindmap Generation
-    const rootLabel = sources[0].title.substring(0, 20) + "...";
-    
-    const mockMindmap = {
-        id: "root",
-        label: "Main Topic: " + rootLabel,
-        children: [
-            {
-                id: "c1",
-                label: "Key Concepts",
-                children: [
-                    { id: "c1-1", label: "Definition" },
-                    { id: "c1-2", label: "Importance" },
-                    { id: "c1-3", label: "History" }
-                ]
-            },
-            {
-                id: "c2",
-                label: "Methodology",
-                children: [
-                    { id: "c2-1", label: "Process A" },
-                    { id: "c2-2", label: "Process B" }
-                ]
-            },
-            {
-                id: "c3",
-                label: "Conclusions",
-                children: [
-                    { id: "c3-1", label: "Result X" },
-                    { id: "c3-2", label: "Result Y" }
-                ]
-            }
-        ]
-    };
-
     await ctx.db.insert("ai_mindmaps", {
         notebookId: args.notebookId,
-        title: `Mindmap: ${rootLabel}`,
-        rootNode: mockMindmap,
+        title: args.title,
+        rootNode: args.rootNode,
     });
   },
 });
