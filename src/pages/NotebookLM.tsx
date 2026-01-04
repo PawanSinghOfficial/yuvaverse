@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
     Sparkles, Plus, MessageSquare, Headphones, 
     Trash2, ChevronRight, StickyNote,
-    BrainCircuit, Network, Pause, ExternalLink
+    BrainCircuit, Network, Pause, ExternalLink, Upload
 } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -22,22 +22,55 @@ export default function NotebookLM() {
   const [selectedNotebookId, setSelectedNotebookId] = useState<Id<"ai_notebooks"> | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [newNotebookTitle, setNewNotebookTitle] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   
   const notebooks = useQuery(api.ai_notebook.getNotebooks);
   const createNotebook = useMutation(api.ai_notebook.createNotebook);
   const deleteNotebook = useMutation(api.ai_notebook.deleteNotebook);
+  const generateUploadUrl = useMutation(api.ai_notebook.generateUploadUrl);
 
   const handleCreateNotebook = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newNotebookTitle.trim()) return;
+    
     try {
-        const id = await createNotebook({ title: newNotebookTitle });
+        setIsUploading(true);
+        let fileId: Id<"_storage"> | undefined = undefined;
+
+        if (selectedFile) {
+            // 1. Get upload URL
+            const postUrl = await generateUploadUrl();
+            
+            // 2. Upload file
+            const result = await fetch(postUrl, {
+                method: "POST",
+                headers: { "Content-Type": selectedFile.type },
+                body: selectedFile,
+            });
+            
+            if (!result.ok) throw new Error("Upload failed");
+            const { storageId } = await result.json();
+            fileId = storageId;
+        }
+
+        // 3. Create notebook with file
+        const id = await createNotebook({ 
+            title: newNotebookTitle,
+            initialFileId: fileId,
+            initialFileName: selectedFile?.name
+        });
+        
         setSelectedNotebookId(id);
         setNewNotebookTitle("");
+        setSelectedFile(null);
         setIsCreating(false);
-        toast.success("Notebook created!");
+        toast.success("Notebook created successfully!");
     } catch (error) {
+        console.error(error);
         toast.error("Failed to create notebook");
+    } finally {
+        setIsUploading(false);
     }
   };
 
@@ -50,7 +83,13 @@ export default function NotebookLM() {
                 <Sparkles className="h-5 w-5 text-purple-600" />
                 AI Notebooks
             </h2>
-            <Dialog open={isCreating} onOpenChange={setIsCreating}>
+            <Dialog open={isCreating} onOpenChange={(open) => {
+                setIsCreating(open);
+                if (!open) {
+                    setNewNotebookTitle("");
+                    setSelectedFile(null);
+                }
+            }}>
                 <DialogTrigger asChild>
                     <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600 border-2 border-transparent hover:border-purple-200 hover:shadow-sm transition-all">
                         <Plus className="h-5 w-5" />
@@ -61,14 +100,57 @@ export default function NotebookLM() {
                         <DialogTitle className="text-2xl font-black uppercase">Create New Notebook</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleCreateNotebook} className="space-y-4 mt-4">
-                        <Input 
-                            placeholder="Notebook Title (e.g. Biology 101)" 
-                            value={newNotebookTitle}
-                            onChange={(e) => setNewNotebookTitle(e.target.value)}
-                            autoFocus
-                            className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                        />
-                        <Button type="submit" className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Create Notebook</Button>
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold uppercase">Notebook Title</label>
+                            <Input 
+                                placeholder="e.g. Biology 101" 
+                                value={newNotebookTitle}
+                                onChange={(e) => setNewNotebookTitle(e.target.value)}
+                                autoFocus
+                                className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                            />
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold uppercase">Upload PDF (Optional)</label>
+                            <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 hover:bg-slate-50 transition-colors text-center cursor-pointer relative">
+                                <input 
+                                    type="file" 
+                                    accept=".pdf"
+                                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                />
+                                <div className="flex flex-col items-center gap-2 text-slate-500">
+                                    {selectedFile ? (
+                                        <>
+                                            <StickyNote className="h-8 w-8 text-purple-600" />
+                                            <span className="font-bold text-purple-700 truncate max-w-[200px]">{selectedFile.name}</span>
+                                            <span className="text-xs text-slate-400">Click to change</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload className="h-8 w-8" />
+                                            <span className="font-medium">Click to upload PDF</span>
+                                            <span className="text-xs text-slate-400">Supports PDF files only</span>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <Button 
+                            type="submit" 
+                            disabled={isUploading || !newNotebookTitle.trim()}
+                            className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                        >
+                            {isUploading ? (
+                                <span className="flex items-center gap-2">
+                                    <Sparkles className="h-4 w-4 animate-spin" /> Creating...
+                                </span>
+                            ) : (
+                                "Create Notebook"
+                            )}
+                        </Button>
                     </form>
                 </DialogContent>
             </Dialog>

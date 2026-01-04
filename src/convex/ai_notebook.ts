@@ -10,6 +10,8 @@ export const createNotebook = mutation({
     title: v.string(),
     description: v.optional(v.string()),
     icon: v.optional(v.string()),
+    initialFileId: v.optional(v.id("_storage")),
+    initialFileName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -28,6 +30,24 @@ export const createNotebook = mutation({
       title: "General Chat",
       lastMessageAt: Date.now(),
     });
+
+    // Add initial source if provided
+    if (args.initialFileId && args.initialFileName) {
+      const sourceId = await ctx.db.insert("ai_sources", {
+        notebookId,
+        title: args.initialFileName,
+        type: "pdf",
+        content: "", // Will be filled by processor
+        fileId: args.initialFileId,
+        summary: "Processing PDF content...",
+        isProcessing: true,
+      });
+
+      await ctx.scheduler.runAfter(0, internal.ai_notebook_actions.processPdfAction, {
+        sourceId,
+        fileId: args.initialFileId,
+      });
+    }
 
     return notebookId;
   },
