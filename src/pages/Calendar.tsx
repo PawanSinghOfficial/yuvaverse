@@ -85,7 +85,7 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="w-full min-h-full bg-pink-50 dark:bg-background border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+    <div className="w-full min-h-full bg-pink-50 dark:bg-background flex flex-col">
       <div className="p-4 md:p-8 space-y-8 flex-1 flex flex-col">
         <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-black tracking-tighter uppercase">Calendar & To-Do</h1>
