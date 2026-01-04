@@ -8,13 +8,80 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
-import { Loader2, UserPlus, Users, Check, X, Copy, Trash2, Send, UserMinus } from "lucide-react";
+import { Loader2, UserPlus, Users, Check, X, Copy, Trash2, Send, UserMinus, Trophy, Flame, Gamepad2, Medal } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Id } from "@/convex/_generated/dataModel";
+import { Badge } from "@/components/ui/badge";
 
 interface FriendsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+}
+
+function FriendProfile({ friend, onClose }: { friend: any, onClose: () => void }) {
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col items-center gap-3">
+        <Avatar className="h-24 w-24 border-4 border-foreground shadow-[4px_4px_0px_0px_var(--foreground)]">
+          <AvatarImage src={friend.image} />
+          <AvatarFallback className="text-2xl">{friend.name?.[0] || "?"}</AvatarFallback>
+        </Avatar>
+        <div className="text-center">
+          <h3 className="text-xl font-black">{friend.name}</h3>
+          <p className="text-muted-foreground">@{friend.username || "student"}</p>
+          <div className="flex gap-2 justify-center mt-2">
+            {friend.role === "admin" && <Badge variant="destructive">Admin</Badge>}
+            {friend.tier === "elite" && <Badge className="bg-yellow-500 hover:bg-yellow-600">Elite</Badge>}
+            {friend.tier === "premium" && <Badge className="bg-purple-500 hover:bg-purple-600">Premium</Badge>}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-muted p-3 rounded-lg border-2 border-foreground shadow-[2px_2px_0px_0px_var(--foreground)]">
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+            <Trophy className="h-4 w-4" />
+            <span className="text-xs font-bold uppercase">XP Points</span>
+          </div>
+          <p className="text-2xl font-black">{friend.points || 0}</p>
+        </div>
+        <div className="bg-muted p-3 rounded-lg border-2 border-foreground shadow-[2px_2px_0px_0px_var(--foreground)]">
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+            <Flame className="h-4 w-4" />
+            <span className="text-xs font-bold uppercase">Streak</span>
+          </div>
+          <p className="text-2xl font-black">{friend.streakCount || 0} <span className="text-sm font-normal text-muted-foreground">days</span></p>
+        </div>
+        <div className="bg-muted p-3 rounded-lg border-2 border-foreground shadow-[2px_2px_0px_0px_var(--foreground)]">
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+            <Gamepad2 className="h-4 w-4" />
+            <span className="text-xs font-bold uppercase">Games Won</span>
+          </div>
+          <p className="text-2xl font-black">{friend.totalGamesWon || 0}</p>
+        </div>
+        <div className="bg-muted p-3 rounded-lg border-2 border-foreground shadow-[2px_2px_0px_0px_var(--foreground)]">
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+            <Medal className="h-4 w-4" />
+            <span className="text-xs font-bold uppercase">High Scores</span>
+          </div>
+          <div className="text-xs space-y-1">
+            <div className="flex justify-between">
+              <span>Snake:</span>
+              <span className="font-bold">{friend.snakeHighScore || 0}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Math:</span>
+              <span className="font-bold">{friend.mathHighScore || 0}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Button onClick={onClose} className="w-full border-2 border-foreground shadow-[4px_4px_0px_0px_var(--foreground)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+        Close Profile
+      </Button>
+    </div>
+  );
 }
 
 export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
@@ -32,6 +99,7 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
   const [friendCode, setFriendCode] = useState<string>("");
   const [inputCode, setInputCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState<any>(null);
 
   useEffect(() => {
     if (open && user) {
@@ -98,8 +166,15 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(val) => {
+      onOpenChange(val);
+      if (!val) setSelectedFriend(null);
+    }}>
       <DialogContent className="sm:max-w-md border-4 border-foreground shadow-[8px_8px_0px_0px_var(--foreground)]">
+        {selectedFriend ? (
+          <FriendProfile friend={selectedFriend} onClose={() => setSelectedFriend(null)} />
+        ) : (
+          <>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
             <Users className="h-6 w-6" />
@@ -159,14 +234,19 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
                 {friends === undefined ? (
                   <div className="flex justify-center p-4"><Loader2 className="animate-spin" /></div>
                 ) : friends.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Users className="h-12 w-12 mx-auto mb-2 opacity-20" />
-                    <p>No friends yet. Add some!</p>
+                  <div className="flex flex-col items-center justify-center py-12 text-muted-foreground space-y-3">
+                    <div className="bg-muted p-4 rounded-full border-2 border-dashed border-muted-foreground/30">
+                      <Users className="h-8 w-8 opacity-50" />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-bold text-foreground">No friends yet</p>
+                      <p className="text-xs max-w-[200px]">Share your code or add friends to see their progress!</p>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {friends.map((friend: any) => (
-                      <div key={friend._id} className="flex items-center justify-between p-3 bg-card border-2 border-foreground rounded-lg shadow-[2px_2px_0px_0px_var(--foreground)]">
+                      <div key={friend._id} className="flex items-center justify-between p-3 bg-card border-2 border-foreground rounded-lg shadow-[2px_2px_0px_0px_var(--foreground)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer" onClick={() => setSelectedFriend(friend)}>
                         <div className="flex items-center gap-3">
                           <Avatar className="border border-foreground">
                             <AvatarImage src={friend.image} />
@@ -177,15 +257,20 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
                             <p className="text-xs text-muted-foreground">{friend.points} XP</p>
                           </div>
                         </div>
-                        <Button 
-                          size="icon" 
-                          variant="ghost" 
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => handleRemoveFriend(friend._id, friend.name)}
-                          title="Remove Friend"
-                        >
-                          <UserMinus className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveFriend(friend._id, friend.name);
+                            }}
+                            title="Remove Friend"
+                          >
+                            <UserMinus className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -219,8 +304,14 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
                 {requests === undefined ? (
                   <div className="flex justify-center p-4"><Loader2 className="animate-spin" /></div>
                 ) : requests.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>No pending requests.</p>
+                  <div className="flex flex-col items-center justify-center py-12 text-muted-foreground space-y-3">
+                    <div className="bg-muted p-4 rounded-full border-2 border-dashed border-muted-foreground/30">
+                      <UserPlus className="h-8 w-8 opacity-50" />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-bold text-foreground">No pending requests</p>
+                      <p className="text-xs">New friend requests will appear here.</p>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -256,9 +347,14 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
                 {sentRequests === undefined ? (
                   <div className="flex justify-center p-4"><Loader2 className="animate-spin" /></div>
                 ) : sentRequests.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Send className="h-12 w-12 mx-auto mb-2 opacity-20" />
-                    <p>No sent requests.</p>
+                  <div className="flex flex-col items-center justify-center py-12 text-muted-foreground space-y-3">
+                    <div className="bg-muted p-4 rounded-full border-2 border-dashed border-muted-foreground/30">
+                      <Send className="h-8 w-8 opacity-50" />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-bold text-foreground">No sent requests</p>
+                      <p className="text-xs">Requests you send will appear here.</p>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -291,6 +387,8 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
             </TabsContent>
           </Tabs>
         </div>
+        </>
+        )}
       </DialogContent>
     </Dialog>
   );

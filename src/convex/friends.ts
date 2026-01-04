@@ -216,6 +216,12 @@ export const getFriends = query({
           username: friend.username,
           image: friend.image,
           points: friend.points,
+          role: friend.role,
+          tier: friend.tier,
+          streakCount: friend.streakCount,
+          totalGamesWon: friend.totalGamesWon,
+          snakeHighScore: friend.snakeHighScore,
+          mathHighScore: friend.mathHighScore,
         } : null;
       })
     );

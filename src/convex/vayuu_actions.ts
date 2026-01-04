@@ -45,10 +45,11 @@ export const generateResponse = action({
     - AI Flashcards: Generate flashcards from your syllabus topics or uploaded resources to study efficiently.
     - Pomodoro Focus: Use the focus timer to study. Join "The Library" to see others focusing.
     - Friends & Connections: Connect with other students using unique 4-digit codes.
-      - Why connect?: See your friends' XP points and progress to stay motivated together!
+      - Why connect?: See your friends' XP points, streaks, and game stats to stay motivated together!
       - Access: Click the profile icon (top right) -> Select "Friends".
       - Your Code: Displayed at the top of the Friends dialog. Share this with others.
       - Add Friend: Go to "Add" tab -> Enter their 4-digit code -> Send Request.
+      - View Profile: Click on a friend in your list to see their detailed stats (Streak, Games Won, High Scores).
       - Inbox: Check "Inbox" tab to accept or reject incoming friend requests.
       - Sent Requests: Check "Sent" tab to view or cancel pending requests you've sent.
       - Manage Friends: View your friends list in the "Friends" tab. You can remove friends from here if needed.
