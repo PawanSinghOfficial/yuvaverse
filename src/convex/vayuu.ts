@@ -1,65 +1,83 @@
-"use node";
-import { action } from "./_generated/server";
+import { internalMutation, mutation, query, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
-import OpenAI from "openai";
+import { internal } from "./_generated/api";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
-const getOpenAI = () => {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not set");
-  }
-  return new OpenAI({ apiKey });
-};
+export const getMessages = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
 
-export const chat = action({
+    return await ctx.db
+      .query("vayuu_messages")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("asc")
+      .collect();
+  },
+});
+
+export const sendMessage = mutation({
   args: {
     message: v.string(),
-    history: v.array(v.object({ role: v.union(v.literal("user"), v.literal("assistant")), content: v.string() })),
-    userName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const openai = getOpenAI();
-    
-    const systemPrompt = `You are Vayuu, a helpful and enthusiastic AI guide for the YuvaVerse campus platform.
-    
-    About YuvaVerse:
-    - It's a gamified campus platform.
-    - Features: AI Notebooks (NotebookLM), Collaborative Groups, Arcade Games, Pomodoro Focus, Daily Quests, AI Flashcards.
-    - Navigation: Dashboard, Syllabus, Resources, Games, Groups, Calendar, Events.
-    
-    Your personality:
-    - Friendly, encouraging, and helpful.
-    - You use emojis occasionally.
-    - You help students navigate the platform and answer questions about their studies or the app features.
-    
-    Specific knowledge:
-    - Syllabus: Users can track progress.
-    - Resources: Users can upload/download notes and papers.
-    - Games: Snake, Tic-Tac-Toe, Math Challenge. Earn points!
-    - Groups: Study or social groups.
-    - NotebookLM: AI-powered study companion for PDFs/text.
-    
-    User context:
-    - User Name: ${args.userName || "Student"}
-    
-    Keep responses concise and relevant to the platform.`;
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
 
-    const messages = [
-      { role: "system", content: systemPrompt },
-      ...args.history.map(msg => ({ role: msg.role, content: msg.content })),
-      { role: "user", content: args.message }
-    ];
+    await ctx.db.insert("vayuu_messages", {
+      userId,
+      role: "user",
+      content: args.message,
+    });
 
-    try {
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: messages as any,
-      });
+    // Cast internal to any to avoid type error while api types are regenerating
+    await ctx.scheduler.runAfter(0, (internal as any).vayuu_actions.generateResponse, {
+      userId,
+    });
+  },
+});
 
-      return completion.choices[0].message.content || "I'm having trouble connecting to my brain right now. Try again?";
-    } catch (error) {
-      console.error("Vayuu chat error:", error);
-      return "I'm currently offline due to a technical glitch. Please try again later.";
+export const clearHistory = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const messages = await ctx.db
+      .query("vayuu_messages")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    for (const msg of messages) {
+      await ctx.db.delete(msg._id);
     }
+  },
+});
+
+export const saveBotResponse = internalMutation({
+  args: {
+    userId: v.id("users"),
+    content: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.insert("vayuu_messages", {
+      userId: args.userId,
+      role: "assistant",
+      content: args.content,
+    });
+  },
+});
+
+// Internal helpers
+export const getMessagesInternal = internalQuery({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("vayuu_messages")
+      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .order("desc")
+      .take(10)
+      .then(msgs => msgs.reverse());
   },
 });

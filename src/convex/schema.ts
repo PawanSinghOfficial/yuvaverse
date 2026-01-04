@@ -285,6 +285,12 @@ const schema = defineSchema(
       focusDuration: v.optional(v.number()), // Total duration in minutes
       startTime: v.optional(v.number()), // When they started
     }).index("by_updated", ["updatedAt"]),
+
+    vayuu_messages: defineTable({
+      userId: v.id("users"),
+      role: v.union(v.literal("user"), v.literal("assistant")),
+      content: v.string(),
+    }).index("by_user", ["userId"]),
   },
   {
     schemaValidation: false,

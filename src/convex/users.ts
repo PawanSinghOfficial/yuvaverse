@@ -1,5 +1,5 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { query, mutation, QueryCtx } from "./_generated/server";
+import { query, mutation, QueryCtx, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 
@@ -320,5 +320,12 @@ export const recordGameResult = mutation({
       newHighScore: args.gameId === "snake" ? patchData.snakeHighScore : 
                     args.gameId === "math" ? patchData.mathHighScore : undefined
     };
+  },
+});
+
+export const getUserInternal = internalQuery({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.userId);
   },
 });

@@ -7,6 +7,7 @@ import { ConvexReactClient } from "convex/react";
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+import { ThemeProvider } from "next-themes";
 import "./index.css";
 import Landing from "./pages/Landing.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -25,10 +26,6 @@ import Pomodoro from "./pages/Pomodoro";
 import Games from "./pages/Games";
 import Flashcards from "./pages/Flashcards";
 import "./types/global.d.ts";
-
-// Force light mode
-document.documentElement.classList.remove("dark");
-localStorage.removeItem("theme");
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -60,34 +57,36 @@ createRoot(document.getElementById("root")!).render(
     <VlyToolbar />
     <InstrumentationProvider>
       <ConvexAuthProvider client={convex}>
-        <BrowserRouter>
-          <RouteSyncer />
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/auth" element={<AuthPage redirectAfterAuth="/dashboard" />} />
-            
-            {/* Protected Routes */}
-            <Route element={<DashboardLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="resources" element={<Resources />} />
-                <Route path="flashcards" element={<Flashcards />} />
-                <Route path="/syllabus" element={<Syllabus />} />
-                <Route path="/groups" element={<Groups />} />
-                <Route path="/groups/:groupId" element={<GroupChat />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/calendar" element={<CalendarPage />} />
-                <Route path="/notebook" element={<NotebookLM />} />
-                <Route path="/focus" element={<Pomodoro />} />
-                <Route path="/games" element={<Games />} />
-                <Route path="/pomodoro" element={<Pomodoro />} />
-                <Route path="/feedback" element={<Feedback />} />
-                <Route path="/admin" element={<Admin />} />
-            </Route>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <BrowserRouter>
+            <RouteSyncer />
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/auth" element={<AuthPage redirectAfterAuth="/dashboard" />} />
+              
+              {/* Protected Routes */}
+              <Route element={<DashboardLayout />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="resources" element={<Resources />} />
+                  <Route path="flashcards" element={<Flashcards />} />
+                  <Route path="/syllabus" element={<Syllabus />} />
+                  <Route path="/groups" element={<Groups />} />
+                  <Route path="/groups/:groupId" element={<GroupChat />} />
+                  <Route path="/events" element={<Events />} />
+                  <Route path="/calendar" element={<CalendarPage />} />
+                  <Route path="/notebook" element={<NotebookLM />} />
+                  <Route path="/focus" element={<Pomodoro />} />
+                  <Route path="/games" element={<Games />} />
+                  <Route path="/pomodoro" element={<Pomodoro />} />
+                  <Route path="/feedback" element={<Feedback />} />
+                  <Route path="/admin" element={<Admin />} />
+              </Route>
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-        <Toaster />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+        </ThemeProvider>
       </ConvexAuthProvider>
     </InstrumentationProvider>
   </StrictMode>,

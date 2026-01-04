@@ -13,6 +13,7 @@ import { VayuuChat } from "@/components/VayuuChat";
 import Resources from "@/pages/Resources";
 import CalendarPage from "@/pages/Calendar";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function DashboardLayout() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -68,6 +69,7 @@ export default function DashboardLayout() {
         <div className="flex items-center gap-4 px-4 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
           <SidebarTrigger />
           <div className="flex-1" />
+          <ThemeToggle />
           <LogoDropdown />
         </div>
         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent p-0">
