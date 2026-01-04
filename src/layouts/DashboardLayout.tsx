@@ -82,13 +82,13 @@ export default function DashboardLayout() {
       <ExitIntentPopup />
 
       <Sheet open={isResourcesOpen} onOpenChange={setIsResourcesOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-[85vw] p-0 overflow-y-auto border-l-4 border-black">
+        <SheetContent side="right" className="w-full sm:max-w-[85vw] p-0 overflow-y-auto border-l-4 border-foreground">
           <Resources />
         </SheetContent>
       </Sheet>
 
       <Sheet open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-[85vw] p-0 overflow-y-auto border-l-4 border-black">
+        <SheetContent side="right" className="w-full sm:max-w-[85vw] p-0 overflow-y-auto border-l-4 border-foreground">
           <CalendarPage />
         </SheetContent>
       </Sheet>

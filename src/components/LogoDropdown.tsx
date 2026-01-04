@@ -55,7 +55,7 @@ export function LogoDropdown() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <DropdownMenuContent align="end" className="w-56 border-2 border-foreground shadow-[4px_4px_0px_0px_var(--foreground)]">
         {isAuthenticated && user && (
             <>
                 <DropdownMenuLabel className="font-normal">

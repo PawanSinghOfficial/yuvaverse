@@ -74,7 +74,7 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+      <DialogContent className="sm:max-w-md border-4 border-foreground shadow-[8px_8px_0px_0px_var(--foreground)]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
             <Users className="h-6 w-6" />
@@ -86,24 +86,24 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
         </DialogHeader>
 
         <div className="flex flex-col gap-4 py-4">
-          <div className="bg-muted p-4 rounded-lg border-2 border-black flex items-center justify-between">
+          <div className="bg-muted p-4 rounded-lg border-2 border-foreground flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Your Friend Code</p>
               <p className="text-3xl font-black tracking-widest">{friendCode || "...."}</p>
             </div>
-            <Button variant="outline" size="icon" onClick={copyCode} className="border-2 border-black hover:bg-primary/20">
+            <Button variant="outline" size="icon" onClick={copyCode} className="border-2 border-foreground hover:bg-primary/20">
               <Copy className="h-4 w-4" />
             </Button>
           </div>
 
           <Tabs defaultValue="friends" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 border-2 border-black p-0 h-auto bg-transparent gap-1">
-              <TabsTrigger value="friends" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-r-2 border-transparent data-[state=active]:border-black rounded-none h-9">Friends</TabsTrigger>
-              <TabsTrigger value="add" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-r-2 border-transparent data-[state=active]:border-black rounded-none h-9">Add Friend</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 border-2 border-foreground p-0 h-auto bg-transparent gap-1">
+              <TabsTrigger value="friends" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-r-2 border-transparent data-[state=active]:border-foreground rounded-none h-9">Friends</TabsTrigger>
+              <TabsTrigger value="add" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-r-2 border-transparent data-[state=active]:border-foreground rounded-none h-9">Add Friend</TabsTrigger>
               <TabsTrigger value="requests" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-none h-9 relative">
                 Requests
                 {requests && requests.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] w-4 h-4 flex items-center justify-center rounded-full border border-black">
+                  <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] w-4 h-4 flex items-center justify-center rounded-full border border-foreground">
                     {requests.length}
                   </span>
                 )}
@@ -122,9 +122,9 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
                 ) : (
                   <div className="space-y-3">
                     {friends.map((friend: any) => (
-                      <div key={friend._id} className="flex items-center justify-between p-3 bg-card border-2 border-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <div key={friend._id} className="flex items-center justify-between p-3 bg-card border-2 border-foreground rounded-lg shadow-[2px_2px_0px_0px_var(--foreground)]">
                         <div className="flex items-center gap-3">
-                          <Avatar className="border border-black">
+                          <Avatar className="border border-foreground">
                             <AvatarImage src={friend.image} />
                             <AvatarFallback>{friend.name?.[0] || "?"}</AvatarFallback>
                           </Avatar>
@@ -148,10 +148,10 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
                     placeholder="e.g. 1234" 
                     value={inputCode}
                     onChange={(e) => setInputCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                    className="border-2 border-black text-lg tracking-widest font-bold"
+                    className="border-2 border-foreground text-lg tracking-widest font-bold"
                     maxLength={4}
                   />
-                  <Button onClick={handleSendRequest} disabled={isLoading || inputCode.length !== 4} className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                  <Button onClick={handleSendRequest} disabled={isLoading || inputCode.length !== 4} className="border-2 border-foreground shadow-[2px_2px_0px_0px_var(--foreground)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
                     {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
                   </Button>
                 </div>
@@ -172,9 +172,9 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
                 ) : (
                   <div className="space-y-3">
                     {requests.map((req: any) => (
-                      <div key={req._id} className="flex items-center justify-between p-3 bg-card border-2 border-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <div key={req._id} className="flex items-center justify-between p-3 bg-card border-2 border-foreground rounded-lg shadow-[2px_2px_0px_0px_var(--foreground)]">
                         <div className="flex items-center gap-3">
-                          <Avatar className="border border-black">
+                          <Avatar className="border border-foreground">
                             <AvatarImage src={req.sender.image} />
                             <AvatarFallback>{req.sender.name?.[0] || "?"}</AvatarFallback>
                           </Avatar>

@@ -36,7 +36,7 @@ export default function UserAvatar({ config, className, pose = "portrait", size 
   
   return (
     <div 
-      className={cn("relative overflow-hidden rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]", className)}
+      className={cn("relative overflow-hidden rounded-full border-4 border-foreground shadow-[4px_4px_0px_0px_var(--foreground)]", className)}
       style={{ 
         backgroundColor: config.backgroundColor,
         width: sizePx,
