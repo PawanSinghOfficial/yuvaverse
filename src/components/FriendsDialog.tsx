@@ -122,18 +122,36 @@ export function FriendsDialog({ open, onOpenChange }: FriendsDialogProps) {
           </div>
 
           <Tabs defaultValue="friends" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 border-2 border-foreground p-0 h-auto bg-transparent gap-1">
-              <TabsTrigger value="friends" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-r-2 border-transparent data-[state=active]:border-foreground rounded-none h-9 text-xs sm:text-sm px-1">Friends</TabsTrigger>
-              <TabsTrigger value="add" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-r-2 border-transparent data-[state=active]:border-foreground rounded-none h-9 text-xs sm:text-sm px-1">Add</TabsTrigger>
-              <TabsTrigger value="requests" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-r-2 border-transparent data-[state=active]:border-foreground rounded-none h-9 relative text-xs sm:text-sm px-1">
+            <TabsList className="grid w-full grid-cols-4 border-2 border-foreground p-0 h-auto bg-muted gap-[1px]">
+              <TabsTrigger 
+                value="friends" 
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-r-2 border-transparent data-[state=active]:border-foreground rounded-none h-10 text-xs sm:text-sm px-1 font-bold transition-all"
+              >
+                Friends
+              </TabsTrigger>
+              <TabsTrigger 
+                value="add" 
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-r-2 border-transparent data-[state=active]:border-foreground rounded-none h-10 text-xs sm:text-sm px-1 font-bold transition-all"
+              >
+                Add
+              </TabsTrigger>
+              <TabsTrigger 
+                value="requests" 
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-r-2 border-transparent data-[state=active]:border-foreground rounded-none h-10 relative text-xs sm:text-sm px-1 font-bold transition-all"
+              >
                 Inbox
                 {requests && requests.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] w-4 h-4 flex items-center justify-center rounded-full border border-foreground">
+                  <span className="absolute top-0.5 right-0.5 bg-destructive text-destructive-foreground text-[9px] w-4 h-4 flex items-center justify-center rounded-full border border-foreground animate-pulse">
                     {requests.length}
                   </span>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="sent" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-none h-9 text-xs sm:text-sm px-1">Sent</TabsTrigger>
+              <TabsTrigger 
+                value="sent" 
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-none h-10 text-xs sm:text-sm px-1 font-bold transition-all"
+              >
+                Sent
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="friends" className="mt-4">

@@ -45,6 +45,7 @@ export const generateResponse = action({
     - AI Flashcards: Generate flashcards from your syllabus topics or uploaded resources to study efficiently.
     - Pomodoro Focus: Use the focus timer to study. Join "The Library" to see others focusing.
     - Friends & Connections: Connect with other students using unique 4-digit codes.
+      - Why connect?: See your friends' XP points and progress to stay motivated together!
       - Access: Click the profile icon (top right) -> Select "Friends".
       - Your Code: Displayed at the top of the Friends dialog. Share this with others.
       - Add Friend: Go to "Add" tab -> Enter their 4-digit code -> Send Request.
