@@ -15,11 +15,17 @@ import { useNavigate } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
 import { FriendsDialog } from "./FriendsDialog";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export function LogoDropdown() {
   const { isAuthenticated, signOut, user } = useAuth();
   const navigate = useNavigate();
   const [showFriends, setShowFriends] = useState(false);
+  
+  // Fetch incoming requests for notification badge
+  const requests = useQuery(api.friends.getIncomingRequests);
+  const requestCount = requests?.length || 0;
 
   const handleSignOut = async () => {
     try {
@@ -38,7 +44,7 @@ export function LogoDropdown() {
     <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full overflow-hidden border-2 border-transparent hover:border-primary/20">
+        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full overflow-hidden border-2 border-transparent hover:border-primary/20 relative">
           {isAuthenticated && user?.image ? (
              <Avatar className="h-9 w-9 border border-border">
                 <AvatarImage src={user.image} alt={user.name || "User"} />
@@ -52,6 +58,9 @@ export function LogoDropdown() {
               height={32}
               className="rounded-lg"
             />
+          )}
+          {isAuthenticated && requestCount > 0 && (
+            <span className="absolute top-0 right-0 h-3 w-3 rounded-full bg-destructive border-2 border-background animate-pulse" />
           )}
         </Button>
       </DropdownMenuTrigger>
@@ -73,9 +82,16 @@ export function LogoDropdown() {
         </DropdownMenuItem>
         {isAuthenticated && (
           <>
-            <DropdownMenuItem onClick={() => setShowFriends(true)} className="cursor-pointer font-medium">
-              <Users className="mr-2 h-4 w-4" />
-              Friends
+            <DropdownMenuItem onClick={() => setShowFriends(true)} className="cursor-pointer font-medium justify-between">
+              <div className="flex items-center">
+                <Users className="mr-2 h-4 w-4" />
+                Friends
+              </div>
+              {requestCount > 0 && (
+                <span className="bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full h-5 min-w-5 flex items-center justify-center">
+                  {requestCount}
+                </span>
+              )}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
