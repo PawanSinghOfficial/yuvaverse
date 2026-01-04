@@ -54,9 +54,9 @@
   --card-foreground: #000000;
   --popover: #ffffff;
   --popover-foreground: #000000;
-  --primary: oklch(0.774 0.117 256.0);
+  --primary: oklch(0.758 0.123 265.7);
   --primary-foreground: #ffffff;
-  --secondary: #00FF80;
+  --secondary: oklch(0.937 0.034 296.7);
   --secondary-foreground: #000000;
   --muted: #f0f0f0;
   --muted-foreground: #000000;
@@ -73,9 +73,9 @@
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: #f8f9fa;
   --sidebar-foreground: #000000;
-  --sidebar-primary: oklch(0.774 0.117 256.0);
+  --sidebar-primary: oklch(0.758 0.123 265.7);
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #00FF80;
+  --sidebar-accent: oklch(0.937 0.034 296.7);
   --sidebar-accent-foreground: #000000;
   --sidebar-border: #404040;
   --sidebar-ring: #404040;
