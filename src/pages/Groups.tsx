@@ -259,16 +259,33 @@ export default function Groups() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {groups?.map((group) => (
-            <Card key={group._id} className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all bg-white dark:bg-card flex flex-col">
-              <CardHeader className="border-b-4 border-black bg-secondary/10 pb-4">
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-xl font-black uppercase tracking-tight">{group.name}</CardTitle>
-                  {group.isPrivate && <Badge variant="outline" className="border-2 border-black font-bold">PRIVATE</Badge>}
-                </div>
+            <Card key={group._id} className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all bg-white dark:bg-card flex flex-col overflow-hidden">
+              <div className="h-32 w-full bg-secondary/10 border-b-4 border-black relative">
+                {group.imageUrl ? (
+                  <img 
+                    src={group.imageUrl} 
+                    alt={group.name} 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-pink-100 dark:bg-pink-900/20">
+                    <Users className="h-12 w-12 text-pink-400/50" />
+                  </div>
+                )}
+                {group.isPrivate && (
+                  <div className="absolute top-2 right-2">
+                    <Badge variant="outline" className="bg-background border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <Lock className="w-3 h-3 mr-1" /> PRIVATE
+                    </Badge>
+                  </div>
+                )}
+              </div>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-xl font-black uppercase tracking-tight line-clamp-1">{group.name}</CardTitle>
               </CardHeader>
-              <CardContent className="pt-6 flex-1 flex flex-col justify-between gap-4">
+              <CardContent className="pt-2 flex-1 flex flex-col justify-between gap-4">
                 <div>
-                  <p className="text-muted-foreground font-medium mb-4 line-clamp-2">{group.description}</p>
+                  <p className="text-muted-foreground font-medium mb-4 line-clamp-2 text-sm">{group.description}</p>
                   <div className="flex items-center gap-4 text-sm font-bold text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Users className="h-4 w-4" />
