@@ -314,15 +314,20 @@ export default function Groups() {
                 </div>
                 
                 <Button 
-                  onClick={() => handleJoin(group._id, group.isPrivate)} 
-                  disabled={isMember(group._id)}
+                  onClick={() => {
+                    if (isMember(group._id)) {
+                      navigate(`/groups/${group._id}`);
+                    } else {
+                      handleJoin(group._id, group.isPrivate);
+                    }
+                  }}
                   className={`w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
                     isMember(group._id) 
                       ? "bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-800" 
                       : "bg-primary text-primary-foreground hover:bg-primary/90"
                   }`}
                 >
-                  {isMember(group._id) ? "Member ✓" : "Join Squad"}
+                  {isMember(group._id) ? "Enter Chat" : "Join Squad"}
                 </Button>
               </CardContent>
             </Card>
@@ -336,6 +341,76 @@ export default function Groups() {
           )}
         </div>
       </div>
+
+      <Dialog open={isJoinDialogOpen} onOpenChange={setIsJoinDialogOpen}>
+        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <DialogHeader>
+            <DialogTitle>Join Private Group</DialogTitle>
+            <DialogDescription>
+              This group is private. Please enter the password to join.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={joinPassword}
+                onChange={(e) => setJoinPassword(e.target.value)}
+                placeholder="Enter group password"
+                className="border-2 border-black"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsJoinDialogOpen(false)} className="border-2 border-black">Cancel</Button>
+            <Button onClick={handlePrivateJoin} className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Join Group</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
+        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <DialogHeader>
+            <DialogTitle>Report Group</DialogTitle>
+            <DialogDescription>
+              Please provide a reason for reporting this group.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reason">Reason</Label>
+              <Textarea
+                id="reason"
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                placeholder="Why are you reporting this group?"
+                className="border-2 border-black"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsReportDialogOpen(false)} className="border-2 border-black">Cancel</Button>
+            <Button variant="destructive" onClick={handleReportSubmitClick} className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Report Group</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={isConfirmReportOpen} onOpenChange={setIsConfirmReportOpen}>
+        <AlertDialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Report</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to report this group? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-2 border-black">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmReport} className="bg-destructive text-destructive-foreground border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Report</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
