@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
     Sparkles, Plus, MessageSquare, Headphones, 
     Trash2, ChevronRight, StickyNote,
-    BrainCircuit, Network, Pause
+    BrainCircuit, Network, Pause, ExternalLink
 } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -120,6 +120,19 @@ export default function NotebookLM() {
                 )}
             </div>
         </ScrollArea>
+        
+        {/* Footer Link to Google NotebookLM */}
+        <div className="p-4 border-t-2 border-border bg-white">
+            <a 
+                href="https://notebooklm.google.com/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-purple-600 transition-colors p-2 rounded-lg hover:bg-purple-50"
+            >
+                <ExternalLink className="h-3 w-3" />
+                Inspired by Google NotebookLM
+            </a>
+        </div>
       </div>
 
       {/* Main Content Area */}
