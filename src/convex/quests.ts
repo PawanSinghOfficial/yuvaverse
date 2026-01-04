@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query, internalMutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { internal } from "./_generated/api";
 
 const QUEST_TYPES = [
   { type: "pomodoro", title: "Complete a Focus Session", target: 1, xp: 20 },
@@ -60,6 +61,13 @@ export const claimDailyBonus = mutation({
     }
 
     await ctx.db.patch(dailyQuest._id, { rewardsClaimed: true });
+
+    // Log Activity
+    await ctx.scheduler.runAfter(0, internal.activities.log, {
+        type: "daily_quests_complete",
+        data: { questCount: dailyQuest.quests.length }
+    });
+
     return BONUS_XP;
   },
 });

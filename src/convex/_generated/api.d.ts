@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as activities from "../activities.js";
 import type * as ai_notebook from "../ai_notebook.js";
 import type * as ai_notebook_actions from "../ai_notebook_actions.js";
 import type * as auth from "../auth.js";
@@ -36,6 +37,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  activities: typeof activities;
   ai_notebook: typeof ai_notebook;
   ai_notebook_actions: typeof ai_notebook_actions;
   auth: typeof auth;

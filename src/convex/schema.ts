@@ -303,6 +303,20 @@ const schema = defineSchema(
       role: v.union(v.literal("user"), v.literal("assistant")),
       content: v.string(),
     }).index("by_user", ["userId"]),
+
+    friend_activities: defineTable({
+      userId: v.id("users"),
+      type: v.string(), // "game_highscore", "resource_upload", "pomodoro_session", "daily_quests_complete"
+      data: v.object({
+        gameId: v.optional(v.string()),
+        score: v.optional(v.number()),
+        resourceId: v.optional(v.id("resources")),
+        resourceTitle: v.optional(v.string()),
+        duration: v.optional(v.number()), // minutes
+        questCount: v.optional(v.number()),
+      }),
+      timestamp: v.number(),
+    }).index("by_user_timestamp", ["userId", "timestamp"]),
   },
   {
     schemaValidation: false,

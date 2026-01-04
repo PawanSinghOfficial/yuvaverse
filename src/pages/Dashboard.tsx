@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DailyQuests } from "@/components/DailyQuests";
+import { FriendActivityFeed } from "@/components/dashboard/FriendActivityFeed";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -469,6 +470,9 @@ export default function Dashboard() {
         </div>
 
         <div className="col-span-3 space-y-6">
+          {/* Friend Activity Feed */}
+          <FriendActivityFeed />
+
           {/* Leaderboard */}
           <Card className="bg-yellow-100 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#eab308]" id="dashboard-leaderboard">
             <CardHeader>

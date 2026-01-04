@@ -293,6 +293,12 @@ export const create = mutation({
         questType: "upload",
         increment: 1
     });
+
+    // Log Activity
+    await ctx.scheduler.runAfter(0, internal.activities.log, {
+        type: "resource_upload",
+        data: { resourceTitle: args.title }
+    });
   },
 });
 

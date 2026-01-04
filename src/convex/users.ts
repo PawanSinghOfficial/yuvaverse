@@ -212,6 +212,12 @@ export const completePomodoroSession = mutation({
         questType: "pomodoro",
         increment: 1
     });
+
+    // Log Activity
+    await ctx.scheduler.runAfter(0, internal.activities.log, {
+        type: "pomodoro_session",
+        data: { duration: args.durationMinutes }
+    });
     
     return pointsEarned;
   },
@@ -312,6 +318,17 @@ export const recordGameResult = mutation({
             userId,
             questType: `${args.gameId}_win`,
             increment: 1
+        });
+    }
+
+    // Log Activity if High Score
+    const isNewHighScore = (args.gameId === "snake" && args.score !== undefined && args.score > (user.snakeHighScore || 0)) ||
+                           (args.gameId === "math" && args.score !== undefined && args.score > (user.mathHighScore || 0));
+    
+    if (isNewHighScore && args.score !== undefined) {
+        await ctx.scheduler.runAfter(0, internal.activities.log, {
+            type: "game_highscore",
+            data: { gameId: args.gameId, score: args.score }
         });
     }
     
