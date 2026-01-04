@@ -16,6 +16,7 @@ import {
 import { useNavigate } from "react-router";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useAuth } from "@/hooks/use-auth";
+import { NinjaCursor } from "@/components/NinjaCursor";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function Landing() {
     "https://harmless-tapir-303.convex.cloud/api/storage/db1724ed-9b2f-4ed4-8514-69ae556175c8";
 
   const { isAuthenticated } = useAuth();
-  const primaryCtaLabel = isAuthenticated ? "Go to Dashboard" : "Join Now";
+  const primaryCtaLabel = isAuthenticated ? "LET'S EXPLORE" : "Join Now";
   const primaryCtaPath = isAuthenticated ? "/dashboard" : "/auth";
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden isolate">
       <ExitIntentPopup />
+      <NinjaCursor />
 
       {/* Live Animated Background */}
       <div className="fixed inset-0 -z-10 overflow-hidden bg-white">
