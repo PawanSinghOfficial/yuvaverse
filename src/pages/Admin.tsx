@@ -28,7 +28,7 @@ import { Id } from "@/convex/_generated/dataModel";
 export default function Admin() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const events = useQuery(api.events.list);
+  const events = useQuery(api.events.list, { college: "All" });
   const feedbacks = useQuery(api.feedback.list);
   const resources = useQuery(api.resources.list, {});
   const flaggedResources = useQuery(api.resources.getFlagged);

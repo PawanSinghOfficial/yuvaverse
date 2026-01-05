@@ -202,7 +202,7 @@ export default function Groups() {
       <div className="p-4 md:p-8 space-y-8 flex-1">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-4xl font-black tracking-tighter uppercase">Student Groups</h1>
+            <h1 className="text-4xl font-black tracking-tighter uppercase">College Groups</h1>
             <p className="text-lg font-medium text-muted-foreground border border-border bg-white dark:bg-card p-2 inline-block shadow-[4px_4px_0px_0px_var(--shadow)] mt-2">
               Join a squad, collaborate, and conquer quests together.
             </p>

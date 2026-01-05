@@ -223,7 +223,7 @@ export default function Landing() {
               <div className="h-14 w-14 bg-pink-100 dark:bg-pink-900 flex items-center justify-center mb-4 text-pink-600 dark:text-pink-300 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)]">
                 <Users className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-black mb-2 uppercase text-foreground">Study Groups</h3>
+              <h3 className="text-xl font-black mb-2 uppercase text-foreground">College Groups</h3>
               <p className="text-muted-foreground font-medium">
                 Collaborate in real-time with voice, video, and chat channels dedicated
                 to your subjects.
