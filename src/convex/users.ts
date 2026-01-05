@@ -109,7 +109,9 @@ export const syncAdminRole = mutation({
     const user = await ctx.db.get(userId);
     if (!user) return;
 
-    if (user.email === "placementandinternships4u@gmail.com" && user.role !== "admin") {
+    const adminEmails = ["placementandinternships4u@gmail.com", "codedbypawan@gmail.com"];
+
+    if (user.email && adminEmails.includes(user.email) && user.role !== "admin") {
       await ctx.db.patch(userId, { role: "admin" });
     }
   },
