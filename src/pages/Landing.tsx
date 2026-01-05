@@ -17,6 +17,7 @@ import { useNavigate } from "react-router";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useAuth } from "@/hooks/use-auth";
 import { NinjaCursor } from "@/components/NinjaCursor";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -84,6 +85,7 @@ export default function Landing() {
           YuvaVerse
         </div>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           {isAuthenticated ? (
             <Button variant="ghost" onClick={() => navigate("/dashboard")}>
               Dashboard
