@@ -71,7 +71,7 @@ export const create = mutation({
     type: v.union(v.literal("study"), v.literal("social")),
     isPrivate: v.boolean(),
     password: v.optional(v.string()),
-    college: v.optional(v.string()),
+    college: v.string(),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -79,6 +79,14 @@ export const create = mutation({
 
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
+
+    // Check permissions: Only Admin or Premium/Elite users can create groups
+    const isSystemAdmin = user.role === "admin";
+    const isPremium = user.tier === "premium" || user.tier === "elite";
+
+    if (!isSystemAdmin && !isPremium) {
+      throw new Error("Only Premium users or Admins can create groups. Please upgrade your plan.");
+    }
 
     if (args.isPrivate && !args.password) {
       throw new Error("Password required for private groups");
@@ -286,6 +294,7 @@ export const updateGroup = mutation({
     const group = await ctx.db.get(args.groupId);
     if (!group) throw new Error("Group not found");
 
+    // Only the original creator can update the group details (including renaming)
     if (group.creatorId !== userId) {
       throw new Error("Only the creator can update the group");
     }

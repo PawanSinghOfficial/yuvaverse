@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Lock, Globe, Plus, Loader2, Image as ImageIcon, Flag, AlertTriangle, Trophy, Trash2 } from "lucide-react";
+import { Users, Lock, Globe, Plus, Loader2, Image as ImageIcon, Flag, AlertTriangle, Trophy, Trash2, Crown } from "lucide-react";
 import { useNavigate } from "react-router";
 import {
   Dialog,
@@ -64,7 +64,7 @@ export default function Groups() {
     isPrivate: false,
     password: "",
     image: null as File | null,
-    college: "Other",
+    college: "",
   });
 
   const [joinPassword, setJoinPassword] = useState("");
@@ -81,8 +81,21 @@ export default function Groups() {
     return userGroups?.includes(groupId) ?? false;
   };
 
+  const canCreateGroup = user?.role === "admin" || user?.tier === "premium" || user?.tier === "elite";
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!canCreateGroup) {
+      toast.error("Only Premium users can create groups!");
+      return;
+    }
+
+    if (!formData.college) {
+      toast.error("Please select a college");
+      return;
+    }
+
     setIsCreating(true);
     try {
       let imageId = undefined;
@@ -109,9 +122,9 @@ export default function Groups() {
       });
       toast.success("Group created successfully!");
       setIsOpen(false);
-      setFormData({ name: "", description: "", type: "study", isPrivate: false, password: "", image: null, college: "Other" });
-    } catch (error) {
-      toast.error("Failed to create group");
+      setFormData({ name: "", description: "", type: "study", isPrivate: false, password: "", image: null, college: "" });
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create group");
     } finally {
       setIsCreating(false);
     }
@@ -237,12 +250,24 @@ export default function Groups() {
                   <DialogTitle className="text-2xl font-black uppercase">Create a New Group</DialogTitle>
                   <DialogDescription>Form a team and start your journey.</DialogDescription>
                 </DialogHeader>
+                
+                {!canCreateGroup && (
+                  <div className="bg-yellow-100 border-2 border-yellow-500 p-4 rounded-md flex items-start gap-3 mb-4">
+                    <Crown className="h-5 w-5 text-yellow-700 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-yellow-800">Premium Feature</h4>
+                      <p className="text-sm text-yellow-700">Only Premium or Elite members can create new groups. Upgrade your plan to start your own squad!</p>
+                    </div>
+                  </div>
+                )}
+
                 <form onSubmit={handleCreate} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Group Name</Label>
                     <Input 
                       id="name" 
                       required 
+                      disabled={!canCreateGroup}
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                       placeholder="e.g., The Code Warriors"
@@ -250,9 +275,10 @@ export default function Groups() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="college">College</Label>
+                    <Label htmlFor="college">College (Required)</Label>
                     <Select 
                       value={formData.college} 
+                      disabled={!canCreateGroup}
                       onValueChange={(value) => setFormData({...formData, college: value})}
                     >
                       <SelectTrigger className="border-2 border-black">
@@ -272,6 +298,7 @@ export default function Groups() {
                     <Input 
                       id="description" 
                       required 
+                      disabled={!canCreateGroup}
                       value={formData.description}
                       onChange={(e) => setFormData({...formData, description: e.target.value})}
                       placeholder="What's your group about?"
@@ -285,6 +312,7 @@ export default function Groups() {
                         id="image" 
                         type="file"
                         accept="image/*"
+                        disabled={!canCreateGroup}
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (file) setFormData({...formData, image: file});
@@ -296,13 +324,29 @@ export default function Groups() {
                   <div className="flex items-center space-x-2">
                     <Switch 
                       id="private" 
+                      disabled={!canCreateGroup}
                       checked={formData.isPrivate}
                       onCheckedChange={(checked) => setFormData({...formData, isPrivate: checked})}
                     />
                     <Label htmlFor="private">Private Group</Label>
                   </div>
+                  {formData.isPrivate && (
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Group Password</Label>
+                      <Input 
+                        id="password" 
+                        type="password"
+                        required={formData.isPrivate}
+                        disabled={!canCreateGroup}
+                        value={formData.password}
+                        onChange={(e) => setFormData({...formData, password: e.target.value})}
+                        placeholder="Set a password"
+                        className="border-2 border-black"
+                      />
+                    </div>
+                  )}
                   <DialogFooter>
-                    <Button type="submit" disabled={isCreating} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <Button type="submit" disabled={isCreating || !canCreateGroup} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                       {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Create Group
                     </Button>
