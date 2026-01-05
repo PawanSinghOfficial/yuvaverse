@@ -82,6 +82,24 @@ export const setUsername = mutation({
   },
 });
 
+export const updateProfile = mutation({
+  args: {
+    branch: v.optional(v.string()),
+    college: v.optional(v.string()),
+    year: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    await ctx.db.patch(userId, {
+      branch: args.branch,
+      college: args.college,
+      year: args.year,
+    });
+  },
+});
+
 export const syncAdminRole = mutation({
   args: {},
   handler: async (ctx) => {

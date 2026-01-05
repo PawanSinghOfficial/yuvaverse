@@ -52,6 +52,11 @@ const schema = defineSchema(
       pomodoroSessionsCompleted: v.optional(v.number()),
       pomodoroSessionsAborted: v.optional(v.number()),
 
+      // Profile Details
+      branch: v.optional(v.string()),
+      college: v.optional(v.string()),
+      year: v.optional(v.string()),
+
       // Game Stats
       snakeHighScore: v.optional(v.number()),
       mathHighScore: v.optional(v.number()),
