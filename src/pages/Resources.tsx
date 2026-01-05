@@ -188,7 +188,7 @@ export default function Resources() {
           {/* Subject Filter */}
           <div className="w-full sm:w-48">
              <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-                <SelectTrigger className="w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <SelectTrigger className="w-full border-2 border-black dark:border-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-none bg-white dark:bg-background">
                    <div className="flex items-center gap-2">
                       <Filter className="h-4 w-4" />
                       <SelectValue placeholder="Filter by Subject" />
@@ -206,18 +206,18 @@ export default function Resources() {
           </div>
 
           <div className="relative w-full md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black font-bold" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black dark:text-muted-foreground font-bold" />
             <Input
               type="search"
               placeholder="Search resources..."
-              className="pl-10 w-full h-10 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus-visible:ring-0 focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-muted-foreground"
+              className="pl-10 w-full h-10 bg-white dark:bg-background border-2 border-black dark:border-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-none focus-visible:ring-0 focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:focus:shadow-none transition-all placeholder:text-muted-foreground"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <Button className="border-2 border-black dark:border-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-none transition-all">
                 <Upload className="mr-2 h-4 w-4" />
                 Upload New
               </Button>
@@ -351,7 +351,7 @@ export default function Resources() {
           <Card 
             key={resource._id} 
             onClick={() => window.open(resource.url, "_blank")}
-            className={`cursor-pointer border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${resource.isFlagged || isReported ? "bg-red-50" : "bg-white"}`}
+            className={`cursor-pointer border-2 border-black dark:border-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-none transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-none ${resource.isFlagged || isReported ? "bg-red-50 dark:bg-red-900/20" : "bg-white dark:bg-card"}`}
           >
             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
               <div className="space-y-1">
@@ -360,20 +360,20 @@ export default function Resources() {
                   {(resource.isFlagged || isReported) && <AlertTriangle className="h-4 w-4 text-destructive" />}
                 </CardTitle>
                 <div className="flex flex-wrap gap-2 mt-1">
-                    <span className="text-xs font-bold px-2 py-0.5 bg-indigo-100 text-indigo-700 border border-black rounded-none">
+                    <span className="text-xs font-bold px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-black dark:border-border rounded-none">
                         {resource.subject}
                     </span>
-                    <span className="text-xs font-bold px-2 py-0.5 bg-pink-100 text-pink-700 border border-black rounded-none">
+                    <span className="text-xs font-bold px-2 py-0.5 bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 border border-black dark:border-border rounded-none">
                         Sem {resource.semester}
                     </span>
                 </div>
                 <p className="text-xs font-medium text-muted-foreground mt-1">By {resource.uploaderName}</p>
               </div>
-              <div className="p-2 bg-yellow-300 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <div className="p-2 bg-yellow-300 dark:bg-yellow-600 border-2 border-black dark:border-border shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-none rounded-md">
                 {resource.type === "code" ? (
-                  <Code className="h-5 w-5 text-black" />
+                  <Code className="h-5 w-5 text-black dark:text-white" />
                 ) : (
-                  <FileText className="h-5 w-5 text-black" />
+                  <FileText className="h-5 w-5 text-black dark:text-white" />
                 )}
               </div>
             </CardHeader>
@@ -383,7 +383,7 @@ export default function Resources() {
                    <Button 
                     variant="ghost" 
                     size="sm" 
-                    className={`h-8 px-2 gap-1 border border-transparent hover:border-black hover:bg-gray-100 ${hasLiked ? "text-blue-600 bg-blue-50 border-blue-200" : "text-muted-foreground"}`}
+                    className={`h-8 px-2 gap-1 border border-transparent hover:border-black dark:hover:border-border hover:bg-gray-100 dark:hover:bg-accent ${hasLiked ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800" : "text-muted-foreground"}`}
                     onClick={(e) => { e.stopPropagation(); handleLike(resource._id); }}
                    >
                      <ThumbsUp className={`h-3 w-3 ${hasLiked ? "fill-current" : ""}`} />
@@ -392,7 +392,7 @@ export default function Resources() {
                    <Button 
                     variant="ghost" 
                     size="sm" 
-                    className={`h-8 px-2 gap-1 border border-transparent hover:border-black hover:bg-gray-100 ${hasDisliked ? "text-red-600 bg-red-50 border-red-200" : "text-muted-foreground"}`}
+                    className={`h-8 px-2 gap-1 border border-transparent hover:border-black dark:hover:border-border hover:bg-gray-100 dark:hover:bg-accent ${hasDisliked ? "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800" : "text-muted-foreground"}`}
                     onClick={(e) => { e.stopPropagation(); handleDislike(resource._id); }}
                    >
                      <ThumbsDown className={`h-3 w-3 ${hasDisliked ? "fill-current" : ""}`} />
@@ -406,7 +406,7 @@ export default function Resources() {
                             sourceType="resource" 
                             sourceId={resource._id}
                             trigger={
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-50" title="Generate Flashcards">
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20" title="Generate Flashcards">
                                     <BrainCircuit className="h-4 w-4" />
                                 </Button>
                             }
@@ -424,7 +424,7 @@ export default function Resources() {
                     <Button 
                         variant="default" 
                         size="sm" 
-                        className="h-8 w-8 p-0 bg-black text-white hover:bg-gray-800 border-2 border-transparent hover:border-black shadow-none hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
+                        className="h-8 w-8 p-0 bg-black dark:bg-primary text-white dark:text-primary-foreground hover:bg-gray-800 dark:hover:bg-primary/90 border-2 border-transparent hover:border-black dark:hover:border-border shadow-none hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-none transition-all" 
                         asChild
                         onClick={(e) => e.stopPropagation()}
                     >
