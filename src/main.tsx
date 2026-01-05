@@ -57,7 +57,14 @@ createRoot(document.getElementById("root")!).render(
     <VlyToolbar />
     <InstrumentationProvider>
       <ConvexAuthProvider client={convex}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false} storageKey="yuvaverse-theme">
+        <ThemeProvider 
+          attribute="class" 
+          defaultTheme="system" 
+          enableSystem 
+          disableTransitionOnChange={false} 
+          storageKey="yuvaverse-theme"
+          themes={['light', 'dark', 'retro', 'cyberpunk']}
+        >
           <BrowserRouter>
             <RouteSyncer />
             <Routes>

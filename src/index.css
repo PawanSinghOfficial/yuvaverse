@@ -116,7 +116,7 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-[data-theme="retro"] {
+.retro {
   --background: #e0dcd3;
   --foreground: #2c2c2c;
   --card: #ebe6dc;
@@ -143,7 +143,7 @@
   --chart-5: #5c5c5c;
 }
 
-[data-theme="cyberpunk"] {
+.cyberpunk {
   --background: #0b0b15;
   --foreground: #00ff9f;
   --card: #121220;
