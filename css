@@ -1,0 +1,5 @@
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.145 0 0);
+  /* ... */
+}
