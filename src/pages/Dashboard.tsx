@@ -2,11 +2,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { BookOpen, Calendar, Users, MessageSquare, Trophy, Crown, Star, Flame, Medal, BookCheck, Edit } from "lucide-react";
+import { BookOpen, Calendar, Users, MessageSquare, Trophy, Crown, Star, Flame, Medal, BookCheck, Edit, Activity, UserCog } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +30,7 @@ export default function Dashboard() {
   const totalTopicsCompleted = useQuery(api.syllabus.getUserTotalProgress) || 0;
   
   const setUsername = useMutation(api.users.setUsername);
+  const updateProfile = useMutation(api.users.updateProfile);
   const redeemPoints = useMutation(api.users.redeemPoints);
   const generateUploadUrl = useMutation(api.users.generateUploadUrl);
   const updateAvatar = useMutation(api.users.updateAvatar);
@@ -36,8 +38,23 @@ export default function Dashboard() {
 
   const [newUsername, setNewUsername] = useState("");
   const [isSettingUsername, setIsSettingUsername] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [showActivityFeed, setShowActivityFeed] = useState(false);
   const [streakIncreased, setStreakIncreased] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+
+  // Profile form state
+  const [branch, setBranch] = useState("");
+  const [college, setCollege] = useState("");
+  const [year, setYear] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setBranch(user.branch || "");
+      setCollege(user.college || "");
+      setYear(user.year || "");
+    }
+  }, [user]);
 
   const currentPoints = user?.points || 0;
   const badge = getBadgeFromPoints(currentPoints);
@@ -118,6 +135,16 @@ export default function Dashboard() {
     }
   };
 
+  const handleUpdateProfile = async () => {
+    try {
+      await updateProfile({ branch, college, year });
+      toast.success("Profile updated!");
+      setIsEditingProfile(false);
+    } catch (error) {
+      toast.error("Failed to update profile");
+    }
+  };
+
   const handleRedeem = async (plan: "premium" | "elite") => {
     try {
       await redeemPoints({ plan });
@@ -128,7 +155,28 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-yellow-50 dark:bg-background min-h-screen transition-colors duration-300">
+    <div className="p-8 space-y-8 bg-yellow-50 dark:bg-background min-h-screen transition-colors duration-300 relative">
+      {/* Activity Feed Toggle */}
+      <div className="absolute top-8 right-8 z-10">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowActivityFeed(!showActivityFeed)}
+                className={`rounded-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all ${showActivityFeed ? 'bg-black text-white' : 'bg-white text-black'}`}
+              >
+                <Activity className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{showActivityFeed ? "Hide Activity Feed" : "Show Activity Feed"}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
       {/* Username Prompt */}
       {!user?.username && (
         <Card className="bg-primary text-primary-foreground border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
@@ -179,11 +227,62 @@ export default function Dashboard() {
               </div>
            </div>
            <div>
-              <h1 className="text-4xl font-black tracking-tighter uppercase text-foreground">
-                Hello, {user?.username || user?.name?.split(" ")[0] || "Student"}
-              </h1>
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-black tracking-tighter uppercase text-foreground">
+                  Hello, {user?.username || user?.name?.split(" ")[0] || "Student"}
+                </h1>
+                <Dialog open={isEditingProfile} onOpenChange={setIsEditingProfile}>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-black/5 dark:hover:bg-white/10">
+                      <UserCog className="h-5 w-5" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl font-bold uppercase">Edit Profile</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="college">College / University</Label>
+                        <Input 
+                          id="college"
+                          value={college}
+                          onChange={(e) => setCollege(e.target.value)}
+                          placeholder="e.g. IIT Bombay"
+                          className="border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-none focus:translate-x-[4px] focus:translate-y-[4px] transition-all"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="branch">Branch / Major</Label>
+                        <Input 
+                          id="branch"
+                          value={branch}
+                          onChange={(e) => setBranch(e.target.value)}
+                          placeholder="e.g. Computer Science"
+                          className="border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-none focus:translate-x-[4px] focus:translate-y-[4px] transition-all"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="year">Year of Study</Label>
+                        <Input 
+                          id="year"
+                          value={year}
+                          onChange={(e) => setYear(e.target.value)}
+                          placeholder="e.g. 2nd Year"
+                          className="border-2 border-border shadow-[4px_4px_0px_0px_var(--shadow)] focus:shadow-none focus:translate-x-[4px] focus:translate-y-[4px] transition-all"
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button onClick={handleUpdateProfile} className="w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">Save Profile</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
               <p className="text-foreground font-medium mt-1 bg-card inline-block px-2 border border-border">
-                Welcome to your digital campus.
+                {user?.college ? `${user.college} • ` : ""}
+                {user?.branch ? `${user.branch} • ` : ""}
+                {user?.year ? `${user.year}` : "Welcome to your digital campus."}
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <Badge className={`bg-gradient-to-r ${badge.gradient} ${badge.accent} border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-1.5 text-sm font-black uppercase tracking-wider hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all`}>
@@ -471,7 +570,15 @@ export default function Dashboard() {
 
         <div className="col-span-3 space-y-6">
           {/* Friend Activity Feed */}
-          <FriendActivityFeed />
+          {showActivityFeed && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <FriendActivityFeed />
+            </motion.div>
+          )}
 
           {/* Leaderboard */}
           <Card className="bg-yellow-100 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#eab308]" id="dashboard-leaderboard">
