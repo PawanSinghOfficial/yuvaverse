@@ -128,7 +128,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-yellow-50 dark:bg-background min-h-screen">
+    <div className="p-8 space-y-8 bg-yellow-50 dark:bg-background min-h-screen transition-colors duration-300">
       {/* Username Prompt */}
       {!user?.username && (
         <Card className="bg-primary text-primary-foreground border-2 border-border shadow-[8px_8px_0px_0px_var(--shadow)]">
@@ -179,7 +179,7 @@ export default function Dashboard() {
               </div>
            </div>
            <div>
-              <h1 className="text-4xl font-black tracking-tighter uppercase">
+              <h1 className="text-4xl font-black tracking-tighter uppercase text-foreground">
                 Hello, {user?.username || user?.name?.split(" ")[0] || "Student"}
               </h1>
               <p className="text-foreground font-medium mt-1 bg-card inline-block px-2 border border-border">
@@ -209,7 +209,7 @@ export default function Dashboard() {
                 <TooltipTrigger asChild>
                   <div 
                     id="dashboard-rank-progress"
-                    className="px-5 py-3 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] w-full max-w-2xl relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                    className="px-5 py-3 bg-white dark:bg-card border-2 border-black dark:border-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.2)] w-full max-w-2xl relative overflow-hidden group hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.2)] transition-all cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                     tabIndex={0}
                     role="progressbar"
                     aria-valuenow={Math.round(progressPercentage)}
@@ -222,7 +222,7 @@ export default function Dashboard() {
                       animate={{ rotate: [10, 15, 10], y: [0, -5, 0] }}
                       transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     >
-                      <Trophy className="h-32 w-32" />
+                      <Trophy className="h-32 w-32 text-foreground" />
                     </motion.div>
                     
                     <div className="flex justify-between items-end mb-1.5 relative z-10">
@@ -241,7 +241,7 @@ export default function Dashboard() {
                       </div>
                       <div className="text-right mb-0.5">
                          <motion.span 
-                           className="text-xs font-black bg-black text-white px-2 py-0.5 border-2 border-transparent group-hover:border-black group-hover:bg-white group-hover:text-black transition-colors inline-block"
+                           className="text-xs font-black bg-black text-white dark:bg-white dark:text-black px-2 py-0.5 border-2 border-transparent group-hover:border-black dark:group-hover:border-white group-hover:bg-white group-hover:text-black dark:group-hover:bg-black dark:group-hover:text-white transition-colors inline-block"
                            initial={{ scale: 0.8, opacity: 0 }}
                            animate={{ scale: 1, opacity: 1 }}
                            transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
@@ -251,7 +251,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                     
-                    <div className="relative h-3.5 w-full bg-gray-100 border-2 border-black z-10 shadow-inner overflow-hidden rounded-sm">
+                    <div className="relative h-3.5 w-full bg-gray-100 dark:bg-gray-800 border-2 border-black dark:border-gray-600 z-10 shadow-inner overflow-hidden rounded-sm">
                       <motion.div 
                         className={`absolute top-0 left-0 h-full ${getProgressColor(progressPercentage)} border-r-2 border-black relative`} 
                         initial={{ width: "0%" }}
@@ -270,7 +270,7 @@ export default function Dashboard() {
                     
                     <div className="flex justify-between items-center mt-1.5 relative z-10">
                       <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Current: {currentPoints} pts</span>
-                      <span className="text-[10px] font-black text-black uppercase tracking-wide">
+                      <span className="text-[10px] font-black text-black dark:text-white uppercase tracking-wide">
                         {nextBadge.minPoints - currentPoints} pts to go
                       </span>
                     </div>
@@ -283,7 +283,7 @@ export default function Dashboard() {
               </Tooltip>
             </TooltipProvider>
           )}
-          <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all w-full md:w-auto" id="dashboard-upload-btn">
+          <Button onClick={() => navigate("/resources")} className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all w-full md:w-auto" id="dashboard-upload-btn">
             <BookOpen className="mr-2 h-4 w-4" />
             Upload Resource
           </Button>
@@ -354,7 +354,7 @@ export default function Dashboard() {
           {registeredEvents.length > 0 && (
             <Card className="bg-orange-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#f97316]" id="dashboard-registered-events">
               <CardHeader>
-                <CardTitle className="text-orange-600 flex items-center gap-2 uppercase">
+                <CardTitle className="text-orange-600 dark:text-orange-400 flex items-center gap-2 uppercase">
                   <Calendar className="h-6 w-6" />
                   Your Registered Events
                 </CardTitle>
@@ -384,7 +384,7 @@ export default function Dashboard() {
                           </span>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" onClick={() => navigate("/events")} className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+                      <Button variant="outline" size="sm" onClick={() => navigate("/events")} className="border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
                         View
                       </Button>
                     </div>
@@ -427,7 +427,7 @@ export default function Dashboard() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.95 }}
-                    className="w-full inline-flex items-center justify-center h-10 px-4 py-2 rounded-md text-sm font-bold uppercase tracking-wider border-2 border-black bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    className="w-full inline-flex items-center justify-center h-10 px-4 py-2 rounded-md text-sm font-bold uppercase tracking-wider border-2 border-black dark:border-white bg-white dark:bg-card text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all hover:bg-gray-50 dark:hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     onClick={() => navigate("/resources")}
                   >
                     See More Resources
@@ -450,7 +450,7 @@ export default function Dashboard() {
                     <Badge className="bg-black dark:bg-white text-white dark:text-black rounded-none">500 pts</Badge>
                   </div>
                   <p className="text-xs font-medium">Unlock exclusive features and badges.</p>
-                  <Button size="sm" className="w-full mt-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={() => handleRedeem("premium")} disabled={(user?.points || 0) < 500}>
+                  <Button size="sm" className="w-full mt-2 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("premium")} disabled={(user?.points || 0) < 500}>
                     Redeem
                   </Button>
                 </div>
@@ -460,7 +460,7 @@ export default function Dashboard() {
                     <Badge className="bg-amber-600 text-white rounded-none">1000 pts</Badge>
                   </div>
                   <p className="text-xs font-medium">Top tier status and priority support.</p>
-                  <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={() => handleRedeem("elite")} disabled={(user?.points || 0) < 1000}>
+                  <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("elite")} disabled={(user?.points || 0) < 1000}>
                     Redeem
                   </Button>
                 </div>
@@ -488,7 +488,7 @@ export default function Dashboard() {
                   return (
                     <div key={i} className="flex items-center justify-between bg-card border border-border p-2 shadow-[2px_2px_0px_0px_var(--shadow)]">
                       <div className="flex items-center gap-3">
-                        <span className={`font-black text-lg w-8 text-center ${i < 3 ? "text-yellow-600" : "text-gray-500"}`}>
+                        <span className={`font-black text-lg w-8 text-center ${i < 3 ? "text-yellow-600 dark:text-yellow-400" : "text-gray-500"}`}>
                           #{i + 1}
                         </span>
                         <div className="flex items-center gap-2">
@@ -513,7 +513,7 @@ export default function Dashboard() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.95 }}
-                    className="w-full inline-flex items-center justify-center h-10 px-4 py-2 rounded-md text-sm font-bold uppercase tracking-wider border-2 border-black bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    className="w-full inline-flex items-center justify-center h-10 px-4 py-2 rounded-md text-sm font-bold uppercase tracking-wider border-2 border-black dark:border-white bg-white dark:bg-card text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all hover:bg-gray-50 dark:hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     onClick={() => navigate("/games")}
                   >
                     See More

@@ -27,17 +27,13 @@ export default function Landing() {
   const primaryCtaLabel = isAuthenticated ? "LET'S EXPLORE" : "Join Now";
   const primaryCtaPath = isAuthenticated ? "/dashboard" : "/auth";
 
-  useEffect(() => {
-    document.documentElement.classList.remove("dark");
-  }, []);
-
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden isolate">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden isolate transition-colors duration-300">
       <ExitIntentPopup />
       <NinjaCursor />
 
       {/* Live Animated Background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden bg-white">
+      <div className="fixed inset-0 -z-10 overflow-hidden bg-background">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
 
         {/* Floating Shapes */}
@@ -48,7 +44,7 @@ export default function Landing() {
             x: [0, 10, 0],
           }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-20 left-10 h-16 w-16 border-4 border-black bg-yellow-300 opacity-40 rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
+          className="absolute top-20 left-10 h-16 w-16 border-4 border-black dark:border-white bg-yellow-300 opacity-40 rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
         />
         <motion.div
           animate={{
@@ -57,7 +53,7 @@ export default function Landing() {
             x: [0, -15, 0],
           }}
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-40 right-20 h-24 w-24 border-4 border-black bg-pink-300 opacity-40 -rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
+          className="absolute bottom-40 right-20 h-24 w-24 border-4 border-black dark:border-white bg-pink-300 opacity-40 -rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
         />
         <motion.div
           animate={{
@@ -65,7 +61,7 @@ export default function Landing() {
             rotate: [0, 15, 0],
           }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/3 right-1/4 h-12 w-12 border-4 border-black bg-blue-300 opacity-40 rotate-45 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
+          className="absolute top-1/3 right-1/4 h-12 w-12 border-4 border-black dark:border-white bg-blue-300 opacity-40 rotate-45 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
         />
         <motion.div
           animate={{
@@ -73,13 +69,13 @@ export default function Landing() {
             rotate: [0, -5, 0],
           }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-20 left-1/3 h-14 w-14 border-4 border-black bg-green-300 opacity-40 rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
+          className="absolute bottom-20 left-1/3 h-14 w-14 border-4 border-black dark:border-white bg-green-300 opacity-40 rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
         />
       </div>
 
       {/* Navbar */}
       <nav className="py-4 px-6 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-border shadow-sm">
-        <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
+        <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-foreground">
           <img
             src={logoUrl}
             alt="YuvaVerse Logo"
@@ -113,12 +109,12 @@ export default function Landing() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="inline-flex items-center rounded-full border-2 border-black px-3 py-1 text-xs font-bold transition-colors bg-yellow-300 text-black mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="inline-flex items-center rounded-full border-2 border-black dark:border-white px-3 py-1 text-xs font-bold transition-colors bg-yellow-300 text-black mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)]">
             🚀 Welcome to the Future of Campus Life
           </div>
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-tight">
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-tight text-foreground">
             Your Digital Campus <br />
-            <span className="text-indigo-600 bg-indigo-50 px-2 border-2 border-transparent">
+            <span className="text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 px-2 border-2 border-transparent">
               Reimagined.
             </span>
           </h1>
@@ -129,7 +125,7 @@ export default function Landing() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="h-14 px-8 text-lg font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+              className="h-14 px-8 text-lg font-bold border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all"
               onClick={() => navigate(primaryCtaPath)}
             >
               {primaryCtaLabel} <ArrowRight className="ml-2 h-5 w-5" />
@@ -149,10 +145,10 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section className="relative z-10 py-24 bg-white/50 backdrop-blur-sm border-t-2 border-black">
+      <section className="relative z-10 py-24 bg-white/50 dark:bg-black/50 backdrop-blur-sm border-t-2 border-black dark:border-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight mb-4">
+            <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight mb-4 text-foreground">
               Everything You Need to Excel
             </h2>
             <p className="text-lg text-muted-foreground font-medium max-w-2xl mx-auto">
@@ -164,12 +160,12 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <motion.div
               whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#4f46e5]"
+              className="bg-card p-6 border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_#4f46e5] dark:shadow-[8px_8px_0px_0px_#6366f1]"
             >
-              <div className="h-14 w-14 bg-indigo-100 flex items-center justify-center mb-4 text-indigo-600 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="h-14 w-14 bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mb-4 text-indigo-600 dark:text-indigo-300 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)]">
                 <BookCheck className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Syllabus Tracker</h3>
+              <h3 className="text-xl font-black mb-2 uppercase text-foreground">Syllabus Tracker</h3>
               <p className="text-muted-foreground font-medium">
                 Track your B.Tech, BCA, or BBA progress topic-by-topic. Never lose track
                 of what to study next.
@@ -178,12 +174,12 @@ export default function Landing() {
 
             <motion.div
               whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#9333ea]"
+              className="bg-card p-6 border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_#9333ea] dark:shadow-[8px_8px_0px_0px_#a855f7]"
             >
-              <div className="h-14 w-14 bg-purple-100 flex items-center justify-center mb-4 text-purple-600 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="h-14 w-14 bg-purple-100 dark:bg-purple-900 flex items-center justify-center mb-4 text-purple-600 dark:text-purple-300 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)]">
                 <BrainCircuit className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-black mb-2 uppercase">AI Notebook</h3>
+              <h3 className="text-xl font-black mb-2 uppercase text-foreground">AI Notebook</h3>
               <p className="text-muted-foreground font-medium">
                 Your personal AI tutor powered by NotebookLM. Upload documents and get
                 instant summaries and quizzes.
@@ -192,12 +188,12 @@ export default function Landing() {
 
             <motion.div
               whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#eab308]"
+              className="bg-card p-6 border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_#eab308] dark:shadow-[8px_8px_0px_0px_#facc15]"
             >
-              <div className="h-14 w-14 bg-yellow-100 flex items-center justify-center mb-4 text-yellow-600 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="h-14 w-14 bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center mb-4 text-yellow-600 dark:text-yellow-300 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)]">
                 <Gamepad2 className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Arcade & Gamification</h3>
+              <h3 className="text-xl font-black mb-2 uppercase text-foreground">Arcade & Gamification</h3>
               <p className="text-muted-foreground font-medium">
                 Challenge Jojo in retro mini-games, earn points, unlock badges, and climb
                 the campus leaderboard.
@@ -206,12 +202,12 @@ export default function Landing() {
 
             <motion.div
               whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#0ea5e9]"
+              className="bg-card p-6 border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_#0ea5e9] dark:shadow-[8px_8px_0px_0px_#38bdf8]"
             >
-              <div className="h-14 w-14 bg-sky-100 flex items-center justify-center mb-4 text-sky-600 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="h-14 w-14 bg-sky-100 dark:bg-sky-900 flex items-center justify-center mb-4 text-sky-600 dark:text-sky-300 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)]">
                 <BookOpen className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Resource Library</h3>
+              <h3 className="text-xl font-black mb-2 uppercase text-foreground">Resource Library</h3>
               <p className="text-muted-foreground font-medium">
                 Access and share notes, practical files, and question papers with your
                 peers.
@@ -220,12 +216,12 @@ export default function Landing() {
 
             <motion.div
               whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#ec4899]"
+              className="bg-card p-6 border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_#ec4899] dark:shadow-[8px_8px_0px_0px_#f472b6]"
             >
-              <div className="h-14 w-14 bg-pink-100 flex items-center justify-center mb-4 text-pink-600 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="h-14 w-14 bg-pink-100 dark:bg-pink-900 flex items-center justify-center mb-4 text-pink-600 dark:text-pink-300 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)]">
                 <Users className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Study Groups</h3>
+              <h3 className="text-xl font-black mb-2 uppercase text-foreground">Study Groups</h3>
               <p className="text-muted-foreground font-medium">
                 Collaborate in real-time with voice, video, and chat channels dedicated
                 to your subjects.
@@ -234,12 +230,12 @@ export default function Landing() {
 
             <motion.div
               whileHover={{ y: -5 }}
-              className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_#f97316]"
+              className="bg-card p-6 border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_#f97316] dark:shadow-[8px_8px_0px_0px_#fb923c]"
             >
-              <div className="h-14 w-14 bg-orange-100 flex items-center justify-center mb-4 text-orange-600 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="h-14 w-14 bg-orange-100 dark:bg-orange-900 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-300 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)]">
                 <Calendar className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-black mb-2 uppercase">Event Calendar</h3>
+              <h3 className="text-xl font-black mb-2 uppercase text-foreground">Event Calendar</h3>
               <p className="text-muted-foreground font-medium">
                 Never miss a society meeting, fest, or workshop again. Register and
                 participate easily.
@@ -266,13 +262,13 @@ export default function Landing() {
                 href="https://www.linkedin.com/in/pawansinghofficial/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
+                className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors text-foreground"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
               <a
                 href="mailto:pawansinghmahori@gmail.com"
-                className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
+                className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors text-foreground"
               >
                 <Mail className="h-5 w-5" />
               </a>
