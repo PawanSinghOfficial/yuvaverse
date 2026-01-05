@@ -21,10 +21,13 @@ import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { COLLEGES } from "@/lib/colleges";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Events() {
   const { user } = useAuth();
-  const events = useQuery(api.events.list);
+  const [selectedCollege, setSelectedCollege] = useState<string>("All");
+  const events = useQuery(api.events.list, { college: selectedCollege });
   const createEvent = useMutation(api.events.create);
   const registerForEvent = useMutation(api.events.register);
   const unregisterFromEvent = useMutation(api.events.unregister);
@@ -39,6 +42,7 @@ export default function Events() {
     time: "",
     location: "",
     type: "workshop",
+    college: "Other",
   });
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -54,11 +58,12 @@ export default function Events() {
         date: dateTime.getTime(),
         location: formData.location,
         type: formData.type,
+        college: formData.college,
       });
 
       toast.success("Event created successfully!");
       setIsOpen(false);
-      setFormData({ title: "", description: "", date: "", time: "", location: "", type: "workshop" });
+      setFormData({ title: "", description: "", date: "", time: "", location: "", type: "workshop", college: "Other" });
     } catch (error) {
       toast.error("Failed to create event");
     } finally {
@@ -97,87 +102,123 @@ export default function Events() {
             </p>
           </div>
           
-          {user?.role === "admin" && (
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-              <DialogTrigger asChild>
-                <Button className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Event
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-black uppercase">Create Event</DialogTitle>
-                  <DialogDescription>Announce a new event to the campus.</DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleCreate} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Event Title</Label>
-                    <Input 
-                      id="title" 
-                      required 
-                      value={formData.title}
-                      onChange={(e) => setFormData({...formData, title: e.target.value})}
-                      placeholder="e.g., Annual Tech Fest"
-                      className="border-2 border-black"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            <div className="w-[200px]">
+              <Select value={selectedCollege} onValueChange={setSelectedCollege}>
+                <SelectTrigger className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
+                  <SelectValue placeholder="Filter by College" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All Colleges</SelectItem>
+                  {COLLEGES.map((college) => (
+                    <SelectItem key={college.value} value={college.value}>
+                      {college.value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {user?.role === "admin" && (
+              <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogTrigger asChild>
+                  <Button className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Event
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-black uppercase">Create Event</DialogTitle>
+                    <DialogDescription>Announce a new event to the campus.</DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleCreate} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="date">Date</Label>
+                      <Label htmlFor="title">Event Title</Label>
                       <Input 
-                        id="date" 
-                        type="date"
-                        required
-                        value={formData.date}
-                        onChange={(e) => setFormData({...formData, date: e.target.value})}
+                        id="title" 
+                        required 
+                        value={formData.title}
+                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                        placeholder="e.g., Annual Tech Fest"
                         className="border-2 border-black"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="time">Time</Label>
+                      <Label htmlFor="college">College</Label>
+                      <Select 
+                        value={formData.college} 
+                        onValueChange={(value) => setFormData({...formData, college: value})}
+                      >
+                        <SelectTrigger className="border-2 border-black">
+                          <SelectValue placeholder="Select College" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {COLLEGES.map((college) => (
+                            <SelectItem key={college.value} value={college.value}>
+                              {college.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="date">Date</Label>
+                        <Input 
+                          id="date" 
+                          type="date"
+                          required
+                          value={formData.date}
+                          onChange={(e) => setFormData({...formData, date: e.target.value})}
+                          className="border-2 border-black"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="time">Time</Label>
+                        <Input 
+                          id="time" 
+                          type="time"
+                          required
+                          value={formData.time}
+                          onChange={(e) => setFormData({...formData, time: e.target.value})}
+                          className="border-2 border-black"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="location">Location</Label>
                       <Input 
-                        id="time" 
-                        type="time"
-                        required
-                        value={formData.time}
-                        onChange={(e) => setFormData({...formData, time: e.target.value})}
+                        id="location" 
+                        required 
+                        value={formData.location}
+                        onChange={(e) => setFormData({...formData, location: e.target.value})}
+                        placeholder="e.g., Main Auditorium"
                         className="border-2 border-black"
                       />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
-                    <Input 
-                      id="location" 
-                      required 
-                      value={formData.location}
-                      onChange={(e) => setFormData({...formData, location: e.target.value})}
-                      placeholder="e.g., Main Auditorium"
-                      className="border-2 border-black"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea 
-                      id="description" 
-                      required
-                      value={formData.description}
-                      onChange={(e) => setFormData({...formData, description: e.target.value})}
-                      placeholder="Event details..."
-                      className="border-2 border-black"
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button type="submit" disabled={isCreating} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                      {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Create Event
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-          )}
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea 
+                        id="description" 
+                        required
+                        value={formData.description}
+                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        placeholder="Event details..."
+                        className="border-2 border-black"
+                      />
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" disabled={isCreating} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Create Event
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6">
@@ -206,6 +247,11 @@ export default function Events() {
                           <MapPin className="h-3 w-3" />
                           {event.location}
                         </Badge>
+                        {event.college && (
+                          <Badge variant="outline" className="border-black/20">
+                            {event.college}
+                          </Badge>
+                        )}
                         <Badge className="uppercase text-[10px] tracking-wider bg-black text-white hover:bg-black/80">
                           {event.type}
                         </Badge>

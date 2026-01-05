@@ -3,9 +3,20 @@ import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("events").order("asc").collect();
+  args: { college: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    let events;
+    if (args.college && args.college !== "All") {
+      events = await ctx.db
+        .query("events")
+        .withIndex("by_college", (q) => q.eq("college", args.college))
+        .collect();
+      // Sort by date in memory since we used college index
+      events.sort((a, b) => a.date - b.date);
+    } else {
+      events = await ctx.db.query("events").order("asc").collect();
+    }
+    return events;
   },
 });
 
@@ -116,6 +127,7 @@ export const create = mutation({
     date: v.number(),
     location: v.string(),
     type: v.string(),
+    college: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);

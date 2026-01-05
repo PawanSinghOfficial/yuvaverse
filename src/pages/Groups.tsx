@@ -41,10 +41,12 @@ import { Id } from "@/convex/_generated/dataModel";
 import confetti from "canvas-confetti";
 import { useAuth } from "@/hooks/use-auth";
 import { GroupCard } from "@/components/groups/GroupCard";
+import { COLLEGES } from "@/lib/colleges";
 
 export default function Groups() {
   const { user } = useAuth();
-  const groups = useQuery(api.groups.list);
+  const [selectedCollege, setSelectedCollege] = useState<string>("All");
+  const groups = useQuery(api.groups.list, { college: selectedCollege });
   const userGroups = useQuery(api.groups.getUserGroups);
   const createGroup = useMutation(api.groups.create);
   const generateUploadUrl = useMutation(api.groups.generateUploadUrl);
@@ -62,6 +64,7 @@ export default function Groups() {
     isPrivate: false,
     password: "",
     image: null as File | null,
+    college: "Other",
   });
 
   const [joinPassword, setJoinPassword] = useState("");
@@ -102,10 +105,11 @@ export default function Groups() {
         isPrivate: formData.isPrivate,
         password: formData.isPrivate ? formData.password : undefined,
         image: imageId,
+        college: formData.college,
       });
       toast.success("Group created successfully!");
       setIsOpen(false);
-      setFormData({ name: "", description: "", type: "study", isPrivate: false, password: "", image: null });
+      setFormData({ name: "", description: "", type: "study", isPrivate: false, password: "", image: null, college: "Other" });
     } catch (error) {
       toast.error("Failed to create group");
     } finally {
@@ -204,73 +208,109 @@ export default function Groups() {
             </p>
           </div>
           
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-              <Button className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
-                <Plus className="mr-2 h-4 w-4" />
-                Create Group
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-black uppercase">Create a New Group</DialogTitle>
-                <DialogDescription>Form a team and start your journey.</DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleCreate} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Group Name</Label>
-                  <Input 
-                    id="name" 
-                    required 
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    placeholder="e.g., The Code Warriors"
-                    className="border-2 border-black"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Input 
-                    id="description" 
-                    required 
-                    value={formData.description}
-                    onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    placeholder="What's your group about?"
-                    className="border-2 border-black"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="image">Group Image (Optional)</Label>
-                  <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            <div className="w-[200px]">
+              <Select value={selectedCollege} onValueChange={setSelectedCollege}>
+                <SelectTrigger className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
+                  <SelectValue placeholder="Filter by College" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All Colleges</SelectItem>
+                  {COLLEGES.map((college) => (
+                    <SelectItem key={college.value} value={college.value}>
+                      {college.value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger asChild>
+                <Button className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Group
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-black uppercase">Create a New Group</DialogTitle>
+                  <DialogDescription>Form a team and start your journey.</DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleCreate} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Group Name</Label>
                     <Input 
-                      id="image" 
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) setFormData({...formData, image: file});
-                      }}
-                      className="border-2 border-black cursor-pointer file:cursor-pointer file:text-foreground file:border-0 file:bg-transparent file:text-sm file:font-medium"
+                      id="name" 
+                      required 
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      placeholder="e.g., The Code Warriors"
+                      className="border-2 border-black"
                     />
                   </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch 
-                    id="private" 
-                    checked={formData.isPrivate}
-                    onCheckedChange={(checked) => setFormData({...formData, isPrivate: checked})}
-                  />
-                  <Label htmlFor="private">Private Group</Label>
-                </div>
-                <DialogFooter>
-                  <Button type="submit" disabled={isCreating} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                    {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Create Group
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+                  <div className="space-y-2">
+                    <Label htmlFor="college">College</Label>
+                    <Select 
+                      value={formData.college} 
+                      onValueChange={(value) => setFormData({...formData, college: value})}
+                    >
+                      <SelectTrigger className="border-2 border-black">
+                        <SelectValue placeholder="Select College" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {COLLEGES.map((college) => (
+                          <SelectItem key={college.value} value={college.value}>
+                            {college.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Input 
+                      id="description" 
+                      required 
+                      value={formData.description}
+                      onChange={(e) => setFormData({...formData, description: e.target.value})}
+                      placeholder="What's your group about?"
+                      className="border-2 border-black"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="image">Group Image (Optional)</Label>
+                    <div className="flex items-center gap-2">
+                      <Input 
+                        id="image" 
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) setFormData({...formData, image: file});
+                        }}
+                        className="border-2 border-black cursor-pointer file:cursor-pointer file:text-foreground file:border-0 file:bg-transparent file:text-sm file:font-medium"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch 
+                      id="private" 
+                      checked={formData.isPrivate}
+                      onCheckedChange={(checked) => setFormData({...formData, isPrivate: checked})}
+                    />
+                    <Label htmlFor="private">Private Group</Label>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit" disabled={isCreating} className="w-full font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                      {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Create Group
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

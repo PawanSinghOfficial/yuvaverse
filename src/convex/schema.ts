@@ -127,7 +127,8 @@ const schema = defineSchema(
       creatorId: v.id("users"),
       reports: v.optional(v.array(v.id("users"))),
       xp: v.optional(v.number()),
-    }),
+      college: v.optional(v.string()),
+    }).index("by_college", ["college"]),
 
     group_members: defineTable({
       groupId: v.id("groups"),
@@ -157,7 +158,8 @@ const schema = defineSchema(
       location: v.string(),
       organizerId: v.id("users"),
       type: v.string(),
-    }).index("by_date", ["date"]),
+      college: v.optional(v.string()),
+    }).index("by_date", ["date"]).index("by_college", ["college"]),
 
     event_registrations: defineTable({
       eventId: v.id("events"),

@@ -4,9 +4,18 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
 
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
-    const groups = await ctx.db.query("groups").collect();
+  args: { college: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    let groups;
+    if (args.college && args.college !== "All") {
+      groups = await ctx.db
+        .query("groups")
+        .withIndex("by_college", (q) => q.eq("college", args.college))
+        .collect();
+    } else {
+      groups = await ctx.db.query("groups").collect();
+    }
+
     return await Promise.all(groups.map(async (g) => {
       let imageUrl = null;
       if (g.image) {
@@ -62,6 +71,7 @@ export const create = mutation({
     type: v.union(v.literal("study"), v.literal("social")),
     isPrivate: v.boolean(),
     password: v.optional(v.string()),
+    college: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -267,6 +277,7 @@ export const updateGroup = mutation({
     name: v.optional(v.string()),
     description: v.optional(v.string()),
     image: v.optional(v.id("_storage")),
+    college: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -283,6 +294,7 @@ export const updateGroup = mutation({
     if (args.name) updates.name = args.name;
     if (args.description) updates.description = args.description;
     if (args.image) updates.image = args.image;
+    if (args.college) updates.college = args.college;
 
     await ctx.db.patch(args.groupId, updates);
   },
