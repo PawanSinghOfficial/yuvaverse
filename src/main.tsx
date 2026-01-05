@@ -57,7 +57,7 @@ createRoot(document.getElementById("root")!).render(
     <VlyToolbar />
     <InstrumentationProvider>
       <ConvexAuthProvider client={convex}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
           <BrowserRouter>
             <RouteSyncer />
             <Routes>

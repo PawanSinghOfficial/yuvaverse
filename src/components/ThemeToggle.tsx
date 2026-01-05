@@ -26,12 +26,6 @@ export function ThemeToggle() {
         <DropdownMenuItem onClick={() => setTheme("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("retro")}>
-          Retro
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("cyberpunk")}>
-          Cyberpunk
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
