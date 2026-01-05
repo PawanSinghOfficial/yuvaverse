@@ -23,7 +23,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   
-  const upcomingEvents = useQuery(api.events.list) || [];
+  const upcomingEvents = useQuery(api.events.list, {}) || [];
   const registeredEvents = useQuery(api.events.getRegisteredEvents) || [];
   const recentResources = useQuery(api.resources.list, {}) || [];
   const leaderboard = useQuery(api.users.getLeaderboard) || [];
