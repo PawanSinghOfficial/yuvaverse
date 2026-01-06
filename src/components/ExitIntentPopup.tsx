@@ -7,6 +7,7 @@ import { Sparkles, MessageSquare } from "lucide-react";
 
 export function ExitIntentPopup() {
   const [isOpen, setIsOpen] = useState(false);
+  const [popupCount, setPopupCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,16 +23,24 @@ export function ExitIntentPopup() {
         counter = counter + 1;
         localStorage.setItem("exitIntentCount", counter.toString());
 
-        // Show every 5th time (1 in 5)
-        // if (counter % 5 === 0) {
-           triggerPopup();
-        // }
+        // Show 10 popups in sequence
+        triggerMultiplePopups();
       }
     };
 
     document.addEventListener("mouseleave", handleExitIntent);
     return () => document.removeEventListener("mouseleave", handleExitIntent);
   }, []);
+
+  const triggerMultiplePopups = () => {
+    // Show popup 10 times with 2 second delay between each
+    for (let i = 0; i < 10; i++) {
+      setTimeout(() => {
+        setPopupCount(i + 1);
+        triggerPopup();
+      }, i * 2000); // 2 second delay between each popup
+    }
+  };
 
   const triggerPopup = () => {
     setIsOpen(true);
@@ -71,11 +80,16 @@ export function ExitIntentPopup() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md border-4 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.3)]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-yellow-500" />
-            More Features Coming Soon!
+          <DialogTitle className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-yellow-500" />
+              More Features Coming Soon!
+            </div>
+            <span className="text-sm font-bold bg-primary text-primary-foreground px-3 py-1 rounded-full">
+              {popupCount}/10
+            </span>
           </DialogTitle>
           <DialogDescription>
             We are constantly working to improve YuvaVerse.
@@ -87,7 +101,7 @@ export function ExitIntentPopup() {
             </p>
         </div>
         <DialogFooter className="sm:justify-center gap-2">
-          <Button onClick={() => { setIsOpen(false); navigate("/feedback"); }} className="w-full sm:w-auto">
+          <Button onClick={() => { setIsOpen(false); navigate("/feedback"); }} className="w-full sm:w-auto border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]">
             <MessageSquare className="mr-2 h-4 w-4" />
             Give Feedback
           </Button>
