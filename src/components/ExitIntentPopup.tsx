@@ -7,7 +7,6 @@ import { Sparkles, MessageSquare } from "lucide-react";
 
 export function ExitIntentPopup() {
   const [isOpen, setIsOpen] = useState(false);
-  const [popupCount, setPopupCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,24 +22,16 @@ export function ExitIntentPopup() {
         counter = counter + 1;
         localStorage.setItem("exitIntentCount", counter.toString());
 
-        // Show 10 popups in sequence
-        triggerMultiplePopups();
+        // Show popup only every 10th time
+        if (counter % 10 === 0) {
+          triggerPopup();
+        }
       }
     };
 
     document.addEventListener("mouseleave", handleExitIntent);
     return () => document.removeEventListener("mouseleave", handleExitIntent);
   }, []);
-
-  const triggerMultiplePopups = () => {
-    // Show popup 10 times with 2 second delay between each
-    for (let i = 0; i < 10; i++) {
-      setTimeout(() => {
-        setPopupCount(i + 1);
-        triggerPopup();
-      }, i * 2000); // 2 second delay between each popup
-    }
-  };
 
   const triggerPopup = () => {
     setIsOpen(true);
@@ -82,14 +73,9 @@ export function ExitIntentPopup() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md border-4 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.3)]">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-yellow-500" />
-              More Features Coming Soon!
-            </div>
-            <span className="text-sm font-bold bg-primary text-primary-foreground px-3 py-1 rounded-full">
-              {popupCount}/10
-            </span>
+          <DialogTitle className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-yellow-500" />
+            More Features Coming Soon!
           </DialogTitle>
           <DialogDescription>
             We are constantly working to improve YuvaVerse.
