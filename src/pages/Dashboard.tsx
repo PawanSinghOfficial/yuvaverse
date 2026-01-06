@@ -162,6 +162,7 @@ export default function Dashboard() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
+                id="activity-feed-toggle"
                 variant="outline"
                 size="icon"
                 onClick={() => setShowActivityFeed(!showActivityFeed)}

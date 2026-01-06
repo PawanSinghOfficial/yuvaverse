@@ -85,12 +85,12 @@ const steps = [
   {
     title: "Add Friends & Connect",
     description: "Build your network on YuvaVerse! Search for your classmates and friends, send them friend requests, and stay connected. You can view their profiles, see what they're working on, and collaborate better together!",
-    targetId: null,
+    targetId: "friends-dropdown-trigger",
   },
   {
     title: "User Activity Feed",
     description: "Stay updated with what's happening in your community! The activity feed shows recent actions from your friends and connections - new resources uploaded, groups joined, achievements unlocked, and more. It's your social pulse on campus!",
-    targetId: null,
+    targetId: "activity-feed-toggle",
   },
   {
     title: "You're All Set!",

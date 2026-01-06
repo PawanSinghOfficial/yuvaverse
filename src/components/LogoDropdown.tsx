@@ -44,7 +44,7 @@ export function LogoDropdown() {
     <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full overflow-visible border-2 border-transparent hover:border-primary/20 relative">
+        <Button id="friends-dropdown-trigger" variant="ghost" size="icon" className="h-10 w-10 rounded-full overflow-visible border-2 border-transparent hover:border-primary/20 relative">
           {isAuthenticated && user?.image ? (
              <Avatar className="h-9 w-9 border border-border">
                 <AvatarImage src={user.image} alt={user.name || "User"} />
