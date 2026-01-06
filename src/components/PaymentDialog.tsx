@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Crown, Zap, Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 interface PaymentDialogProps {
   open: boolean;
@@ -17,13 +20,20 @@ interface PaymentDialogProps {
   tier: "premium" | "elite";
 }
 
-const TIER_INFO = {
+type Duration = "1month" | "3months" | "6months" | "1year";
+
+const SUBSCRIPTION_PLANS = {
   premium: {
     name: "Premium",
-    price: 300,
     icon: Zap,
     color: "text-blue-600",
     bgColor: "bg-blue-100",
+    durations: {
+      "1month": { price: 300, months: 1, label: "1 Month" },
+      "3months": { price: 750, months: 3, label: "3 Months" },
+      "6months": { price: 1400, months: 6, label: "6 Months" },
+      "1year": { price: 2500, months: 12, label: "1 Year" },
+    },
     features: [
       "Create up to 2 study groups",
       "Priority support",
@@ -34,10 +44,15 @@ const TIER_INFO = {
   },
   elite: {
     name: "Elite",
-    price: 600,
     icon: Crown,
     color: "text-yellow-600",
     bgColor: "bg-yellow-100",
+    durations: {
+      "1month": { price: 600, months: 1, label: "1 Month" },
+      "3months": { price: 1500, months: 3, label: "3 Months" },
+      "6months": { price: 3000, months: 6, label: "6 Months" },
+      "1year": { price: 6000, months: 12, label: "1 Year" },
+    },
     features: [
       "Create up to 5 study groups",
       "All Premium features",
@@ -50,12 +65,19 @@ const TIER_INFO = {
 };
 
 export function PaymentDialog({ open, onOpenChange, tier }: PaymentDialogProps) {
-  const tierInfo = TIER_INFO[tier];
-  const Icon = tierInfo.icon;
+  const [selectedDuration, setSelectedDuration] = useState<Duration>("1month");
+
+  const planInfo = SUBSCRIPTION_PLANS[tier];
+  const Icon = planInfo.icon;
+  const durationInfo = planInfo.durations[selectedDuration];
+  const amount = durationInfo.price;
+  const perMonthCost = Math.round(amount / durationInfo.months);
+  const savingsPercent = durationInfo.months > 1
+    ? Math.round((1 - perMonthCost / planInfo.durations["1month"].price) * 100)
+    : 0;
 
   const upiId = "pawansingh.24@ibl";
-  const amount = tierInfo.price;
-  const upiString = `upi://pay?pa=${upiId}&pn=YuvaVerse&am=${amount}&cu=INR&tn=${tierInfo.name} Subscription`;
+  const upiString = `upi://pay?pa=${upiId}&pn=YuvaVerse&am=${amount}&cu=INR&tn=${planInfo.name} ${durationInfo.label} Subscription`;
 
   // Generate QR code URL using Google Charts API (free service)
   const qrCodeUrl = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(upiString)}&choe=UTF-8`;
@@ -74,8 +96,8 @@ export function PaymentDialog({ open, onOpenChange, tier }: PaymentDialogProps) 
       <DialogContent className="sm:max-w-[500px] border-4 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.3)] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl font-black uppercase">
-            <Icon className={`h-6 w-6 ${tierInfo.color}`} />
-            Upgrade to {tierInfo.name}
+            <Icon className={`h-6 w-6 ${planInfo.color}`} />
+            Upgrade to {planInfo.name}
           </DialogTitle>
           <DialogDescription>
             Complete the payment to unlock premium features
@@ -83,17 +105,71 @@ export function PaymentDialog({ open, onOpenChange, tier }: PaymentDialogProps) 
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Price Badge */}
-          <div className="flex justify-center">
-            <Badge className={`${tierInfo.bgColor} ${tierInfo.color} text-2xl font-black px-6 py-2 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]`}>
-              ₹{amount}
-            </Badge>
+          {/* Duration Selection */}
+          <div className="space-y-3">
+            <h4 className="font-bold text-sm uppercase">Choose Duration:</h4>
+            <RadioGroup value={selectedDuration} onValueChange={(value) => setSelectedDuration(value as Duration)}>
+              {Object.entries(planInfo.durations).map(([key, info]) => {
+                const monthlyRate = Math.round(info.price / info.months);
+                const discount = info.months > 1
+                  ? Math.round((1 - monthlyRate / planInfo.durations["1month"].price) * 100)
+                  : 0;
+
+                return (
+                  <div
+                    key={key}
+                    className={`flex items-center space-x-3 border-2 p-4 rounded-lg cursor-pointer transition-all ${
+                      selectedDuration === key
+                        ? `${planInfo.bgColor} ${planInfo.color} border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]`
+                        : "border-black/20 dark:border-white/20 hover:border-black/40 dark:hover:border-white/40"
+                    }`}
+                    onClick={() => setSelectedDuration(key as Duration)}
+                  >
+                    <RadioGroupItem value={key} id={key} />
+                    <Label htmlFor={key} className="flex-1 cursor-pointer">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-bold">{info.label}</p>
+                          <p className="text-sm">₹{monthlyRate}/month</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-black text-lg">₹{info.price}</p>
+                          {discount > 0 && (
+                            <Badge className="bg-green-500 text-white border-0 text-xs">
+                              Save {discount}%
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </Label>
+                  </div>
+                );
+              })}
+            </RadioGroup>
+          </div>
+
+          {/* Price Summary */}
+          <div className="flex flex-col items-center gap-2 bg-slate-100 dark:bg-slate-900 p-4 rounded-lg border-2 border-black dark:border-white">
+            <div className="text-center">
+              <p className="text-sm font-medium text-muted-foreground uppercase">Total Amount</p>
+              <Badge className={`${planInfo.bgColor} ${planInfo.color} text-3xl font-black px-6 py-2 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] mt-2`}>
+                ₹{amount}
+              </Badge>
+            </div>
+            <p className="text-sm font-bold">
+              ₹{perMonthCost}/month × {durationInfo.months} {durationInfo.months === 1 ? "month" : "months"}
+            </p>
+            {savingsPercent > 0 && (
+              <p className="text-xs font-medium text-green-600 dark:text-green-400">
+                💰 You save {savingsPercent}% compared to monthly billing!
+              </p>
+            )}
           </div>
 
           {/* Features List */}
           <div className="space-y-2 bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border-2 border-black dark:border-white">
             <h4 className="font-bold text-sm uppercase mb-3">What you get:</h4>
-            {tierInfo.features.map((feature, index) => (
+            {planInfo.features.map((feature, index) => (
               <div key={index} className="flex items-start gap-2">
                 <Check className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                 <span className="text-sm font-medium">{feature}</span>
