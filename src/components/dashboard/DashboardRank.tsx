@@ -8,10 +8,10 @@ interface DashboardRankProps {
   user: any;
   nextBadge: any;
   progressPercentage: number;
-  currentPoints: number;
+  currentGems: number;
 }
 
-export function DashboardRank({ user, nextBadge, progressPercentage, currentPoints }: DashboardRankProps) {
+export function DashboardRank({ user, nextBadge, progressPercentage, currentGems }: DashboardRankProps) {
   const navigate = useNavigate();
 
   const getProgressColor = (percent: number) => {
@@ -88,16 +88,16 @@ export function DashboardRank({ user, nextBadge, progressPercentage, currentPoin
                 </div>
                 
                 <div className="flex justify-between items-center mt-1.5 relative z-10">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Current: {currentPoints} pts</span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Current: {currentGems} gems</span>
                   <span className="text-[10px] font-black text-black dark:text-white uppercase tracking-wide">
-                    {nextBadge.minPoints - currentPoints} pts to go
+                    {nextBadge.minPoints - currentGems} gems to go
                   </span>
                 </div>
               </div>
             </TooltipTrigger>
             <TooltipContent className="bg-black text-white border-2 border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
               <p className="font-bold uppercase tracking-wider text-xs">Keep going!</p>
-              <p className="text-xs">Earn {nextBadge.minPoints - currentPoints} more points to unlock {nextBadge.label}.</p>
+              <p className="text-xs">Earn {nextBadge.minPoints - currentGems} more gems to unlock {nextBadge.label}.</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

@@ -78,8 +78,15 @@ export default function RockPaperScissors() {
         gameId: "rps",
         win: isWin
       });
-      if (res && isWin) {
-        toast.success(`You Won! +${res.pointsAwarded} Points`);
+      if (res) {
+        if (res.gemsAwarded > 0) {
+          toast.success(`🎉 5 Consecutive Wins! +${res.gemsAwarded} Gems!`);
+        } else if (isWin) {
+          const winsLeft = 5 - res.consecutiveWins;
+          toast.success(`You Won! ${res.consecutiveWins}/5 wins (${winsLeft} more for 10 gems)`);
+        } else {
+          // Don't show toast on loss, game already shows result
+        }
       }
     } catch (error) {
       console.error("Failed to record result:", error);

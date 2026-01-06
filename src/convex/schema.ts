@@ -43,7 +43,8 @@ const schema = defineSchema(
 
       role: v.optional(roleValidator), // role of the user. do not remove
       tier: v.optional(tierValidator),
-      points: v.optional(v.number()),
+      points: v.optional(v.number()), // Legacy field, kept for backwards compatibility
+      gems: v.optional(v.number()), // New gems system
       username: v.optional(v.string()),
       friendCode: v.optional(v.string()),
       streakCount: v.optional(v.number()),
@@ -62,6 +63,7 @@ const schema = defineSchema(
       mathHighScore: v.optional(v.number()),
       totalGamesPlayed: v.optional(v.number()),
       totalGamesWon: v.optional(v.number()),
+      consecutiveWins: v.optional(v.number()), // Track consecutive wins for gems system
     }).index("email", ["email"]).index("by_username", ["username"]).index("by_friend_code", ["friendCode"]), // index for the email. do not remove or modify
 
     friends: defineTable({

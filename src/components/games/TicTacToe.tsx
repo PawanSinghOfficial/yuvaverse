@@ -147,15 +147,22 @@ export default function TicTacToe() {
   const handleGameEnd = async (isWin: boolean) => {
     if (gameRecorded) return;
     setGameRecorded(true);
-    
+
     try {
       const result = await recordResult({
         gameId: "tictactoe",
         win: isWin
       });
-      
+
       if (result) {
-        toast.success(isWin ? `Victory! +${result.pointsAwarded} Points` : `Game Over. +${result.pointsAwarded} Points`);
+        if (result.gemsAwarded > 0) {
+          toast.success(`🎉 5 Consecutive Wins! +${result.gemsAwarded} Gems!`);
+        } else if (isWin) {
+          const winsLeft = 5 - result.consecutiveWins;
+          toast.success(`Victory! ${result.consecutiveWins}/5 wins (${winsLeft} more for 10 gems)`);
+        } else {
+          toast.error(`Defeat! Streak reset. Try for 5 consecutive wins to earn 10 gems.`);
+        }
       }
     } catch (error) {
       console.error("Failed to record result:", error);

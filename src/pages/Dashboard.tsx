@@ -32,7 +32,7 @@ export default function Dashboard() {
   
   const setUsername = useMutation(api.users.setUsername);
   const updateProfile = useMutation(api.users.updateProfile);
-  const redeemPoints = useMutation(api.users.redeemPoints);
+  const redeemGems = useMutation(api.users.redeemGems);
   const generateUploadUrl = useMutation(api.users.generateUploadUrl);
   const updateAvatar = useMutation(api.users.updateAvatar);
   const updateStreak = useMutation(api.users.updateStreak);
@@ -59,19 +59,19 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  const currentPoints = user?.points || 0;
-  const badge = getBadgeFromPoints(currentPoints);
-  
+  const currentGems = user?.gems || 0;
+  const badge = getBadgeFromPoints(currentGems);
+
   // Calculate progress to next badge
-  const currentBadgeIndex = BADGE_LEVELS.findIndex(b => currentPoints >= b.minPoints);
+  const currentBadgeIndex = BADGE_LEVELS.findIndex(b => currentGems >= b.minPoints);
   const nextBadge = currentBadgeIndex > 0 ? BADGE_LEVELS[currentBadgeIndex - 1] : null;
-  
+
   let progressPercentage = 100;
   if (nextBadge) {
     const currentLevelMin = BADGE_LEVELS[currentBadgeIndex].minPoints;
     const nextLevelMin = nextBadge.minPoints;
     const range = nextLevelMin - currentLevelMin;
-    const gained = currentPoints - currentLevelMin;
+    const gained = currentGems - currentLevelMin;
     progressPercentage = Math.min(100, Math.max(0, (gained / range) * 100));
   }
 
@@ -150,10 +150,10 @@ export default function Dashboard() {
 
   const handleRedeem = async (plan: "premium" | "elite") => {
     try {
-      await redeemPoints({ plan });
+      await redeemGems({ plan });
       toast.success(`Upgraded to ${plan}!`);
     } catch (error) {
-      toast.error("Failed to redeem points. Insufficient balance?");
+      toast.error("Failed to redeem gems. Insufficient balance?");
     }
   };
 
@@ -372,16 +372,16 @@ export default function Dashboard() {
                     </div>
                     
                     <div className="flex justify-between items-center mt-1.5 relative z-10">
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Current: {currentPoints} pts</span>
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Current: {currentGems} gems</span>
                       <span className="text-[10px] font-black text-black dark:text-white uppercase tracking-wide">
-                        {nextBadge.minPoints - currentPoints} pts to go
+                        {nextBadge.minPoints - currentGems} gems to go
                       </span>
                     </div>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent className="bg-black text-white border-2 border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
                   <p className="font-bold uppercase tracking-wider text-xs">Keep going!</p>
-                  <p className="text-xs">Earn {nextBadge.minPoints - currentPoints} more points to unlock {nextBadge.label}.</p>
+                  <p className="text-xs">Earn {nextBadge.minPoints - currentGems} more gems to unlock {nextBadge.label}.</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -440,11 +440,11 @@ export default function Dashboard() {
         ) : (
             <Card className="bg-card hover:bg-emerald-100 dark:hover:bg-emerald-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#10b981]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-black uppercase">Points</CardTitle>
+                <CardTitle className="text-lg font-black uppercase">Gems</CardTitle>
                 <Trophy className="h-6 w-6 text-foreground" />
             </CardHeader>
             <CardContent>
-                <div className="text-4xl font-black">{user?.points || 0}</div>
+                <div className="text-4xl font-black">{user?.gems || 0}</div>
                 <p className="text-sm font-bold text-muted-foreground bg-emerald-200 dark:bg-emerald-800 dark:text-white inline-block px-1 mt-1">Contribution score</p>
             </CardContent>
             </Card>
@@ -544,18 +544,18 @@ export default function Dashboard() {
           {!isPremium && (
             <Card className="bg-sky-50 dark:bg-card border-2 border-border shadow-[8px_8px_0px_0px_#0ea5e9]" id="dashboard-redeem">
               <CardHeader>
-                <CardTitle className="uppercase">Redeem Points</CardTitle>
+                <CardTitle className="uppercase">Redeem Gems</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-2">
                 <div className="bg-card border border-border p-4 space-y-2 shadow-[4px_4px_0px_0px_var(--shadow)]">
                   <div className="flex justify-between items-center">
                     <h4 className="font-black uppercase text-lg">Premium</h4>
-                    <Badge className="bg-black dark:bg-white text-white dark:text-black rounded-none">500 pts</Badge>
+                    <Badge className="bg-black dark:bg-white text-white dark:text-black rounded-none">500 gems</Badge>
                   </div>
                   <p className="text-xs font-medium">Unlock exclusive features and badges.</p>
                   <div className="space-y-2">
-                    <Button size="sm" className="w-full mt-2 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("premium")} disabled={(user?.points || 0) < 500}>
-                      Redeem (500 pts)
+                    <Button size="sm" className="w-full mt-2 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("premium")} disabled={(user?.gems || 0) < 500}>
+                      Redeem (500 gems)
                     </Button>
                     <Button
                       size="sm"
@@ -571,12 +571,12 @@ export default function Dashboard() {
                 <div className="bg-amber-100 dark:bg-amber-900 border border-border p-4 space-y-2 shadow-[4px_4px_0px_0px_var(--shadow)]">
                   <div className="flex justify-between items-center">
                     <h4 className="font-black uppercase text-lg text-amber-700 dark:text-amber-300">Elite</h4>
-                    <Badge className="bg-amber-600 text-white rounded-none">1000 pts</Badge>
+                    <Badge className="bg-amber-600 text-white rounded-none">1000 gems</Badge>
                   </div>
                   <p className="text-xs font-medium">Top tier status and priority support.</p>
                   <div className="space-y-2">
-                    <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("elite")} disabled={(user?.points || 0) < 1000}>
-                      Redeem (1000 pts)
+                    <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("elite")} disabled={(user?.gems || 0) < 1000}>
+                      Redeem (1000 gems)
                     </Button>
                     <Button
                       size="sm"
@@ -617,7 +617,7 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-3">
                 {leaderboard.slice(0, 3).map((u, i) => {
-                  const entryBadge = getBadgeFromPoints(u.points);
+                  const entryBadge = getBadgeFromPoints(u.gems);
                   return (
                     <div key={i} className="flex items-center justify-between bg-card border border-border p-2 shadow-[2px_2px_0px_0px_var(--shadow)]">
                       <div className="flex items-center gap-3">
@@ -636,7 +636,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-black text-foreground">{u.points} pts</span>
+                        <span className="text-xs font-black text-foreground">{u.gems} gems</span>
                       </div>
                     </div>
                   );

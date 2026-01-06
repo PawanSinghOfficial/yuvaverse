@@ -7,15 +7,15 @@ interface DashboardStatsProps {
   recentResourcesCount: number;
   registeredEventsCount: number;
   isPremium: boolean;
-  userPoints: number;
+  userGems: number;
 }
 
-export function DashboardStats({ 
-  totalTopicsCompleted, 
-  recentResourcesCount, 
-  registeredEventsCount, 
-  isPremium, 
-  userPoints 
+export function DashboardStats({
+  totalTopicsCompleted,
+  recentResourcesCount,
+  registeredEventsCount,
+  isPremium,
+  userGems
 }: DashboardStatsProps) {
   const navigate = useNavigate();
 
@@ -66,11 +66,11 @@ export function DashboardStats({
       ) : (
           <Card className="bg-card hover:bg-emerald-100 dark:hover:bg-emerald-900 cursor-pointer border-2 border-border shadow-[8px_8px_0px_0px_#10b981]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-black uppercase">Points</CardTitle>
+              <CardTitle className="text-lg font-black uppercase">Gems</CardTitle>
               <Trophy className="h-6 w-6 text-foreground" />
           </CardHeader>
           <CardContent>
-              <div className="text-4xl font-black">{userPoints}</div>
+              <div className="text-4xl font-black">{userGems}</div>
               <p className="text-sm font-bold text-muted-foreground bg-emerald-200 dark:bg-emerald-800 dark:text-white inline-block px-1 mt-1">Contribution score</p>
           </CardContent>
           </Card>

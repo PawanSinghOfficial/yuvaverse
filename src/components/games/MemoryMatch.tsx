@@ -193,7 +193,14 @@ export default function MemoryMatch() {
         difficulty: difficulty
       }).then((res) => {
         if (res) {
-          toast.success(isWin ? `You Won! +${res.pointsAwarded} Points` : `Vayuu Won. +${res.pointsAwarded} Points`);
+          if (res.gemsAwarded > 0) {
+            toast.success(`🎉 5 Consecutive Wins! +${res.gemsAwarded} Gems!`);
+          } else if (isWin) {
+            const winsLeft = 5 - res.consecutiveWins;
+            toast.success(`You Won! ${res.consecutiveWins}/5 wins (${winsLeft} more for 10 gems)`);
+          } else {
+            toast.error(`Vayuu Won. Streak reset. Try for 5 consecutive wins to earn 10 gems.`);
+          }
         }
       }).catch(console.error);
     }

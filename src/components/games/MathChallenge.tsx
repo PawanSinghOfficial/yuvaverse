@@ -100,9 +100,16 @@ export default function MathChallenge() {
         win: isWin, // Consider it a "win" if they got at least some points
         difficulty: difficulty
       });
-      
+
       if (result) {
-        toast.success(`Time's Up! You earned ${result.pointsAwarded} points.`);
+        if (result.gemsAwarded > 0) {
+          toast.success(`🎉 5 Consecutive Wins! +${result.gemsAwarded} Gems!`);
+        } else if (isWin && score > 0) {
+          const winsLeft = 5 - result.consecutiveWins;
+          toast.success(`Time's Up! Score: ${score}. ${result.consecutiveWins}/5 wins (${winsLeft} more for 10 gems)`);
+        } else {
+          toast.info(`Time's Up! Score: ${score}. Win 5 times in a row to earn 10 gems!`);
+        }
         if (result.newHighScore && result.newHighScore === score) {
           toast.success("New High Score! 🏆");
         }

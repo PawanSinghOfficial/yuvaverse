@@ -117,7 +117,7 @@ export const syncAdminRole = mutation({
   },
 });
 
-export const redeemPoints = mutation({
+export const redeemGems = mutation({
   args: { plan: v.union(v.literal("premium"), v.literal("elite")) },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -127,14 +127,14 @@ export const redeemPoints = mutation({
     if (!user) throw new Error("User not found");
 
     const cost = args.plan === "premium" ? 500 : 1000;
-    const currentPoints = user.points || 0;
+    const currentGems = user.gems || 0;
 
-    if (currentPoints < cost) {
-      throw new Error("Insufficient points");
+    if (currentGems < cost) {
+      throw new Error("Insufficient gems");
     }
 
     await ctx.db.patch(userId, {
-      points: currentPoints - cost,
+      gems: currentGems - cost,
       tier: args.plan,
     });
   },
@@ -145,13 +145,13 @@ export const getLeaderboard = query({
   handler: async (ctx) => {
     const users = await ctx.db.query("users").collect();
     return users
-      .filter((u) => (u.points || 0) > 0)
-      .sort((a, b) => (b.points || 0) - (a.points || 0))
+      .filter((u) => (u.gems || 0) > 0)
+      .sort((a, b) => (b.gems || 0) - (a.gems || 0))
       .slice(0, 10)
       .map(u => ({
         _id: u._id,
         name: u.username || u.name || "Anonymous",
-        points: u.points || 0,
+        gems: u.gems || 0,
         image: u.image,
       }));
   },
@@ -216,13 +216,13 @@ export const completePomodoroSession = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    // Award 2 points for completion of pomodoro timer
-    const pointsEarned = 2;
+    // Award 2 gems for completion of pomodoro timer
+    const gemsEarned = 2;
     const currentCompleted = user.pomodoroSessionsCompleted || 0;
-    const currentPoints = user.points || 0;
+    const currentGems = user.gems || 0;
 
     await ctx.db.patch(userId, {
-      points: currentPoints + pointsEarned,
+      gems: currentGems + gemsEarned,
       pomodoroSessionsCompleted: currentCompleted + 1,
     });
 
@@ -238,8 +238,8 @@ export const completePomodoroSession = mutation({
         type: "pomodoro_session",
         data: { duration: args.durationMinutes }
     });
-    
-    return pointsEarned;
+
+    return gemsEarned;
   },
 });
 
@@ -282,24 +282,28 @@ export const recordGameResult = mutation({
     const user = await ctx.db.get(userId);
     if (!user) return null;
 
-    // Points system based on difficulty
-    let winPoints = 10;
-    let participationPoints = 2;
+    // New gems system: Only award gems for 5 consecutive wins
+    const currentConsecutiveWins = user.consecutiveWins || 0;
+    const currentGems = user.gems || 0;
+    let gemsAwarded = 0;
+    let newConsecutiveWins = currentConsecutiveWins;
 
-    if (args.difficulty === "easy") {
-      winPoints = 5;
-      participationPoints = 1;
-    } else if (args.difficulty === "hard") {
-      winPoints = 20;
-      participationPoints = 5;
+    if (args.win) {
+      newConsecutiveWins = currentConsecutiveWins + 1;
+
+      // Award 10 gems for every 5 consecutive wins
+      if (newConsecutiveWins >= 5) {
+        gemsAwarded = 10;
+        newConsecutiveWins = 0; // Reset counter after awarding gems
+      }
+    } else {
+      // Reset consecutive wins on loss
+      newConsecutiveWins = 0;
     }
 
-    // Points system: winPoints for a win, participationPoints for playing/participation
-    const pointsAwarded = args.win ? winPoints : participationPoints;
-    const currentPoints = user.points || 0;
-    
     let patchData: any = {
-      points: currentPoints + pointsAwarded,
+      gems: currentGems + gemsAwarded,
+      consecutiveWins: newConsecutiveWins,
       totalGamesPlayed: (user.totalGamesPlayed || 0) + 1,
     };
 
@@ -307,20 +311,16 @@ export const recordGameResult = mutation({
       patchData.totalGamesWon = (user.totalGamesWon || 0) + 1;
     }
 
-    // Update High Scores and award bonus
-    const HIGH_SCORE_BONUS = 50;
-
+    // Track High Scores (no gems bonus)
     if (args.gameId === "snake" && args.score !== undefined) {
       if (args.score > (user.snakeHighScore || 0)) {
         patchData.snakeHighScore = args.score;
-        patchData.points += HIGH_SCORE_BONUS;
       }
     }
-    
+
     if (args.gameId === "math" && args.score !== undefined) {
       if (args.score > (user.mathHighScore || 0)) {
         patchData.mathHighScore = args.score;
-        patchData.points += HIGH_SCORE_BONUS;
       }
     }
 
@@ -344,17 +344,18 @@ export const recordGameResult = mutation({
     // Log Activity if High Score
     const isNewHighScore = (args.gameId === "snake" && args.score !== undefined && args.score > (user.snakeHighScore || 0)) ||
                            (args.gameId === "math" && args.score !== undefined && args.score > (user.mathHighScore || 0));
-    
+
     if (isNewHighScore && args.score !== undefined) {
         await ctx.scheduler.runAfter(0, internal.activities.log, {
             type: "game_highscore",
             data: { gameId: args.gameId, score: args.score }
         });
     }
-    
-    return { 
-      pointsAwarded, 
-      newHighScore: args.gameId === "snake" ? patchData.snakeHighScore : 
+
+    return {
+      gemsAwarded,
+      consecutiveWins: newConsecutiveWins,
+      newHighScore: args.gameId === "snake" ? patchData.snakeHighScore :
                     args.gameId === "math" ? patchData.mathHighScore : undefined
     };
   },

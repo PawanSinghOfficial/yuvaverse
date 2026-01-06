@@ -46,11 +46,11 @@ export function GameGuide() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-white truncate">{player.name}</p>
                 <div className="flex items-center gap-2">
-                    <p className="text-xs text-white/50 font-medium">{player.points} pts</p>
-                    {/* Simulated Trophy Count based on points for visual flair */}
+                    <p className="text-xs text-white/50 font-medium">{player.gems} gems</p>
+                    {/* Simulated Trophy Count based on gems for visual flair */}
                     <div className="flex items-center gap-0.5 text-yellow-500">
                         <Trophy className="h-3 w-3" />
-                        <span className="text-[10px] font-bold">{Math.floor(player.points / 100)}</span>
+                        <span className="text-[10px] font-bold">{Math.floor(player.gems / 100)}</span>
                     </div>
                 </div>
               </div>

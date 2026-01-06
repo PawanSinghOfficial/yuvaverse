@@ -113,9 +113,9 @@ export default function SnakeGame() {
         win: false, // Snake is endless, so just participation/score
         difficulty: difficulty
       });
-      
+
       if (result) {
-        toast.success(`Game Over! You earned ${result.pointsAwarded} points.`);
+        toast.info(`Game Over! Score: ${score}. Win other games 5 times in a row to earn 10 gems!`);
         if (result.newHighScore && result.newHighScore === score) {
           toast.success("New High Score! 🏆");
         }
