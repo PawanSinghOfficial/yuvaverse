@@ -214,10 +214,6 @@ export default function Games() {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const { playSound } = useGameSounds();
 
-  useEffect(() => {
-    document.documentElement.classList.remove("dark");
-  }, []);
-
   const ActiveGame = GAMES.find(g => g.id === selectedGame)?.component;
 
   return (
