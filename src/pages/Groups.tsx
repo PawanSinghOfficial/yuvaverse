@@ -81,13 +81,13 @@ export default function Groups() {
     return userGroups?.includes(groupId) ?? false;
   };
 
-  const canCreateGroup = user?.role === "admin" || user?.tier === "premium" || user?.tier === "elite";
+  const canCreateGroup = user?.role === "admin" || user?.tier === "elite";
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!canCreateGroup) {
-      toast.error("Only Premium users can create groups!");
+      toast.error("Only Elite users and Admins can create groups!");
       return;
     }
 
@@ -255,8 +255,8 @@ export default function Groups() {
                   <div className="bg-yellow-100 border-2 border-yellow-500 p-4 rounded-md flex items-start gap-3 mb-4">
                     <Crown className="h-5 w-5 text-yellow-700 mt-0.5 flex-shrink-0" />
                     <div>
-                      <h4 className="font-bold text-yellow-800">Premium Feature</h4>
-                      <p className="text-sm text-yellow-700">Only Premium or Elite members can create new groups. Upgrade your plan to start your own squad!</p>
+                      <h4 className="font-bold text-yellow-800">Elite Feature</h4>
+                      <p className="text-sm text-yellow-700">Only Elite members and Admins can create new groups. Upgrade to Elite tier to start your own squad!</p>
                     </div>
                   </div>
                 )}

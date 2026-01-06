@@ -80,12 +80,12 @@ export const create = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    // Check permissions: Only Admin or Premium/Elite users can create groups
+    // Check permissions: Only Admin or Elite users can create groups
     const isSystemAdmin = user.role === "admin";
-    const isPremium = user.tier === "premium" || user.tier === "elite";
+    const isElite = user.tier === "elite";
 
-    if (!isSystemAdmin && !isPremium) {
-      throw new Error("Only Premium users or Admins can create groups. Please upgrade your plan.");
+    if (!isSystemAdmin && !isElite) {
+      throw new Error("Only Elite users or Admins can create groups. Please upgrade to Elite tier.");
     }
 
     if (args.isPrivate && !args.password) {
