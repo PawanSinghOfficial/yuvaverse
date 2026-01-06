@@ -83,6 +83,16 @@ const steps = [
     targetId: "sidebar-nav-feedback",
   },
   {
+    title: "Add Friends & Connect",
+    description: "Build your network on YuvaVerse! Search for your classmates and friends, send them friend requests, and stay connected. You can view their profiles, see what they're working on, and collaborate better together!",
+    targetId: null,
+  },
+  {
+    title: "User Activity Feed",
+    description: "Stay updated with what's happening in your community! The activity feed shows recent actions from your friends and connections - new resources uploaded, groups joined, achievements unlocked, and more. It's your social pulse on campus!",
+    targetId: null,
+  },
+  {
     title: "You're All Set!",
     description: "That's the basics! You can also explore the sidebar for more features like the Calendar, College group, and Feedback. Enjoy your journey in YuvaVerse!",
     targetId: null,
