@@ -61,7 +61,7 @@ export function AppSidebar({ onGuideClick, onResourcesClick, onCalendarClick, ..
       color: "text-violet-500",
     },
     {
-      label: "Study Groups",
+      label: "College group",
       icon: Users,
       href: "/groups",
       color: "text-pink-700",

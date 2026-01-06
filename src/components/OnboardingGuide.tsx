@@ -29,7 +29,7 @@ const steps = [
   },
   {
     title: "Your Command Center",
-    description: "This grid gives you a snapshot of everything happening. Check how many resources are available, see active study groups you can join, view your registered events, and track your total points. It's your quick status report.",
+    description: "This grid gives you a snapshot of everything happening. Check how many resources are available, see active college groups you can join, view your registered events, and track your total points. It's your quick status report.",
     targetId: "dashboard-stats-grid",
   },
   {
@@ -49,12 +49,12 @@ const steps = [
   },
   {
     title: "League Upgrades & Ranks",
-    description: "This card tracks your journey to the next league! See exactly how many points you need to level up. Reaching higher ranks unlocks exclusive benefits like creating more study groups (up to 5 for Elite!) and special profile badges.",
+    description: "This card tracks your journey to the next league! See exactly how many points you need to level up. Reaching higher ranks unlocks exclusive benefits like creating more college groups (up to 5 for Elite!) and special profile badges.",
     targetId: "dashboard-rank-progress",
   },
   {
-    title: "Study Groups & Limits",
-    description: "Create and join study groups to collaborate! Creation limits depend on your tier: Freemium users can create 1 group, Premium users 2 groups, and Elite users up to 5 groups. Upgrade your tier to lead more squads!",
+    title: "College group & Limits",
+    description: "Create and join college groups to collaborate! Creation limits depend on your tier: Freemium users can create 1 group, Premium users 2 groups, and Elite users up to 5 groups. Upgrade your tier to lead more squads!",
     targetId: "sidebar-nav-groups",
   },
   {
@@ -84,7 +84,7 @@ const steps = [
   },
   {
     title: "You're All Set!",
-    description: "That's the basics! You can also explore the sidebar for more features like the Calendar, Study Groups, and Feedback. Enjoy your journey in YuvaVerse!",
+    description: "That's the basics! You can also explore the sidebar for more features like the Calendar, College group, and Feedback. Enjoy your journey in YuvaVerse!",
     targetId: null,
   }
 ];

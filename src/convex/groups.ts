@@ -234,7 +234,7 @@ export const sendMessage = mutation({
     let expiresAt: number | undefined;
     if (args.expiresInMinutes && args.expiresInMinutes > 0) {
       if (group.type !== "study") {
-        throw new Error("Disappearing messages are only available in study groups");
+        throw new Error("Disappearing messages are only available in college groups");
       }
       const clampedMinutes = Math.min(args.expiresInMinutes, 60 * 24);
       expiresAt = Date.now() + clampedMinutes * 60 * 1000;
