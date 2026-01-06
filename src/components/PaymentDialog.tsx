@@ -50,8 +50,8 @@ const SUBSCRIPTION_PLANS = {
     durations: {
       "1month": { price: 600, months: 1, label: "1 Month" },
       "3months": { price: 1500, months: 3, label: "3 Months" },
-      "6months": { price: 3000, months: 6, label: "6 Months" },
-      "1year": { price: 6000, months: 12, label: "1 Year" },
+      "6months": { price: 2400, months: 6, label: "6 Months" },
+      "1year": { price: 4200, months: 12, label: "1 Year" },
     },
     features: [
       "Create up to 5 study groups",

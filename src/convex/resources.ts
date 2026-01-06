@@ -164,13 +164,7 @@ export const toggleLike = mutation({
         dislikes: newDislikes
       });
 
-      // Increase uploader points
-      const uploader = await ctx.db.get(resource.uploaderId);
-      if (uploader) {
-        await ctx.db.patch(resource.uploaderId, {
-          points: (uploader.points || 0) + 5
-        });
-      }
+      // No gems reward for likes - gems only earned from upload
     }
   },
 });
@@ -235,6 +229,21 @@ export const resolveFlag = mutation({
             await ctx.db.delete(r._id);
           }
 
+          // Deduct gems from uploader and send notification
+          const uploader = await ctx.db.get(resource.uploaderId);
+          if (uploader) {
+            const currentGems = uploader.gems || 0;
+            await ctx.db.patch(resource.uploaderId, {
+              gems: Math.max(0, currentGems - 10) // Deduct 10 gems, don't go below 0
+            });
+
+            // TODO: Send email notification to uploader
+            // Email: Your resource "${resource.title}" was removed due to being flagged as incorrect/inappropriate.
+            // 10 gems have been deducted from your account.
+            // Email can be sent via Resend or similar service
+            console.log(`Resource deleted: ${resource.title}, uploader: ${uploader.email}, gems deducted: 10`);
+          }
+
           await ctx.storage.delete(resource.fileId);
           await ctx.db.delete(args.resourceId);
        }
@@ -283,9 +292,9 @@ export const create = mutation({
       downloads: 0,
     });
 
-    // Award points for upload
-    const currentPoints = user.points || 0;
-    await ctx.db.patch(user._id, { points: currentPoints + 10 });
+    // Award gems for upload
+    const currentGems = user.gems || 0;
+    await ctx.db.patch(user._id, { gems: currentGems + 10 });
 
     // Update Daily Quest
     await ctx.scheduler.runAfter(0, internal.quests.updateProgress, {
@@ -322,8 +331,18 @@ export const deleteResource = mutation({
             await ctx.db.delete(r._id);
         }
 
-        // Try to delete from storage if possible, though we might not have the ID directly mapped if not stored
-        // But we have fileId
+        // Deduct gems from uploader
+        const uploader = await ctx.db.get(resource.uploaderId);
+        if (uploader) {
+          const currentGems = uploader.gems || 0;
+          await ctx.db.patch(resource.uploaderId, {
+            gems: Math.max(0, currentGems - 10) // Deduct 10 gems, don't go below 0
+          });
+
+          // TODO: Send email notification to uploader
+          console.log(`Resource deleted by admin: ${resource.title}, uploader: ${uploader.email}, gems deducted: 10`);
+        }
+
         await ctx.storage.delete(resource.fileId);
         await ctx.db.delete(args.id);
     }

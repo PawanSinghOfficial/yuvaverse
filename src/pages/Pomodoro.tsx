@@ -383,10 +383,10 @@ export default function Pomodoro() {
     if (successAudioRef.current) {
       successAudioRef.current.play().catch(e => console.error("Audio play failed:", e));
     }
-    
+
     try {
-      const points = await completeSession({ durationMinutes: totalTime / 60 });
-      setPointsEarned(points);
+      await completeSession({ durationMinutes: totalTime / 60 });
+      setPointsEarned(0); // No gems earned from Pomodoro
       setShowCompletion(true);
       
       if (Notification.permission === "granted") {
@@ -740,20 +740,9 @@ export default function Pomodoro() {
           </DialogHeader>
           <div className="text-center py-4">
             <p className="text-muted-foreground font-medium text-lg px-4">
-              Congratulation for succesfully completing your target here is your reward
+              Congratulations on successfully completing your focus session!
             </p>
-            {pointsEarned > 0 && (
-              <motion.div 
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="mt-6 inline-flex items-center gap-2 bg-yellow-100 border-2 border-black px-4 py-2 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-              >
-                <span className="text-2xl">🏆</span>
-                <span className="font-black uppercase text-yellow-700">+{pointsEarned} Points Earned</span>
-              </motion.div>
-            )}
-            <p className="text-sm text-muted-foreground mt-6">Take a short break and stretch.</p>
+            <p className="text-sm text-muted-foreground mt-6">Take a short break and stretch. Earn gems by uploading resources or winning 5 arcade games in a row!</p>
           </div>
           <DialogFooter className="sm:justify-center pb-4">
             <Button 

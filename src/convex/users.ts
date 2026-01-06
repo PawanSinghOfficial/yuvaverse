@@ -216,13 +216,10 @@ export const completePomodoroSession = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    // Award 2 gems for completion of pomodoro timer
-    const gemsEarned = 2;
+    // No gems for pomodoro - only arcade games and resource uploads earn gems
     const currentCompleted = user.pomodoroSessionsCompleted || 0;
-    const currentGems = user.gems || 0;
 
     await ctx.db.patch(userId, {
-      gems: currentGems + gemsEarned,
       pomodoroSessionsCompleted: currentCompleted + 1,
     });
 
@@ -239,7 +236,7 @@ export const completePomodoroSession = mutation({
         data: { duration: args.durationMinutes }
     });
 
-    return gemsEarned;
+    return 0; // No gems earned
   },
 });
 
