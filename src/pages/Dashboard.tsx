@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { BookOpen, Calendar, Users, MessageSquare, Trophy, Crown, Star, Flame, Medal, BookCheck, Edit, Activity, UserCog } from "lucide-react";
+import { BookOpen, Calendar, Users, MessageSquare, Trophy, Crown, Star, Flame, Medal, BookCheck, Edit, Activity, UserCog, IndianRupee } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
@@ -18,6 +18,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DailyQuests } from "@/components/DailyQuests";
 import { FriendActivityFeed } from "@/components/dashboard/FriendActivityFeed";
+import { PaymentDialog } from "@/components/PaymentDialog";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -42,6 +43,8 @@ export default function Dashboard() {
   const [showActivityFeed, setShowActivityFeed] = useState(false);
   const [streakIncreased, setStreakIncreased] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<"premium" | "elite">("premium");
 
   // Profile form state
   const [branch, setBranch] = useState("");
@@ -550,9 +553,20 @@ export default function Dashboard() {
                     <Badge className="bg-black dark:bg-white text-white dark:text-black rounded-none">500 pts</Badge>
                   </div>
                   <p className="text-xs font-medium">Unlock exclusive features and badges.</p>
-                  <Button size="sm" className="w-full mt-2 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("premium")} disabled={(user?.points || 0) < 500}>
-                    Redeem
-                  </Button>
+                  <div className="space-y-2">
+                    <Button size="sm" className="w-full mt-2 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("premium")} disabled={(user?.points || 0) < 500}>
+                      Redeem (500 pts)
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all"
+                      onClick={() => { setSelectedTier("premium"); setPaymentDialogOpen(true); }}
+                    >
+                      <IndianRupee className="h-4 w-4 mr-1" />
+                      Pay ₹300
+                    </Button>
+                  </div>
                 </div>
                 <div className="bg-amber-100 dark:bg-amber-900 border border-border p-4 space-y-2 shadow-[4px_4px_0px_0px_var(--shadow)]">
                   <div className="flex justify-between items-center">
@@ -560,9 +574,20 @@ export default function Dashboard() {
                     <Badge className="bg-amber-600 text-white rounded-none">1000 pts</Badge>
                   </div>
                   <p className="text-xs font-medium">Top tier status and priority support.</p>
-                  <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("elite")} disabled={(user?.points || 0) < 1000}>
-                    Redeem
-                  </Button>
+                  <div className="space-y-2">
+                    <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("elite")} disabled={(user?.points || 0) < 1000}>
+                      Redeem (1000 pts)
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full bg-amber-50 dark:bg-amber-950 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all"
+                      onClick={() => { setSelectedTier("elite"); setPaymentDialogOpen(true); }}
+                    >
+                      <IndianRupee className="h-4 w-4 mr-1" />
+                      Pay ₹600
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -661,6 +686,13 @@ export default function Dashboard() {
           </Card>
         </div>
       </div>
+
+      {/* Payment Dialog */}
+      <PaymentDialog
+        open={paymentDialogOpen}
+        onOpenChange={setPaymentDialogOpen}
+        tier={selectedTier}
+      />
     </div>
   );
 }
