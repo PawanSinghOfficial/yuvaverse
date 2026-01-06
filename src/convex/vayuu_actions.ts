@@ -65,23 +65,36 @@ export const generateResponse = action({
     ];
 
     try {
-      const completion = await openai.chat.completions.create({
+      // Add timeout to OpenAI request
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timeout")), 25000) // 25 second timeout
+      );
+
+      const completionPromise = openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: apiMessages as any,
+        max_tokens: 500, // Limit response length for faster replies
+        temperature: 0.7,
       });
 
+      const completion = await Promise.race([completionPromise, timeoutPromise]) as any;
+
       const responseContent = completion.choices[0].message.content || "I'm having trouble connecting to my brain right now. Try again?";
-      
+
       await ctx.runMutation(internal.vayuu.saveBotResponse, {
         userId: args.userId,
         content: responseContent,
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Vayuu chat error:", error);
+      const errorMessage = error.message === "Request timeout"
+        ? "Sorry, I'm taking too long to respond. Please try asking again! 🤔"
+        : "I'm currently offline due to a technical glitch. Please try again later. 🔧";
+
       await ctx.runMutation(internal.vayuu.saveBotResponse, {
         userId: args.userId,
-        content: "I'm currently offline due to a technical glitch. Please try again later.",
+        content: errorMessage,
       });
     }
   },

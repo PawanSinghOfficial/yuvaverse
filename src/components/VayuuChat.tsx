@@ -60,25 +60,29 @@ export function VayuuChat({ user }: VayuuChatProps) {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="fixed bottom-24 left-6 z-50 w-80 md:w-96 shadow-2xl"
           >
-            <Card className="border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] overflow-hidden">
-              <CardHeader className="bg-primary p-4 flex flex-row items-center justify-between">
+            <Card className="border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.3)] overflow-hidden">
+              <CardHeader className="bg-primary dark:bg-primary p-4 flex flex-row items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="bg-white p-1 rounded-full">
-                    <Bot className="h-5 w-5 text-primary" />
+                  <div className="bg-white p-1 rounded-full w-8 h-8 flex items-center justify-center overflow-hidden">
+                    <img
+                      src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a"
+                      alt="Vayuu"
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                   <CardTitle className="text-white text-lg">Chat with Vayuu</CardTitle>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={handleClear} 
-                    className="text-white hover:bg-white/20 h-8 w-8"
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleClear}
+                    className="text-white hover:bg-white/20 dark:hover:bg-white/30 h-8 w-8"
                     title="Clear History"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-white hover:bg-white/20 h-8 w-8">
+                  <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-white hover:bg-white/20 dark:hover:bg-white/30 h-8 w-8">
                     <X className="h-5 w-5" />
                   </Button>
                 </div>
@@ -87,8 +91,13 @@ export function VayuuChat({ user }: VayuuChatProps) {
                 <ScrollArea className="h-[300px] p-4" ref={scrollRef}>
                   <div className="space-y-4">
                     {messages.length === 0 && (
-                      <div className="flex justify-start">
-                        <div className="bg-muted text-foreground rounded-2xl rounded-bl-none px-4 py-2 text-sm font-medium">
+                      <div className="flex justify-start gap-2">
+                        <img
+                          src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a"
+                          alt="Vayuu"
+                          className="h-8 w-8 rounded-full object-cover flex-shrink-0"
+                        />
+                        <div className="bg-muted dark:bg-slate-800 text-foreground rounded-2xl rounded-bl-none px-4 py-2 text-sm font-medium">
                           Hi! I'm Vayuu. Ask me anything about the YuvaVerse portal! 🚀
                         </div>
                       </div>
@@ -96,13 +105,20 @@ export function VayuuChat({ user }: VayuuChatProps) {
                     {messages.map((msg) => (
                       <div
                         key={msg._id}
-                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start gap-2"}`}
                       >
+                        {msg.role !== "user" && (
+                          <img
+                            src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a"
+                            alt="Vayuu"
+                            className="h-8 w-8 rounded-full object-cover flex-shrink-0"
+                          />
+                        )}
                         <div
                           className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm font-medium ${
                             msg.role === "user"
                               ? "bg-primary text-primary-foreground rounded-br-none"
-                              : "bg-muted text-foreground rounded-bl-none"
+                              : "bg-muted dark:bg-slate-800 text-foreground rounded-bl-none"
                           }`}
                         >
                           {msg.content}
@@ -110,8 +126,13 @@ export function VayuuChat({ user }: VayuuChatProps) {
                       </div>
                     ))}
                     {isThinking && (
-                      <div className="flex justify-start">
-                        <div className="bg-muted text-foreground rounded-2xl rounded-bl-none px-4 py-2 flex items-center gap-2">
+                      <div className="flex justify-start gap-2">
+                        <img
+                          src="https://harmless-tapir-303.convex.cloud/api/storage/8bfd0dc3-0f8f-4844-a6da-045aa56a771a"
+                          alt="Vayuu"
+                          className="h-8 w-8 rounded-full object-cover flex-shrink-0"
+                        />
+                        <div className="bg-muted dark:bg-slate-800 text-foreground rounded-2xl rounded-bl-none px-4 py-2 flex items-center gap-2">
                           <Loader2 className="h-4 w-4 animate-spin" />
                           <span className="text-xs opacity-70">Vayuu is thinking...</span>
                         </div>
@@ -120,7 +141,7 @@ export function VayuuChat({ user }: VayuuChatProps) {
                   </div>
                 </ScrollArea>
               </CardContent>
-              <CardFooter className="p-3 bg-muted/20 border-t">
+              <CardFooter className="p-3 bg-muted/20 dark:bg-slate-900/50 border-t dark:border-slate-700">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -132,7 +153,7 @@ export function VayuuChat({ user }: VayuuChatProps) {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask Vayuu..."
-                    className="bg-background border-black/20 focus-visible:ring-primary"
+                    className="bg-background border-black/20 dark:border-white/20 focus-visible:ring-primary"
                     disabled={isThinking}
                   />
                   <Button type="submit" size="icon" disabled={!input.trim() || isThinking}>
@@ -149,7 +170,7 @@ export function VayuuChat({ user }: VayuuChatProps) {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 left-6 z-50 h-14 w-14 bg-black text-white rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] flex items-center justify-center border-2 border-white/20 hover:bg-gray-900 transition-colors"
+        className="fixed bottom-6 left-6 z-50 h-14 w-14 bg-black dark:bg-white text-white dark:text-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] flex items-center justify-center border-2 border-white/20 dark:border-black/20 hover:bg-gray-900 dark:hover:bg-gray-100 transition-colors"
       >
         {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
       </motion.button>
