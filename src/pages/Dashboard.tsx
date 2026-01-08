@@ -550,12 +550,12 @@ export default function Dashboard() {
                 <div className="bg-card border border-border p-4 space-y-2 shadow-[4px_4px_0px_0px_var(--shadow)]">
                   <div className="flex justify-between items-center">
                     <h4 className="font-black uppercase text-lg">Premium</h4>
-                    <Badge className="bg-black dark:bg-white text-white dark:text-black rounded-none">500 gems</Badge>
+                    <Badge className="bg-black dark:bg-white text-white dark:text-black rounded-none">1500 gems</Badge>
                   </div>
                   <p className="text-xs font-medium">Unlock exclusive features and badges.</p>
                   <div className="space-y-2">
-                    <Button size="sm" className="w-full mt-2 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("premium")} disabled={(user?.gems || 0) < 500}>
-                      Redeem (500 gems)
+                    <Button size="sm" className="w-full mt-2 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("premium")} disabled={(user?.gems || 0) < 1500}>
+                      Redeem (1500 gems)
                     </Button>
                     <Button
                       size="sm"
@@ -571,12 +571,12 @@ export default function Dashboard() {
                 <div className="bg-amber-100 dark:bg-amber-900 border border-border p-4 space-y-2 shadow-[4px_4px_0px_0px_var(--shadow)]">
                   <div className="flex justify-between items-center">
                     <h4 className="font-black uppercase text-lg text-amber-700 dark:text-amber-300">Elite</h4>
-                    <Badge className="bg-amber-600 text-white rounded-none">1000 gems</Badge>
+                    <Badge className="bg-amber-600 text-white rounded-none">3000 gems</Badge>
                   </div>
                   <p className="text-xs font-medium">Top tier status and priority support.</p>
                   <div className="space-y-2">
-                    <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("elite")} disabled={(user?.gems || 0) < 1000}>
-                      Redeem (1000 gems)
+                    <Button size="sm" className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] transition-all" onClick={() => handleRedeem("elite")} disabled={(user?.gems || 0) < 3000}>
+                      Redeem (3000 gems)
                     </Button>
                     <Button
                       size="sm"

@@ -126,7 +126,7 @@ export const redeemGems = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    const cost = args.plan === "premium" ? 500 : 1000;
+    const cost = args.plan === "premium" ? 1500 : 3000;
     const currentGems = user.gems || 0;
 
     if (currentGems < cost) {
