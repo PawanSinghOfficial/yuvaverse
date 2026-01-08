@@ -39,7 +39,7 @@ const SUBSCRIPTION_PLANS = {
       "Priority support",
       "Advanced analytics",
       "Custom profile badges",
-      "Ad-free experience",
+      "Wider reach",
     ],
   },
   elite: {
