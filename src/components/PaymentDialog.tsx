@@ -59,7 +59,7 @@ const SUBSCRIPTION_PLANS = {
       "Early access to new features",
       "Exclusive Elite badge",
       "VIP support",
-      "Custom themes",
+      "Exclusive Retro & Cyberpunk themes",
     ],
   },
 };
