@@ -77,7 +77,7 @@ export const getMessagesInternal = internalQuery({
       .query("vayuu_messages")
       .withIndex("by_user", (q) => q.eq("userId", args.userId))
       .order("desc")
-      .take(10)
+      .take(5) // Only last 5 messages for faster context
       .then(msgs => msgs.reverse());
   },
 });

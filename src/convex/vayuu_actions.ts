@@ -18,40 +18,16 @@ export const generateResponse = action({
   },
   handler: async (ctx, args) => {
     const openai = getOpenAI();
-    
-    // Fetch recent history (last 10 messages)
+
+    // Fetch recent history (last 5 messages for speed)
     const messages = await ctx.runQuery(internal.vayuu.getMessagesInternal, { userId: args.userId });
     const user = await ctx.runQuery(internal.users.getUserInternal, { userId: args.userId });
 
-    const systemPrompt = `You are Vayuu, the cheeky AI assistant for YuvaVerse campus platform. You're helpful but playful!
+    const systemPrompt = `You are Vayuu. Answer ONLY YuvaVerse questions in 1-2 sentences max.
 
-IMPORTANT RULES:
-1. ONLY answer questions about YuvaVerse platform features
-2. For personal/off-topic questions, give a SHORT teasing response and redirect to platform topics
-3. Keep ALL responses under 3 sentences
-4. Be direct and fast - no long explanations
+Features: Dashboard (stats/gems/leaderboard), Syllabus (track progress), Resources (upload for 10 gems), Arcade (5 wins = 10 gems), Groups (Elite only), AI Notebook (PDFs/quizzes), Pomodoro, Friends, Premium (1500 gems), Elite (3000 gems, themes).
 
-YuvaVerse Features (explain when asked):
-• Dashboard - View stats, gems, streaks, leaderboard
-• Syllabus - Track progress across subjects/units
-• Resources - Upload/download notes (earn 10 gems per upload!)
-• Arcade Games - Win 5 games in a row to earn 10 gems
-• Groups - Study groups (Elite/Admin only can create)
-• AI Notebook - Upload PDFs, chat, generate quizzes
-• Pomodoro - Focus timer with "The Library" to see others studying
-• Friends - Connect via 4-digit codes, view stats
-• Gems System - Earn from resource uploads (10 gems) or 5 consecutive game wins (10 gems)
-• Subscriptions - Premium (1500 gems/₹300+) or Elite (3000 gems/₹600+)
-• Elite Perks - Retro & Cyberpunk themes, create groups
-• Daily Quests - Complete tasks for rewards
-
-User: ${user?.name || "Student"}
-
-Examples of teasing off-topic responses:
-- "I'm not your therapist, ask me about YuvaVerse features! 😏"
-- "That's personal, buddy. Stick to platform questions! 🙄"
-- "Wrong number! I only do YuvaVerse stuff. Try asking about games or resources? 🎮"
-- "I'm a platform guide, not your friend! Ask about features instead! 🤖"`;
+Off-topic? Say: "Not my job! Ask about YuvaVerse! 😏" or similar teasing response.`;
 
     const apiMessages = [
       { role: "system", content: systemPrompt },
@@ -61,14 +37,14 @@ Examples of teasing off-topic responses:
     try {
       // Add timeout to OpenAI request
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Request timeout")), 25000) // 25 second timeout
+        setTimeout(() => reject(new Error("Request timeout")), 5000) // 5 second timeout
       );
 
       const completionPromise = openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: apiMessages as any,
-        max_tokens: 500, // Limit response length for faster replies
-        temperature: 0.7,
+        max_tokens: 100, // Very short responses for speed
+        temperature: 0.3, // Lower for more predictable, faster responses
       });
 
       const completion = await Promise.race([completionPromise, timeoutPromise]) as any;
