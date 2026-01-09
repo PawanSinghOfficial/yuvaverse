@@ -172,6 +172,16 @@ export default function MemoryMatch() {
         });
       } else {
         playSound('lose');
+
+        // Teasing message when CPU wins
+        const username = user?.username || user?.name || "Player";
+        const loseTeases = [
+          `I have a photographic memory, ${username}. Do you? 📸`,
+          `Forgot where that card was, ${username}? 😂`,
+          `CPU wins again! Better focus next time, ${username}. 🧠`,
+          `Too easy for me, ${username}! 🤖`
+        ];
+        toast.error(loseTeases[Math.floor(Math.random() * loseTeases.length)]);
       }
       
       recordResult({

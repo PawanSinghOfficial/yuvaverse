@@ -411,10 +411,20 @@ export default function Pomodoro() {
     setShowQuitConfirm(false);
     setTimeLeft(totalTime);
     if (audioRef.current) audioRef.current.pause();
-    
+
+    // Teasing message when quitting
+    const username = user?.username || user?.name || "Warrior";
+    const teases = [
+      `Giving up already, ${username}? Focus is a muscle! 💪`,
+      `Distracted again, ${username}? Stay focused! 👀`,
+      `You can do better than that, ${username}. Try again! 📉`,
+      `Focus broken! ${username}, get back in the zone! 🧘`,
+      `Quitting is not an option, ${username}! 🚫`
+    ];
+    toast.error(teases[Math.floor(Math.random() * teases.length)]);
+
     try {
       await abortSession({});
-      toast.info("Session aborted. Keep trying!");
     } catch (error) {
       console.error("Failed to abort session:", error);
     }

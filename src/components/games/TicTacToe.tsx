@@ -107,9 +107,31 @@ export default function TicTacToe() {
             spread: 70,
             origin: { y: 0.6 }
          });
+
+         // Teasing message when user wins
+         const username = user?.username || user?.name || "Player";
+         const winTeases = [
+            `Beginner's luck, ${username}! I'll get you next time. 😤`,
+            `Okay, okay, you won. But can you do it again? 🤔`,
+            `I was just warming up! Rematch? 🤖`,
+            `CPU: 0, ${username}: 1. Don't get cocky! 😒`
+         ];
+         toast.info(winTeases[Math.floor(Math.random() * winTeases.length)]);
+
          handleGameEnd(true);
       } else {
          playSound('lose');
+
+         // Teasing message when CPU wins
+         const username = user?.username || user?.name || "Player";
+         const loseTeases = [
+            `Tic-Tac-Toe? More like Tic-Tac-NO, ${username}! ❌`,
+            `I can see your moves before you make them, ${username}. 🔮`,
+            `Better luck next time, ${username}! 🤖`,
+            `CPU: 1, ${username}: 0. 😎`
+         ];
+         toast.error(loseTeases[Math.floor(Math.random() * loseTeases.length)]);
+
          handleGameEnd(false);
       }
     } else if (!board.includes(null)) {

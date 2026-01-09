@@ -76,8 +76,20 @@ export default function MathChallenge() {
     setIsActive(false);
     setGameOver(true);
     playSound('gameover');
-    
+
     const isWin = score > 0;
+
+    // Teasing message when player scores 0
+    if (!isWin) {
+      const username = user?.username || user?.name || "Player";
+      const teases = [
+        `Is that all you got, ${username}? 😏`,
+        `My calculator runs faster than you, ${username}! 🤖`,
+        `Zero points? Really, ${username}? 😂`,
+        `CPU is disappointed, ${username}. 📉`
+      ];
+      toast.error(teases[Math.floor(Math.random() * teases.length)]);
+    }
 
     try {
       const result = await recordResult({

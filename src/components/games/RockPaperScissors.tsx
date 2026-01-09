@@ -46,10 +46,28 @@ export default function RockPaperScissors() {
       setScore(s => ({ ...s, user: s.user + 1 }));
       isWin = true;
       playSound('win');
+
+      // Teasing message when user wins
+      const winTeases = [
+        `Rock, Paper, Scissors... You got lucky, ${username}! 🪨📄✂️`,
+        `My sensors must be lagging. You won this round! 🤖`,
+        `I let you win, ${username}. Don't get used to it! 😉`,
+        `CPU: 0, ${username}: 1. I'm taking notes! 📝`
+      ];
+      toast.info(winTeases[Math.floor(Math.random() * winTeases.length)]);
     } else {
       resultText = "You Lose!";
       setScore(s => ({ ...s, computer: s.computer + 1 }));
       playSound('lose');
+
+      // Teasing message when CPU wins
+      const loseTeases = [
+        `I read you like a book, ${username}! 📚`,
+        `Too slow! CPU reigns supreme! 👑`,
+        `Is that all you got? Try again! 🤖`,
+        `Calculated. Precision. Victory. 😎`
+      ];
+      toast.error(loseTeases[Math.floor(Math.random() * loseTeases.length)]);
     }
     
     setResult(resultText);
