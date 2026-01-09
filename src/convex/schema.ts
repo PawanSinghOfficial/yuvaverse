@@ -307,12 +307,6 @@ const schema = defineSchema(
       startTime: v.optional(v.number()), // When they started
     }).index("by_updated", ["updatedAt"]),
 
-    vayuu_messages: defineTable({
-      userId: v.id("users"),
-      role: v.union(v.literal("user"), v.literal("assistant")),
-      content: v.string(),
-    }).index("by_user", ["userId"]),
-
     friend_activities: defineTable({
       userId: v.id("users"),
       type: v.string(), // "game_highscore", "resource_upload", "pomodoro_session", "daily_quests_complete"

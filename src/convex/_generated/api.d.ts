@@ -27,8 +27,6 @@ import type * as syllabus from "../syllabus.js";
 import type * as test_ai from "../test_ai.js";
 import type * as todos from "../todos.js";
 import type * as users from "../users.js";
-import type * as vayuu from "../vayuu.js";
-import type * as vayuu_actions from "../vayuu_actions.js";
 
 import type {
   ApiFromModules,
@@ -56,8 +54,6 @@ declare const fullApi: ApiFromModules<{
   test_ai: typeof test_ai;
   todos: typeof todos;
   users: typeof users;
-  vayuu: typeof vayuu;
-  vayuu_actions: typeof vayuu_actions;
 }>;
 
 /**

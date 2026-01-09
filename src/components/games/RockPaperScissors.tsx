@@ -6,7 +6,6 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useGameSounds } from "@/hooks/use-game-sounds";
-import { VayuuTease } from "@/components/VayuuTease";
 
 const CHOICES = [
   { id: "rock", label: "Rock", icon: Hand, color: "bg-stone-500" },
@@ -19,7 +18,6 @@ export default function RockPaperScissors() {
   const [computerChoice, setComputerChoice] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [score, setScore] = useState({ user: 0, computer: 0 });
-  const [teaseMessage, setTeaseMessage] = useState<string | null>(null);
   const { playSound } = useGameSounds();
   
   const user = useQuery(api.users.currentUser);
@@ -48,27 +46,10 @@ export default function RockPaperScissors() {
       setScore(s => ({ ...s, user: s.user + 1 }));
       isWin = true;
       playSound('win');
-
-      const winTeases = [
-        `Rock, Paper, Scissors... You got lucky, ${username}! 🪨📄✂️`,
-        `My sensors must be lagging. You won this round! 🤖`,
-        `I let you win, ${username}. Don't get used to it! 😉`,
-        `Vayuu: 0, ${username}: 1. I'm taking notes! 📝`
-      ];
-      setTeaseMessage(winTeases[Math.floor(Math.random() * winTeases.length)]);
-
     } else {
       resultText = "You Lose!";
       setScore(s => ({ ...s, computer: s.computer + 1 }));
       playSound('lose');
-
-      const loseTeases = [
-        `I read you like a book, ${username}! 📚`,
-        `Too slow! Vayuu reigns supreme! 👑`,
-        `Is that all you got? Try again! 🤖`,
-        `Calculated. Precision. Victory. 😎`
-      ];
-      setTeaseMessage(loseTeases[Math.floor(Math.random() * loseTeases.length)]);
     }
     
     setResult(resultText);
@@ -101,7 +82,6 @@ export default function RockPaperScissors() {
 
   return (
     <div className="flex flex-col items-center gap-8 p-4 w-full max-w-md mx-auto">
-      <VayuuTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
       <div className="flex justify-between w-full text-xl font-black uppercase">
         <div className="text-green-600">You: {score.user}</div>
         <div className="text-red-600">Vayuu: {score.computer}</div>

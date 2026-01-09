@@ -7,7 +7,6 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useGameSounds } from "@/hooks/use-game-sounds";
-import { VayuuTease } from "@/components/VayuuTease";
 
 const EMOJIS = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮"];
 
@@ -23,7 +22,6 @@ export default function MemoryMatch() {
   const [gameRecorded, setGameRecorded] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   const [cpuMemory, setCpuMemory] = useState<Map<number, string>>(new Map());
-  const [teaseMessage, setTeaseMessage] = useState<string | null>(null);
   const { playSound } = useGameSounds();
   
   const user = useQuery(api.users.currentUser);
@@ -174,17 +172,6 @@ export default function MemoryMatch() {
         });
       } else {
         playSound('lose');
-        if (scores.player < scores.cpu) {
-            const username = user?.username || user?.name || "Player";
-            const teases = [
-                `I have a photographic memory, ${username}. Do you? 📸`,
-                `Forgot where that card was, ${username}? 😂`,
-                `Vayuu wins again! Better focus next time, ${username}. 🧠`,
-                `Too easy for me, ${username}! 🤖`
-            ];
-            const randomTease = teases[Math.floor(Math.random() * teases.length)];
-            setTeaseMessage(randomTease);
-        }
       }
       
       recordResult({
@@ -225,7 +212,6 @@ export default function MemoryMatch() {
 
   return (
     <div className="flex flex-col items-center gap-6 p-4 w-full max-w-4xl mx-auto">
-      <VayuuTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
       <div className="flex flex-col w-full gap-4">
         <div className="flex justify-between items-center px-4 bg-secondary/20 p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           <div className={`flex items-center gap-2 text-xl font-black ${turn === "player" ? "text-green-600 scale-110" : "text-muted-foreground"} transition-all`}>

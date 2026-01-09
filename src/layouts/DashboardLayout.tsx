@@ -9,7 +9,6 @@ import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { LogoDropdown } from "@/components/LogoDropdown";
-import { VayuuChat } from "@/components/VayuuChat";
 import Resources from "@/pages/Resources";
 import CalendarPage from "@/pages/Calendar";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -78,7 +77,6 @@ export default function DashboardLayout() {
       </SidebarInset>
       
       <OnboardingGuide isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
-      <VayuuChat user={user} />
       <ExitIntentPopup />
 
       <Sheet open={isResourcesOpen} onOpenChange={setIsResourcesOpen}>

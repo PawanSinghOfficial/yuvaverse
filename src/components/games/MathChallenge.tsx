@@ -8,7 +8,6 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useGameSounds } from "@/hooks/use-game-sounds";
-import { VayuuTease } from "@/components/VayuuTease";
 
 type Difficulty = "easy" | "medium" | "hard";
 
@@ -22,7 +21,6 @@ export default function MathChallenge() {
   const [isActive, setIsActive] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
-  const [teaseMessage, setTeaseMessage] = useState<string | null>(null);
   const { playSound } = useGameSounds();
   
   const user = useQuery(api.users.currentUser);
@@ -81,18 +79,6 @@ export default function MathChallenge() {
     
     const isWin = score > 0;
 
-    if (!isWin) {
-        const username = user?.username || user?.name || "Player";
-        const teases = [
-            `Is that all you got, ${username}? 😏`,
-            `My calculator runs faster than you, ${username}! 🤖`,
-            `Zero points? Really, ${username}? 😂`,
-            `Vayuu is disappointed, ${username}. 📉`
-        ];
-        const randomTease = teases[Math.floor(Math.random() * teases.length)];
-        setTeaseMessage(randomTease);
-    }
-
     try {
       const result = await recordResult({
         gameId: "math",
@@ -150,7 +136,6 @@ export default function MathChallenge() {
 
   return (
     <div className="flex flex-col items-center gap-6 p-4 w-full max-w-md mx-auto">
-      <VayuuTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
       <div className="flex justify-between w-full font-black uppercase text-xl items-center">
         <div className="flex items-center gap-2 text-yellow-600">
           <Timer className="h-6 w-6" /> {timeLeft}s
