@@ -41,6 +41,7 @@ import {
 import { toast } from "sonner";
 import { GrowingPlant } from "@/components/pomodoro/GrowingPlant";
 import { LibrarySeating } from "@/components/pomodoro/LibrarySeating";
+import { VayuuTease } from "@/components/VayuuTease";
 
 const AMBIENT_SOUNDS = [
   {
@@ -98,6 +99,7 @@ export default function Pomodoro() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showQuitConfirm, setShowQuitConfirm] = useState(false);
   const [isPiPActive, setIsPiPActive] = useState(false);
+  const [teaseMessage, setTeaseMessage] = useState<string | null>(null);
   
   const activeSound = AMBIENT_SOUNDS.find(s => s.id === selectedSound);
   const pageBackground = activeSound?.pageBg || "bg-yellow-50/50 dark:bg-background";
@@ -416,12 +418,12 @@ export default function Pomodoro() {
     const username = user?.username || user?.name || "Warrior";
     const teases = [
       `Giving up already, ${username}? Focus is a muscle! 💪`,
-      `Distracted again, ${username}? Stay focused! 👀`,
+      `Distracted again, ${username}? Vayuu is watching! 👀`,
       `You can do better than that, ${username}. Try again! 📉`,
       `Focus broken! ${username}, get back in the zone! 🧘`,
       `Quitting is not an option, ${username}! 🚫`
     ];
-    toast.error(teases[Math.floor(Math.random() * teases.length)]);
+    setTeaseMessage(teases[Math.floor(Math.random() * teases.length)]);
 
     try {
       await abortSession({});
@@ -467,6 +469,7 @@ export default function Pomodoro() {
 
   return (
     <div ref={containerRef} className={cn("p-8 min-h-full w-full flex flex-col items-center justify-center space-y-8 relative overflow-y-auto transition-colors duration-1000", pageBackground)}>
+      <VayuuTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
       {/* Hidden Canvas and Video for PiP */}
       <canvas ref={pipCanvasRef} width={300} height={300} className="hidden" />
       <video ref={pipVideoRef} className="hidden" muted playsInline />

@@ -8,6 +8,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useGameSounds } from "@/hooks/use-game-sounds";
+import { VayuuTease } from "@/components/VayuuTease";
 
 export default function TicTacToe() {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -16,6 +17,7 @@ export default function TicTacToe() {
   const [winningLine, setWinningLine] = useState<number[] | null>(null);
   const [gameRecorded, setGameRecorded] = useState(false);
   const [isCpuThinking, setIsCpuThinking] = useState(false);
+  const [teaseMessage, setTeaseMessage] = useState<string | null>(null);
   const { playSound } = useGameSounds();
   
   const user = useQuery(api.users.currentUser);
@@ -114,9 +116,9 @@ export default function TicTacToe() {
             `Beginner's luck, ${username}! I'll get you next time. 😤`,
             `Okay, okay, you won. But can you do it again? 🤔`,
             `I was just warming up! Rematch? 🤖`,
-            `CPU: 0, ${username}: 1. Don't get cocky! 😒`
+            `Vayuu: 0, ${username}: 1. Don't get cocky! 😒`
          ];
-         toast.info(winTeases[Math.floor(Math.random() * winTeases.length)]);
+         setTeaseMessage(winTeases[Math.floor(Math.random() * winTeases.length)]);
 
          handleGameEnd(true);
       } else {
@@ -128,9 +130,9 @@ export default function TicTacToe() {
             `Tic-Tac-Toe? More like Tic-Tac-NO, ${username}! ❌`,
             `I can see your moves before you make them, ${username}. 🔮`,
             `Better luck next time, ${username}! 🤖`,
-            `CPU: 1, ${username}: 0. 😎`
+            `Vayuu: 1, ${username}: 0. 😎`
          ];
-         toast.error(loseTeases[Math.floor(Math.random() * loseTeases.length)]);
+         setTeaseMessage(loseTeases[Math.floor(Math.random() * loseTeases.length)]);
 
          handleGameEnd(false);
       }
@@ -177,6 +179,7 @@ export default function TicTacToe() {
 
   return (
     <div className="flex flex-col items-center gap-6 p-4">
+      <VayuuTease message={teaseMessage} onClose={() => setTeaseMessage(null)} />
       <div className="flex justify-between items-center w-full max-w-xs">
         <div className={`text-xl font-black ${xIsNext && !winner ? "text-primary scale-110" : "text-muted-foreground"} transition-all`}>
           You (X)
