@@ -415,7 +415,7 @@ export default function Pomodoro() {
     if (audioRef.current) audioRef.current.pause();
 
     // Teasing message when quitting
-    const username = user?.username || user?.name || "Warrior";
+    const username = user?.username || user?.name || "Focus Master";
     const teases = [
       `Giving up already, ${username}? Focus is a muscle! 💪`,
       `Distracted again, ${username}? Vayuu is watching! 👀`,

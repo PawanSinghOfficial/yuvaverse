@@ -83,7 +83,7 @@ export default function MathChallenge() {
 
     // Teasing message when player scores 0
     if (!isWin) {
-      const username = user?.username || user?.name || "Player";
+      const username = user?.username || user?.name || "Math Genius";
       const teases = [
         `Is that all you got, ${username}? 😏`,
         `My calculator runs faster than you, ${username}! 🤖`,

@@ -176,7 +176,7 @@ export default function MemoryMatch() {
         playSound('lose');
 
         // Teasing message when CPU wins
-        const username = user?.username || user?.name || "Player";
+        const username = user?.username || user?.name || "Champion";
         const loseTeases = [
           `I have a photographic memory, ${username}. Do you? 📸`,
           `Forgot where that card was, ${username}? 😂`,

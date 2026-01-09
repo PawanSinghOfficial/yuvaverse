@@ -111,11 +111,11 @@ export default function TicTacToe() {
          });
 
          // Teasing message when user wins
-         const username = user?.username || user?.name || "Player";
+         const username = user?.username || user?.name || "Champion";
          const winTeases = [
             `Beginner's luck, ${username}! I'll get you next time. 😤`,
-            `Okay, okay, you won. But can you do it again? 🤔`,
-            `I was just warming up! Rematch? 🤖`,
+            `Okay, okay, you won. But can you do it again, ${username}? 🤔`,
+            `I was just warming up, ${username}! Rematch? 🤖`,
             `Vayuu: 0, ${username}: 1. Don't get cocky! 😒`
          ];
          setTeaseMessage(winTeases[Math.floor(Math.random() * winTeases.length)]);
@@ -125,7 +125,7 @@ export default function TicTacToe() {
          playSound('lose');
 
          // Teasing message when CPU wins
-         const username = user?.username || user?.name || "Player";
+         const username = user?.username || user?.name || "Champion";
          const loseTeases = [
             `Tic-Tac-Toe? More like Tic-Tac-NO, ${username}! ❌`,
             `I can see your moves before you make them, ${username}. 🔮`,

@@ -34,7 +34,7 @@ export default function RockPaperScissors() {
     let isWin = false;
     let resultText = "";
 
-    const username = user?.username || user?.name || "Player";
+    const username = user?.username || user?.name || "Champion";
 
     if (choiceId === randomChoice) {
       resultText = "Draw!";
